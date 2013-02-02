@@ -15,10 +15,10 @@
 package com.l2jserver.gameserver.eventengine.model;
 
 import javolution.util.FastList;
-import com.l2jserver.gameserver.eventengine.container.NpcContainer;
 
 import com.l2jserver.gameserver.datatables.NpcTable;
 import com.l2jserver.gameserver.datatables.SpawnTable;
+import com.l2jserver.gameserver.eventengine.container.NpcContainer;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -99,25 +99,35 @@ public class EventNpc
 	public boolean equals(Object obj)
 	{
 		if (this == obj)
+		{
 			return true;
+		}
 		if (obj == null)
+		{
 			return false;
+		}
 		if (getClass() != obj.getClass())
+		{
 			return false;
+		}
 		EventNpc other = (EventNpc) obj;
 		if (_owner == null)
 		{
 			if (other._owner != null)
+			{
 				return false;
+			}
 		}
 		else if (!_owner.equals(other._owner))
+		{
 			return false;
+		}
 		return true;
 	}
 	
 	public void showBombEffect(FastList<EventPlayer> victims)
 	{
-		FastList<L2Object> temp = new FastList<L2Object>();
+		FastList<L2Object> temp = new FastList<>();
 		
 		for (EventPlayer victim : victims)
 		{

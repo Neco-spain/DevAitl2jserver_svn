@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javolution.util.FastList;
+import javolution.util.FastMap;
 import javolution.util.FastSet;
 
 import com.l2jserver.Config;
@@ -40,6 +42,7 @@ public class SpawnTable
 	private static final Logger _log = Logger.getLogger(SpawnTable.class.getName());
 	
 	private final FastSet<L2Spawn> _spawntable = new FastSet<>();
+	private final FastMap<Integer, L2Spawn> _spawngetnpc = new FastMap<Integer, L2Spawn>().shared();
 	private int _npcSpawnCount;
 	private int _customSpawnCount;
 	
@@ -359,5 +362,25 @@ public class SpawnTable
 		}
 		
 		return npces;
+	}
+	
+	public FastList<L2Spawn> getSpawnsByNpcId(int npcId)
+	{
+		FastList<L2Spawn> spawns = new FastList<>();
+		for (L2Spawn spawn : getSpawntable().values())
+		{
+			if ((spawn.getNpc() == null) || (spawn.getNpc().getNpcId() != npcId))
+			{
+				continue;
+			}
+			
+			spawns.add(spawn);
+		}
+		return spawns;
+	}
+	
+	public FastMap<Integer, L2Spawn> getSpawntable()
+	{
+		return _spawngetnpc;
 	}
 }

@@ -1025,6 +1025,9 @@ public final class Config
 	public static float RATE_QUEST_REWARD_SCROLL;
 	public static float RATE_QUEST_REWARD_RECIPE;
 	public static float RATE_QUEST_REWARD_MATERIAL;
+	public static float RATE_QUEST_REWARD_ACCESSORY;
+	public static float RATE_QUESTS_ARMOR_REWARD;
+	public static float RATE_QUESTS_WEAPON_REWARD;
 	public static Map<Integer, Float> RATE_DROP_ITEMS_ID;
 	public static float RATE_KARMA_EXP_LOST;
 	public static float RATE_SIEGE_GUARDS_PRICE;
@@ -2824,7 +2827,9 @@ public final class Config
 			RATE_QUEST_REWARD_MATERIAL = Float.parseFloat(RatesSettings.getProperty("RateQuestRewardMaterial", "1."));
 			RATE_HB_TRUST_INCREASE = Float.parseFloat(RatesSettings.getProperty("RateHellboundTrustIncrease", "1."));
 			RATE_HB_TRUST_DECREASE = Float.parseFloat(RatesSettings.getProperty("RateHellboundTrustDecrease", "1."));
-			
+			RATE_QUEST_REWARD_ACCESSORY = Float.parseFloat(RatesSettings.getProperty("RateQuestRewardAccessory", "1."));
+			RATE_QUESTS_ARMOR_REWARD = Float.parseFloat(RatesSettings.getProperty("RateQuestRewardArmor", "1."));
+			RATE_QUESTS_WEAPON_REWARD = Float.parseFloat(RatesSettings.getProperty("RateQuestRewardWeapon", "1."));
 			RATE_VITALITY_LEVEL_1 = Float.parseFloat(RatesSettings.getProperty("RateVitalityLevel1", "1.5"));
 			RATE_VITALITY_LEVEL_2 = Float.parseFloat(RatesSettings.getProperty("RateVitalityLevel2", "2."));
 			RATE_VITALITY_LEVEL_3 = Float.parseFloat(RatesSettings.getProperty("RateVitalityLevel3", "2.5"));
@@ -3697,6 +3702,15 @@ public final class Config
 				break;
 			case "ratequestrewardmaterial":
 				RATE_QUEST_REWARD_MATERIAL = Float.parseFloat(pValue);
+				break;
+			case "RateQuestRewardAccessory":
+				RATE_QUEST_REWARD_ACCESSORY = Float.parseFloat(pValue);
+				break;
+			case "RateQuestRewardArmor":
+				RATE_QUESTS_ARMOR_REWARD = Float.parseFloat(pValue);
+				break;
+			case "RateQuestRewardWeapon":
+				RATE_QUESTS_WEAPON_REWARD = Float.parseFloat(pValue);
 				break;
 			case "ratehellboundtrustincrease":
 				RATE_HB_TRUST_INCREASE = Float.parseFloat(pValue);

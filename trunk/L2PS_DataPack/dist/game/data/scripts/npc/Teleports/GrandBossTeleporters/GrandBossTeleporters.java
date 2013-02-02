@@ -14,12 +14,12 @@
  */
 package npc.Teleports.GrandBossTeleporters;
 
-import individual.Antharas;
-import individual.Valakas;
 import npc.AbstractNpcAI;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.datatables.DoorTable;
+import com.l2jserver.gameserver.features.data._0_Antharas;
+import com.l2jserver.gameserver.features.data._0_Valakas;
 import com.l2jserver.gameserver.instancemanager.GrandBossManager;
 import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -46,17 +46,18 @@ public class GrandBossTeleporters extends AbstractNpcAI
 		31686, // Gatekeeper of Fire Dragon : Opens doors to Heart of Volcano
 		31687, // Gatekeeper of Fire Dragon : Opens doors to Heart of Volcano
 		31759, // Teleportation Cubic : Teleport out of Lair of Valakas
-		32762  // Freya doors
+		32762
+	// Freya doors
 	};
 	
 	private Quest valakasAI()
 	{
-		return QuestManager.getInstance().getQuest(Valakas.class.getSimpleName());
+		return QuestManager.getInstance().getQuest(_0_Valakas.class.getSimpleName());
 	}
 	
 	private Quest antharasAI()
 	{
-		return QuestManager.getInstance().getQuest(Antharas.class.getSimpleName());
+		return QuestManager.getInstance().getQuest(_0_Antharas.class.getSimpleName());
 	}
 	
 	private static int playerCount = 0;
@@ -210,11 +211,11 @@ public class GrandBossTeleporters extends AbstractNpcAI
 			case 31687:
 				DoorTable.getInstance().getDoor(24210005).openMe();
 				break;
-				
-            case 32762: // Sirra
-                DoorTable.getInstance().getDoor(23140101).openMe();
-                break;
-                
+			
+			case 32762: // Sirra
+				DoorTable.getInstance().getDoor(23140101).openMe();
+				break;
+			
 			case 31540:
 				if (playerCount < 50)
 				{

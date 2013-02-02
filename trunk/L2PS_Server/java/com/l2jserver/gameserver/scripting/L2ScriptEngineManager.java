@@ -21,9 +21,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +47,10 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import javolution.util.FastMap;
+import javolution.util.FastSet;
 
 import com.l2jserver.Config;
+import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.script.jython.JythonScriptEngine;
 
 /**
@@ -48,8 +60,11 @@ import com.l2jserver.script.jython.JythonScriptEngine;
 public final class L2ScriptEngineManager
 {
 	private static final Logger _log = Logger.getLogger(L2ScriptEngineManager.class.getName());
-	
 	public static final File SCRIPT_FOLDER = new File(Config.DATAPACK_ROOT.getAbsolutePath(), "data/scripts");
+	private final static String[] SCRIPT_PKGS =
+	{
+		"data"
+	};
 	
 	public static L2ScriptEngineManager getInstance()
 	{
@@ -163,7 +178,7 @@ public final class L2ScriptEngineManager
 	public void executeScriptList(File list) throws IOException
 	{
 		File file;
-		
+		executeCoreScripts();
 		if (!Config.ALT_DEV_NO_HANDLERS && Config.ALT_DEV_NO_QUESTS)
 		{
 			file = new File(SCRIPT_FOLDER, "handlers/MasterHandler.java");
@@ -528,5 +543,180 @@ public final class L2ScriptEngineManager
 	private static class SingletonHolder
 	{
 		protected static final L2ScriptEngineManager _instance = new L2ScriptEngineManager();
+	}
+	
+	private static void addScript(Collection<Class<?>> classes, String name)
+	{
+		try
+		{
+			Class<?> cl = Class.forName(name);
+			if ((cl != null) && (Quest.class.isAssignableFrom(cl)))
+			{
+				classes.add(cl);
+			}
+		}
+		catch (ClassNotFoundException e)
+		{
+			_log.log(Level.WARNING, "" + e.getMessage(), e);
+		}
+		catch (Throwable t)
+		{
+			_log.warning(t.getMessage());
+		}
+	}
+	
+	private static Collection<Class<?>> getClassesForPackageInDir(File directory, String packageName, Collection<Class<?>> classes)
+	{
+		if (!directory.exists())
+		{
+			return classes;
+		}
+		File[] files = directory.listFiles();
+		for (File file : files)
+		{
+			if (file.isDirectory())
+			{
+				getClassesForPackageInDir(file, packageName + "." + file.getName(), classes);
+			}
+			else if (file.getName().endsWith(".class"))
+			{
+				addScript(classes, packageName + '.' + file.getName().substring(0, file.getName().length() - 6));
+			}
+		}
+		return classes;
+	}
+	
+	private void getClassesForPackageInJar(URL url, String packagePath, Collection<Class<?>> classes)
+	{
+		JarInputStream stream = null;
+		try
+		{
+			stream = new JarInputStream(url.openStream()); // may want better way to open url connections
+			JarEntry entry = stream.getNextJarEntry();
+			while (entry != null)
+			{
+				String name = entry.getName();
+				int i = name.lastIndexOf("/");
+				if ((i > 0) && name.endsWith(".class") && name.substring(0, i).startsWith(packagePath))
+				{
+					addScript(classes, name.substring(0, name.length() - 6).replace("/", "."));
+				}
+				entry = stream.getNextJarEntry();
+			}
+			stream.close();
+		}
+		catch (IOException e)
+		{
+			_log.warning("Can't get classes for url " + url + ": " + e.getMessage());
+		}
+	}
+	
+	public Collection<Class<?>> getClassesForPackage(String packageName)
+	{
+		String packagePath = packageName.replace(".", "/");
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		Collection<Class<?>> classes = new FastSet<>();
+		try
+		{
+			Enumeration<URL> resources = classLoader.getResources(packagePath);
+			ArrayList<File> dirs = new ArrayList<>();
+			while (resources.hasMoreElements())
+			{
+				URL resource = resources.nextElement();
+				dirs.add(new File(resource.getFile()));
+			}
+			for (File directory : dirs)
+			{
+				getClassesForPackageInDir(directory, packageName, classes);
+			}
+		}
+		catch (IOException e)
+		{
+			_log.log(Level.WARNING, "" + e.getMessage(), e);
+		}
+		ArrayList<URL> jarUrls = new ArrayList<>();
+		while (classLoader != null)
+		{
+			if (classLoader instanceof URLClassLoader)
+			{
+				for (URL url : ((URLClassLoader) classLoader).getURLs())
+				{
+					if (url.getFile().endsWith(".jar"))
+					{
+						jarUrls.add(url);
+					}
+				}
+			}
+			classLoader = classLoader.getParent();
+		}
+		for (URL url : jarUrls)
+		{
+			getClassesForPackageInJar(url, packagePath, classes);
+		}
+		return classes;
+	}
+	
+	public void executeCoreScripts()
+	{
+		for (String pkg : SCRIPT_PKGS)
+		{
+			Collection<Class<?>> classes = getClassesForPackage("com.l2jserver.gameserver.features." + pkg);
+			for (Class<?> cls : classes)
+			{
+				if (cls.getSimpleName().equals("AirShipController"))
+				{
+					continue;
+				}
+				try
+				{
+					Method m = cls.getMethod("main", new Class[]
+					{
+						String[].class
+					});
+					if (m.getDeclaringClass().equals(cls))
+					{
+						m.invoke(cls, new Object[]
+						{
+							new String[] {}
+						});
+					}
+					continue;
+				}
+				catch (NoSuchMethodException e)
+				{
+				}
+				catch (InvocationTargetException e)
+				{
+					_log.log(Level.WARNING, e.getMessage(), e);
+				}
+				catch (IllegalAccessException e)
+				{
+					_log.log(Level.WARNING, e.getMessage(), e);
+				}
+				try
+				{
+					Constructor<?> c = cls.getConstructor(new Class[] {});
+					Quest q = (Quest) c.newInstance();
+					q.setAltMethodCall(true);
+				}
+				catch (NoSuchMethodException e)
+				{
+					// _log.log(Level.WARNING, e.getMessage(), e);
+				}
+				catch (InvocationTargetException e)
+				{
+					_log.log(Level.WARNING, e.getMessage(), e);
+				}
+				catch (IllegalAccessException e)
+				{
+					_log.log(Level.WARNING, e.getMessage(), e);
+				}
+				catch (InstantiationException e)
+				{
+					_log.log(Level.WARNING, e.getMessage(), e);
+				}
+				
+			}
+		}
 	}
 }

@@ -1148,4 +1148,19 @@ public abstract class L2Item
 	{
 		return getItemType() == L2EtcItemType.PET_COLLAR;
 	}
+	
+	public boolean isAccessory()
+	{
+		return _type2 == TYPE2_ACCESSORY;
+	}
+	
+	public boolean isArmorOrShield()
+	{
+		return _type2 == TYPE2_SHIELD_ARMOR;
+	}
+	
+	public boolean isWeapon()
+	{
+		return _type2 == TYPE2_WEAPON;
+	}
 }

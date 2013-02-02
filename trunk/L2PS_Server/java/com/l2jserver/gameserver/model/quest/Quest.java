@@ -82,22 +82,13 @@ import com.l2jserver.util.Util;
 public class Quest extends ManagedScript
 {
 	protected static final Logger _log = Logger.getLogger(Quest.class.getName());
-	
-	/**
-	 * Map containing events from String value of the event.
-	 */
 	private static Map<String, Quest> _allEventsS = new HashMap<>();
-	
-	/**
-	 * Map containing lists of timers from the name of the timer.
-	 */
 	private final Map<String, List<QuestTimer>> _allEventTimers = new L2FastMap<>(true);
 	private final Set<Integer> _questInvolvedNpcs = new HashSet<>();
-	
+	boolean altMethodCall = true;
 	private final ReentrantReadWriteLock _rwLock = new ReentrantReadWriteLock();
 	private final WriteLock _writeLock = _rwLock.writeLock();
 	private final ReadLock _readLock = _rwLock.readLock();
-	
 	private final int _questId;
 	private final String _name;
 	private final String _descr;
@@ -3486,5 +3477,22 @@ public class Quest extends ManagedScript
 	public String onNodeArrived(L2Npc npc)
 	{
 		return null;
+	}
+	
+	public void setAltMethodCall(boolean altMethodCall)
+	{
+		this.altMethodCall = altMethodCall;
+	}
+	
+	protected static boolean isIntInArray(int i, int[] ia)
+	{
+		for (int v : ia)
+		{
+			if (i == v)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

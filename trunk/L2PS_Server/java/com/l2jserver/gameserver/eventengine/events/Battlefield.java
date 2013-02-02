@@ -1,6 +1,7 @@
 package com.l2jserver.gameserver.eventengine.events;
 
 import javolution.util.FastList;
+
 import com.l2jserver.gameserver.eventengine.AbstractEvent;
 import com.l2jserver.gameserver.eventengine.Configuration;
 import com.l2jserver.gameserver.eventengine.container.NpcContainer;
@@ -58,8 +59,8 @@ public class Battlefield extends AbstractEvent
 						announce("Congratulation! The " + teams.get(winnerTeam).getName() + " team won the event with " + teams.get(winnerTeam).getScore() + " points!");
 						eventEnded();
 						break;
-				default:
-					break;
+					default:
+						break;
 				}
 			}
 			catch (Throwable e)
@@ -83,11 +84,11 @@ public class Battlefield extends AbstractEvent
 	
 	public EventState eventState;
 	
-	private Core task;
+	private final Core task;
 	
 	public int winnerTeam;
 	
-	private FastList<EventNpc> bases;
+	private final FastList<EventNpc> bases;
 	
 	@SuppressWarnings(
 	{

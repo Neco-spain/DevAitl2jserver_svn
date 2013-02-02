@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
+
 import com.l2jserver.gameserver.eventengine.AbstractEvent;
 import com.l2jserver.gameserver.eventengine.Configuration;
 import com.l2jserver.gameserver.eventengine.ManagerNpc;
@@ -33,7 +34,7 @@ public class Vote
 		protected static final Vote _instance = new Vote();
 	}
 	
-	private class VoteCore implements Runnable
+	protected class VoteCore implements Runnable
 	{
 		
 		@Override
@@ -42,7 +43,7 @@ public class Vote
 			switch (phase)
 			{
 				case VOTE:
-					announce("Vote phase started! You have " + Configuration.getInstance().getInt(0, "voteTime") / 60 + " mins to vote!");
+					announce("Vote phase started! You have " + (Configuration.getInstance().getInt(0, "voteTime") / 60) + " mins to vote!");
 					voteCountdown = new VoteCountdown(Configuration.getInstance().getInt(0, "voteTime"));
 					voteCountdown.start();
 					break;
@@ -59,8 +60,8 @@ public class Vote
 					
 					setVotePhase(VotePhase.RUNNING);
 					break;
-			default:
-				break;
+				default:
+					break;
 			}
 			
 		}
@@ -77,11 +78,15 @@ public class Vote
 		@Override
 		public void clockBody()
 		{
-			if (counter == Configuration.getInstance().getInt(0, "showVotePopupAt") && Configuration.getInstance().getBoolean(0, "votePopupEnabled"))
+			if ((counter == Configuration.getInstance().getInt(0, "showVotePopupAt")) && Configuration.getInstance().getBoolean(0, "votePopupEnabled"))
 			{
 				for (Integer playerId : Out.getEveryPlayer())
+				{
 					if (!popupOffList.contains(playerId))
+					{
 						ManagerNpc.getInstance().showVoteList(playerId);
+					}
+				}
 			}
 			
 			switch (counter)
@@ -91,7 +96,7 @@ public class Vote
 				case 600:
 				case 300:
 				case 60:
-					announce("" + counter / 60 + " minutes left to vote.");
+					announce("" + (counter / 60) + " minutes left to vote.");
 					break;
 				case 30:
 				case 10:
@@ -123,20 +128,17 @@ public class Vote
 	}
 	
 	public FastMap<Integer, Integer> votes;
-	private FastList<Integer> bannedEvents;
+	private final FastList<Integer> bannedEvents;
 	public VoteCountdown voteCountdown;
 	
 	public VotePhase phase;
 	
-	private VoteCore voteCore;
+	private final VoteCore voteCore;
 	
 	private AbstractEvent currentEvent;
 	
 	public FastList<Integer> popupOffList;
 	
-	@SuppressWarnings({
-		"synthetic-access"
-	})
 	public Vote()
 	{
 		votes = new FastMap<>();
@@ -173,7 +175,7 @@ public class Vote
 	{
 		if (getCurrentEvent() == event)
 		{
-			announce("Next event in " + Configuration.getInstance().getInt(0, "voteTime") / 60 + "mins!");
+			announce("Next event in " + (Configuration.getInstance().getInt(0, "voteTime") / 60) + "mins!");
 			setVotePhase(VotePhase.VOTE);
 			voteSchedule(1);
 		}

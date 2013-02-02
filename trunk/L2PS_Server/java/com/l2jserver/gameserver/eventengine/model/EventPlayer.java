@@ -18,12 +18,12 @@ import java.net.InetAddress;
 import java.util.List;
 
 import javolution.util.FastList;
-import com.l2jserver.gameserver.eventengine.AbstractEvent;
 
 import com.l2jserver.gameserver.GameTimeController;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.SkillTable;
+import com.l2jserver.gameserver.eventengine.AbstractEvent;
 import com.l2jserver.gameserver.instancemanager.TransformationManager;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2Party;
@@ -53,7 +53,6 @@ import com.l2jserver.gameserver.network.serverpackets.SetupGauge;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
 import com.l2jserver.gameserver.util.Broadcast;
 
-@SuppressWarnings({"deprecation","unused"})
 public class EventPlayer implements Comparable<EventPlayer>
 {
 	
@@ -61,8 +60,8 @@ public class EventPlayer implements Comparable<EventPlayer>
 	// Logger.getLogger(PlayerEventInfo.class.getName());
 	
 	// Main variables
-	private L2PcInstance _owner;
-	private int _playersId;
+	private final L2PcInstance _owner;
+	private final int _playersId;
 	private boolean _isInEvent;
 	private boolean _isRegistered;
 	private boolean _isInFFAEvent;
@@ -265,13 +264,13 @@ public class EventPlayer implements Comparable<EventPlayer>
 	
 	public int getPartyLeaderId()
 	{
-		return _owner.getParty().getPartyLeaderOID();
+		return _owner.getParty().getLeaderObjectId();
 	}
 	
 	public List<Integer> getPartyMembers()
 	{
-		List<Integer> pt = new FastList<Integer>();
-		for (L2PcInstance player : _owner.getParty().getPartyMembers())
+		List<Integer> pt = new FastList<>();
+		for (L2PcInstance player : _owner.getParty().getMembers())
 		{
 			if (player != null)
 			{
@@ -624,7 +623,7 @@ public class EventPlayer implements Comparable<EventPlayer>
 		SetupGauge sg = new SetupGauge(0, 10000);
 		_owner.sendPacket(sg);
 		// End SoE Animation section
-		_owner.forceIsCasting(GameTimeController.getGameTicks() + 10000 / GameTimeController.MILLIS_IN_TICK);
+		_owner.forceIsCasting(GameTimeController.getGameTicks() + (10000 / GameTimeController.MILLIS_IN_TICK));
 	}
 	
 	public void simon(Integer npc, String text)
@@ -642,7 +641,7 @@ public class EventPlayer implements Comparable<EventPlayer>
 		_owner.standUp();
 	}
 	
-	private boolean statusCheck()
+	protected boolean statusCheck()
 	{
 		if (_owner.isInJail())
 		{
@@ -823,18 +822,20 @@ public class EventPlayer implements Comparable<EventPlayer>
 		setTitle("<- " + _score + "->");
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(EventPlayer other)
 	{
 		if (getScore() > other.getScore())
+		{
 			return 1;
+		}
 		else if (getScore() < other.getScore())
+		{
 			return -1;
+		}
 		else
+		{
 			return 0;
+		}
 	}
 }

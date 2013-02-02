@@ -14,10 +14,10 @@
  */
 package npc.Dorian;
 
-import quests.Q00024_InhabitantsOfTheForestOfTheDead.Q00024_InhabitantsOfTheForestOfTheDead;
 import npc.AbstractNpcAI;
 
 import com.l2jserver.gameserver.datatables.SpawnTable;
+import com.l2jserver.gameserver.features.data.Q00024_InhabitantsOfTheForestOfTheDead;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
