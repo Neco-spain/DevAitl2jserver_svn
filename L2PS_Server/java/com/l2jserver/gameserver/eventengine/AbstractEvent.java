@@ -9,6 +9,7 @@ import java.util.Random;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
+
 import com.l2jserver.gameserver.eventengine.container.EventContainer;
 import com.l2jserver.gameserver.eventengine.container.PlayerContainer;
 import com.l2jserver.gameserver.eventengine.function.Buffer;
@@ -79,8 +80,8 @@ public abstract class AbstractEvent
 					reset();
 					EventContainer.getInstance().removeEvent(containerId);
 					break;
-			default:
-				break;
+				default:
+					break;
 			}
 		}
 	}
@@ -139,7 +140,7 @@ public abstract class AbstractEvent
 				case 600:
 				case 300:
 				case 60:
-					announce("" + counter / 60 + " minutes left to register.");
+					announce("" + (counter / 60) + " minutes left to register.");
 					break;
 				case 30:
 				case 10:
@@ -357,7 +358,7 @@ public abstract class AbstractEvent
 		FastList<EventPlayer> sublist = new FastList<>();
 		for (EventPlayer player : list)
 		{
-			if ((count % 9 == 0) && (list.size() - count != 1))
+			if (((count % 9) == 0) && ((list.size() - count) != 1))
 			{
 				if (sublist.size() == 0)
 				{
@@ -370,7 +371,7 @@ public abstract class AbstractEvent
 					sublist.add(player);
 				}
 			}
-			if (count % 9 < 9)
+			if ((count % 9) < 9)
 			{
 				sublist.add(player);
 			}
@@ -605,7 +606,9 @@ public abstract class AbstractEvent
 			InetAddress ipc = player.getInetAddress();
 			
 			if (ipc == null)
+			{
 				continue;
+			}
 			
 			if (ip.contains(ipc))
 			{
@@ -632,7 +635,9 @@ public abstract class AbstractEvent
 			InetAddress ipc = player.getInetAddress();
 			
 			if (ipc == null)
+			{
 				continue;
+			}
 			
 			if (ip.contains(ipc))
 			{
@@ -856,7 +861,7 @@ public abstract class AbstractEvent
 		{
 			for (EventPlayer p : PlayerContainer.getInstance().getPlayers())
 			{
-				if (p.getInetAddress().equals(pi.getInetAddress()) && p.getOwner().getObjectId() == pi.getOwner().getObjectId())
+				if (p.getInetAddress().equals(pi.getInetAddress()) && (p.getOwner().getObjectId() == pi.getOwner().getObjectId()))
 				{
 					pi.sendMessage("This IP address is already registered to an event");
 					return false;

@@ -31,53 +31,52 @@ public class AdventTable
 	private static Logger _log = Logger.getLogger(AdventTable.class.getName());
 	private static String SQL_RESTORE = "SELECT charId,advent_time,advent_points FROM character_lov_bonus";
 	private static String SQL_REPLACE = "REPLACE INTO character_lov_bonus (charId,advent_time,advent_points) VALUES (?,?,?)";
-
+	
 	private static class HuntingState
 	{
 		private int adventTime;
 		private int adventPoints;
-
+		
 		public HuntingState(int adventTime, int adventPoints)
 		{
 			super();
 			this.adventTime = adventTime;
 			this.adventPoints = adventPoints;
 		}
-
+		
 		public int getAdventTime()
 		{
 			return adventTime;
 		}
-
+		
 		public int getAdventPoints()
 		{
 			return adventPoints;
 		}
-
+		
 		public void setAdventTime(int adventTime)
 		{
 			this.adventTime = adventTime;
 		}
-
+		
 		public void setAdventPoints(int adventPoints)
 		{
 			this.adventPoints = adventPoints;
 		}
 	}
-
-	private FastMap<Integer, HuntingState> hunting = new FastMap<>();
-
+	
+	private final FastMap<Integer, HuntingState> hunting = new FastMap<>();
+	
 	private AdventTable()
 	{
 		load();
 	}
-
+	
 	private void load()
 	{
 		reload();
 	}
-
-
+	
 	public void reload()
 	{
 		hunting.clear();
@@ -87,8 +86,8 @@ public class AdventTable
 			con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement(SQL_RESTORE);
 			ResultSet rset = statement.executeQuery();
-
-			while(rset.next())
+			
+			while (rset.next())
 			{
 				int charId = rset.getInt("charId");
 				int atime = rset.getInt("advent_time");
@@ -107,56 +106,68 @@ public class AdventTable
 			L2DatabaseFactory.close(con);
 		}
 	}
-
+	
 	public int getAdventTime(int charId)
 	{
 		HuntingState rec = hunting.get(charId);
 		if (rec != null)
+		{
 			return rec.getAdventTime();
+		}
 		return -1;
 	}
-
+	
 	public int getAdventPoints(int charId)
 	{
 		HuntingState rec = hunting.get(charId);
 		if (rec != null)
+		{
 			return rec.getAdventPoints();
+		}
 		return 0;
 	}
-
+	
 	public void setAdventTime(int charId, int time, boolean store)
 	{
 		HuntingState rec = hunting.get(charId);
 		if (rec != null)
+		{
 			rec.setAdventTime(time);
+		}
 		else
 		{
 			rec = new HuntingState(time, 0);
 			hunting.put(charId, rec);
 		}
 		if (store)
+		{
 			store(rec, charId);
+		}
 	}
-
+	
 	public void setAdventPoints(int charId, int value, boolean store)
 	{
 		HuntingState rec = hunting.get(charId);
 		if (rec != null)
+		{
 			rec.setAdventPoints(value);
+		}
 		else
 		{
 			rec = new HuntingState(0, value);
 			hunting.put(charId, rec);
 		}
 		if (store)
+		{
 			store(rec, charId);
+		}
 	}
-
+	
 	public static AdventTable getInstance()
 	{
 		return SingletonHolder._instance;
 	}
-
+	
 	private void store(HuntingState rec, int charId)
 	{
 		Connection con = null;
@@ -169,14 +180,14 @@ public class AdventTable
 		}
 		catch (Exception e)
 		{
-			//_log.log(Level.SEVERE, "Could not update Hunting for player: "+charId, e);
+			// _log.log(Level.SEVERE, "Could not update Hunting for player: "+charId, e);
 		}
 		finally
 		{
 			L2DatabaseFactory.close(con);
 		}
 	}
-
+	
 	private void storeExecute(HuntingState rec, int charId, PreparedStatement statement) throws SQLException
 	{
 		statement.setInt(1, charId);
@@ -184,14 +195,14 @@ public class AdventTable
 		statement.setInt(3, rec.getAdventPoints());
 		statement.executeUpdate();
 	}
-
+	
 	public void execRecTask()
 	{
 		for (HuntingState rec : hunting.values())
 		{
 			rec.setAdventTime(0);
 		}
-
+		
 		Connection con = null;
 		try
 		{
@@ -208,14 +219,14 @@ public class AdventTable
 		}
 		catch (Exception e)
 		{
-			//_log.log(Level.SEVERE, "Could not update Hunting task for players", e);
+			// _log.log(Level.SEVERE, "Could not update Hunting task for players", e);
 		}
 		finally
 		{
 			L2DatabaseFactory.close(con);
 		}
 	}
-
+	
 	@SuppressWarnings("synthetic-access")
 	private static class SingletonHolder
 	{

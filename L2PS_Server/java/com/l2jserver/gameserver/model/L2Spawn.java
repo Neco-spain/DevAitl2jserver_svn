@@ -688,4 +688,9 @@ public class L2Spawn
 	{
 		_name = name;
 	}
+	
+	public L2Npc getNpc()
+	{
+		return null;
+	}
 }

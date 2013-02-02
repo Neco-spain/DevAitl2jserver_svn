@@ -14,11 +14,11 @@
  */
 package npc.Teleports.Warpgate;
 
-import quests.Q00130_PathToHellbound.Q00130_PathToHellbound;
-import quests.Q00133_ThatsBloodyHot.Q00133_ThatsBloodyHot;
 import npc.AbstractNpcAI;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.features.data.Q00130_PathToHellbound;
+import com.l2jserver.gameserver.features.data.Q00133_ThatsBloodyHot;
 import com.l2jserver.gameserver.instancemanager.HellboundManager;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.L2Character;

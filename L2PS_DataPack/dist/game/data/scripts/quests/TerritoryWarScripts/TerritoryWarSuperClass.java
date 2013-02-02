@@ -17,9 +17,8 @@ package quests.TerritoryWarScripts;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 
-import quests.Q00147_PathtoBecominganEliteMercenary.Q00147_PathtoBecominganEliteMercenary;
-
 import com.l2jserver.gameserver.SevenSigns;
+import com.l2jserver.gameserver.features.data.Q00147_PathtoBecominganEliteMercenary;
 import com.l2jserver.gameserver.instancemanager.TerritoryWarManager;
 import com.l2jserver.gameserver.instancemanager.TerritoryWarManager.TerritoryNPCSpawn;
 import com.l2jserver.gameserver.model.L2Object;

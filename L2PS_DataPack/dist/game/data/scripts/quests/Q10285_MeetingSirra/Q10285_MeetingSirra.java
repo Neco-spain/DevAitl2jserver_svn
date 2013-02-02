@@ -14,8 +14,6 @@
  */
 package quests.Q10285_MeetingSirra;
 
-import handlers.bypasshandlers.QuestLink;
-
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -23,6 +21,8 @@ import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+
+import handlers.bypasshandlers.QuestLink;
 
 public class Q10285_MeetingSirra extends Quest
 {
@@ -34,7 +34,7 @@ public class Q10285_MeetingSirra extends Quest
 	private static final int _kegor = 32761;
 	private static final int _sirra = 32762;
 	private static final int _jinia2 = 32781;
-
+	
 	public Q10285_MeetingSirra(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
@@ -48,16 +48,18 @@ public class Q10285_MeetingSirra extends Quest
 		addTalkId(_sirra);
 		addTalkId(_steward);
 	}
-
- 	@Override
+	
+	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
 		QuestState st = player.getQuestState(qn);
 		
 		if (st == null)
+		{
 			return htmltext;
-
+		}
+		
 		if (npc.getNpcId() == _rafforty)
 		{
 			if (event.equalsIgnoreCase("32020-05.htm"))
@@ -68,7 +70,7 @@ public class Q10285_MeetingSirra extends Quest
 				st.set("Ex", "0");
 				st.playSound("ItemSound.quest_accept");
 			}
-		}	
+		}
 		else if (npc.getNpcId() == _jinia)
 		{
 			if (event.equalsIgnoreCase("32760-02.htm"))
@@ -77,28 +79,28 @@ public class Q10285_MeetingSirra extends Quest
 				st.set("cond", "3");
 				st.playSound("ItemSound.quest_middle");
 			}
-
+			
 			else if (event.equalsIgnoreCase("32760-06.htm"))
 			{
 				st.set("Ex", "3");
-				addSpawn(_sirra, -23905,-8790,-5384,56238, false, 0, false, npc.getInstanceId());
+				addSpawn(_sirra, -23905, -8790, -5384, 56238, false, 0, false, npc.getInstanceId());
 				st.set("cond", "5");
 				st.playSound("ItemSound.quest_middle");
 			}
-
+			
 			else if (event.equalsIgnoreCase("32760-12.htm"))
 			{
 				st.set("Ex", "5");
 				st.set("cond", "7");
 				st.playSound("ItemSound.quest_middle");
 			}
-
+			
 			else if (event.equalsIgnoreCase("32760-14.htm"))
 			{
 				st.set("Ex", "0");
 				st.set("progress", "2");
 				st.playSound("ItemSound.quest_middle");
-
+				
 				// destroy instance after 1 min
 				Instance inst = InstanceManager.getInstance().getInstance(npc.getInstanceId());
 				inst.setDuration(60000);
@@ -129,16 +131,18 @@ public class Q10285_MeetingSirra extends Quest
 			{
 				if (player.getLevel() >= 82)
 				{
-					player.teleToLocation(103045,-124361,-2768);
+					player.teleToLocation(103045, -124361, -2768);
 					htmltext = "";
 				}
 				else
+				{
 					htmltext = "32029-01a";
+				}
 			}
-		}	
+		}
 		return htmltext;
 	}
-
+	
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
@@ -146,8 +150,10 @@ public class Q10285_MeetingSirra extends Quest
 		QuestState st = player.getQuestState(qn);
 		
 		if (st == null)
+		{
 			return htmltext;
-
+		}
+		
 		if (npc.getNpcId() == _rafforty)
 		{
 			switch (st.getState())
@@ -155,15 +161,23 @@ public class Q10285_MeetingSirra extends Quest
 				case State.CREATED:
 					QuestState _prev = player.getQuestState("10284_AcquisitionOfDivineSword");
 					if ((_prev != null) && (_prev.getState() == State.COMPLETED) && (player.getLevel() >= 82))
+					{
 						htmltext = "32020-01.htm";
+					}
 					else
+					{
 						htmltext = "32020-03.htm";
+					}
 					break;
 				case State.STARTED:
 					if (st.getInt("progress") == 1)
+					{
 						htmltext = "32020-06.htm";
+					}
 					else if (st.getInt("progress") == 2)
+					{
 						htmltext = "32020-09.htm";
+					}
 					else if (st.getInt("progress") == 3)
 					{
 						st.giveItems(57, 283425);
@@ -178,7 +192,7 @@ public class Q10285_MeetingSirra extends Quest
 					break;
 			}
 		}
-		else if (npc.getNpcId() == _jinia && st.getInt("progress") == 1)
+		else if ((npc.getNpcId() == _jinia) && (st.getInt("progress") == 1))
 		{
 			switch (st.getInt("Ex"))
 			{
@@ -196,7 +210,7 @@ public class Q10285_MeetingSirra extends Quest
 					return "32760-13.htm";
 			}
 		}
-		else if (npc.getNpcId() == _kegor && st.getInt("progress") == 1)
+		else if ((npc.getNpcId() == _kegor) && (st.getInt("progress") == 1))
 		{
 			switch (st.getInt("Ex"))
 			{
@@ -208,7 +222,7 @@ public class Q10285_MeetingSirra extends Quest
 					return "32761-04.htm";
 			}
 		}
-		else if (npc.getNpcId() == _sirra && st.getInt("progress") == 1)
+		else if ((npc.getNpcId() == _sirra) && (st.getInt("progress") == 1))
 		{
 			switch (st.getInt("Ex"))
 			{
@@ -218,13 +232,13 @@ public class Q10285_MeetingSirra extends Quest
 					return "32762-09.htm";
 			}
 		}
-		else if (npc.getNpcId() == _steward && st.getInt("progress") == 2)
+		else if ((npc.getNpcId() == _steward) && (st.getInt("progress") == 2))
 		{
 			htmltext = "32029-01.htm";
 			st.set("cond", "8");
 			st.playSound("ItemSound.quest_middle");
 		}
-		else if (npc.getNpcId() == _jinia2 && st.getInt("progress") == 2)
+		else if ((npc.getNpcId() == _jinia2) && (st.getInt("progress") == 2))
 		{
 			htmltext = "32781-01.htm";
 			st.playSound("ItemSound.quest_middle");
@@ -236,11 +250,13 @@ public class Q10285_MeetingSirra extends Quest
 	public String onFirstTalk(L2Npc npc, L2PcInstance player)
 	{
 		if (npc.getNpcId() == _sirra)
+		{
 			QuestLink.showQuestWindow(player, npc);
+		}
 		
 		return null;
 	}
-
+	
 	public static void main(String[] args)
 	{
 		new Q10285_MeetingSirra(10285, qn, "Meeting Sirra");
