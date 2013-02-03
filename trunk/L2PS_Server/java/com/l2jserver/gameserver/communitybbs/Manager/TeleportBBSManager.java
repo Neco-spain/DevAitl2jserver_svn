@@ -117,23 +117,18 @@ public class TeleportBBSManager extends BaseBBSManager
 			activeChar.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.YOU_NOT_ENOUGH_ADENA));
 			return;
 		}
-		else
+		if (priceTp > 0)
 		{
-			if (priceTp > 0)
-			{
-				activeChar.reduceAdena("Teleport", priceTp, activeChar, true);
-			}
-			activeChar.teleToLocation(xTp, yTp, zTp);
+			activeChar.reduceAdena("Teleport", priceTp, activeChar, true);
 		}
+		activeChar.teleToLocation(xTp, yTp, zTp);
 	}
 	
 	private void showTp(L2PcInstance activeChar)
 	{
 		CBteleport tp;
-		Connection con = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement st = con.prepareStatement("SELECT * FROM comteleport WHERE charId=?;");
 			st.setLong(1, activeChar.getObjectId());
 			ResultSet rs = st.executeQuery();
@@ -169,25 +164,13 @@ public class TeleportBBSManager extends BaseBBSManager
 		catch (Exception e)
 		{
 		}
-		finally
-		{
-			try
-			{
-				con.close();
-			}
-			catch (Exception e)
-			{
-			}
-		}
 		
 	}
 	
 	private void delTp(L2PcInstance activeChar, int TpNameDell)
 	{
-		Connection conDel = null;
-		try
+		try (Connection conDel = L2DatabaseFactory.getInstance().getConnection())
 		{
-			conDel = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement stDel = conDel.prepareStatement("DELETE FROM comteleport WHERE charId=? AND TpId=?;");
 			stDel.setInt(1, activeChar.getObjectId());
 			stDel.setInt(2, TpNameDell);
@@ -196,17 +179,6 @@ public class TeleportBBSManager extends BaseBBSManager
 		catch (Exception e)
 		{
 		}
-		finally
-		{
-			try
-			{
-				conDel.close();
-			}
-			catch (Exception e)
-			{
-			}
-		}
-		
 	}
 	
 	private void AddTp(L2PcInstance activeChar, String TpNameAdd)
@@ -235,11 +207,8 @@ public class TeleportBBSManager extends BaseBBSManager
 			return;
 		}
 		
-		Connection con = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
-			
 			PreparedStatement st = con.prepareStatement("SELECT COUNT(*) FROM comteleport WHERE charId=?;");
 			st.setLong(1, activeChar.getObjectId());
 			ResultSet rs = st.executeQuery();
@@ -280,16 +249,6 @@ public class TeleportBBSManager extends BaseBBSManager
 		}
 		catch (Exception e)
 		{
-		}
-		finally
-		{
-			try
-			{
-				con.close();
-			}
-			catch (Exception e)
-			{
-			}
 		}
 	}
 	

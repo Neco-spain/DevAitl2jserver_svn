@@ -1,3 +1,17 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.l2jserver.gameserver.features.data;
 
 import java.util.Calendar;
@@ -28,6 +42,7 @@ import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.model.skills.L2Skill;
 import com.l2jserver.gameserver.network.SystemMessageId;
+import com.l2jserver.gameserver.network.serverpackets.ExFreyaMessages;
 import com.l2jserver.gameserver.network.serverpackets.ExSendUIEvent;
 import com.l2jserver.gameserver.network.serverpackets.Okoli;
 import com.l2jserver.gameserver.network.serverpackets.OnEventTrigger;
@@ -60,12 +75,10 @@ public class _4_FreyaEasyAndHard extends Quest
 		public FastMap<Integer, L2Npc> _archery_knights = new FastMap<>();
 		public FastMap<Integer, L2Npc> _simple_knights = new FastMap<>();
 		public FastMap<Integer, L2Npc> _glaciers = new FastMap<>();
-		// Hard
 		public L2Attackable _freyaStand_hard = null;
 		public L2Attackable _glakias_hard = null;
 		public FastMap<Integer, L2Npc> _archery_knights_hard = new FastMap<>();
 		
-		// Hard - end
 		public FreyaWorld()
 		{
 			InstanceManager.getInstance();
@@ -87,16 +100,15 @@ public class _4_FreyaEasyAndHard extends Quest
 		@Override
 		public void run()
 		{
-			// Hard
 			if (_isHard)
 			{
 				switch (_waveId)
 				{
 					case 1:
-						// Freya controller
+						
 						_world._freya_controller = (L2Attackable) spawnNpc(freya_controller, 114707, -114793, -11199, 0, _world.instanceId);
 						_world._freya_controller.setIsInvul(true);
-						// Sirra
+						
 						spawnNpc(_sirra, 114766, -113141, -11200, 15956, _world.instanceId);
 						handleWorldState(1, _world.instanceId);
 						break;
@@ -199,16 +211,13 @@ public class _4_FreyaEasyAndHard extends Quest
 						break;
 				}
 			}
-			// Hard - end
 			else if (_isEasy)
 			{
 				switch (_waveId)
 				{
 					case 1:
-						// Freya controller
 						_world._freya_controller = (L2Attackable) spawnNpc(freya_controller, 114707, -114793, -11199, 0, _world.instanceId);
 						_world._freya_controller.setIsInvul(true);
-						// Sirra
 						spawnNpc(_sirra, 114766, -113141, -11200, 15956, _world.instanceId);
 						handleWorldState(1, _world.instanceId);
 						break;
@@ -320,10 +329,6 @@ public class _4_FreyaEasyAndHard extends Quest
 		}
 	}
 	
-	// freyaStand = 29179;
-	// archery_knight = 18855;
-	// Glakias = 25699;
-	
 	protected boolean _isEasy = false;
 	protected boolean _isHard = false;
 	protected static int Jinia = 32781;
@@ -331,19 +336,15 @@ public class _4_FreyaEasyAndHard extends Quest
 	protected static int freyaOnThrone = 29177;
 	protected static int freyaSpelling = 29178;
 	protected static int freyaStand = 29179;
+	protected static int freyaStand_hard = 29180;
 	protected static int freya_controller = 36800;
 	protected static int glacier = 18853;
 	protected static int archery_knight = 18855;
 	protected static int Glakias = 25699;
 	protected static int _sirra = 32762;
-	// private static int tmp = 32777;
 	private static int door = 23140101;
-	
-	// Hard
-	protected static int freyaStand_hard = 29180;
 	protected static int archery_knight_hard = 18856;
 	protected static int Glakias_hard = 25700;
-	// Hard - end
 	
 	private static int[] emmiters =
 	{
@@ -521,7 +522,6 @@ public class _4_FreyaEasyAndHard extends Quest
 		}
 		
 		int pause = 0;
-		// Hard
 		if (_isHard)
 		{
 			switch (movieId)
@@ -551,7 +551,6 @@ public class _4_FreyaEasyAndHard extends Quest
 					pause = 0;
 			}
 		}
-		// Hard - end
 		else if (_isEasy)
 		{
 			switch (movieId)
@@ -629,7 +628,6 @@ public class _4_FreyaEasyAndHard extends Quest
 	protected void handleWorldState(int statusId, FreyaWorld world)
 	{
 		int instanceId = world.instanceId;
-		// Hard
 		if (_isHard)
 		{
 			switch (statusId)
@@ -690,7 +688,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					
 					break;
 				case 10:
-					// broadcastString(1801086, world.instanceId);
+					broadcastString(1801086, world.instanceId);
 					InstanceManager.getInstance().getInstance(world.instanceId).getDoor(door).closeMe();
 					world._freyaThrone.setIsInvul(false);
 					world._freyaThrone.setIsImmobilized(false);
@@ -740,7 +738,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					}
 					break;
 				case 21:
-					// broadcastString(1801087, instanceId);
+					broadcastString(1801087, instanceId);
 					for (L2Npc mob : world._archery_knights_hard.values())
 					{
 						archeryAttack(mob, world);
@@ -794,7 +792,7 @@ public class _4_FreyaEasyAndHard extends Quest
 						}
 					}
 					
-					// broadcastString(1801088, instanceId);
+					broadcastString(1801088, instanceId);
 					world._freyaStand_hard = (L2Attackable) spawnNpc(freyaStand_hard, 114720, -117085, -11088, 15956, world.instanceId);
 					world._freyaStand_hard.setOnKillDelay(0);
 					world._freyaStand_hard.getAI();
@@ -810,6 +808,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					break;
 				case 40:
 					broadcastMovie(18, world);
+					world._freyaStand_hard.setIsImmobilized(true);
 					stopAll(world);
 					ThreadPoolManager.getInstance().scheduleGeneral(new spawnWave(14, world.instanceId), 27000);
 					break;
@@ -827,7 +826,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					handleWorldState(42, instanceId);
 					break;
 				case 42:
-					// broadcastString(1801089, instanceId);
+					broadcastString(1801089, instanceId);
 					if ((world._freyaStand_hard != null) && !world._freyaStand_hard.isDead())
 					{
 						world._jinia.setTarget(world._freyaStand_hard);
@@ -875,7 +874,6 @@ public class _4_FreyaEasyAndHard extends Quest
 					break;
 			}
 		}
-		// Hard - end
 		else if (_isEasy)
 		{
 			switch (statusId)
@@ -936,7 +934,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					
 					break;
 				case 10:
-					// broadcastString(1801086, world.instanceId);
+					broadcastString(1801086, world.instanceId);
 					InstanceManager.getInstance().getInstance(world.instanceId).getDoor(door).closeMe();
 					world._freyaThrone.setIsInvul(false);
 					world._freyaThrone.setIsImmobilized(false);
@@ -986,7 +984,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					}
 					break;
 				case 21:
-					// broadcastString(1801087, instanceId);
+					broadcastString(1801087, instanceId);
 					for (L2Npc mob : world._archery_knights.values())
 					{
 						archeryAttack(mob, world);
@@ -1055,6 +1053,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					break;
 				case 40:
 					broadcastMovie(18, world);
+					world._freyaStand.setIsImmobilized(true);
 					stopAll(world);
 					ThreadPoolManager.getInstance().scheduleGeneral(new spawnWave(14, world.instanceId), 27000);
 					break;
@@ -1072,7 +1071,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					handleWorldState(42, instanceId);
 					break;
 				case 42:
-					// broadcastString(1801089, instanceId);
+					broadcastString(1801089, instanceId);
 					if ((world._freyaStand != null) && !world._freyaStand.isDead())
 					{
 						world._jinia.setTarget(world._freyaStand);
@@ -1123,7 +1122,7 @@ public class _4_FreyaEasyAndHard extends Quest
 					for (int objId : world.allowed)
 					{
 						L2PcInstance player = L2World.getInstance().getPlayer(objId);
-						QuestState st = player.getQuestState("10286_ReunionWithSirra");
+						QuestState st = player.getQuestState("Q10286_ReunionWithSirra");
 						if ((st != null) && (st.getState() == State.STARTED) && (st.getInt("progress") == 2))
 						{
 							st.set("cond", "7");
@@ -1196,7 +1195,6 @@ public class _4_FreyaEasyAndHard extends Quest
 	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isPet)
 	{
 		int npcId = npc.getNpcId();
-		// Hard
 		if (_isHard)
 		{
 			if (npcId == archery_knight_hard)
@@ -1226,7 +1224,6 @@ public class _4_FreyaEasyAndHard extends Quest
 				}
 			}
 		}
-		// Easy
 		else if (_isEasy)
 		{
 			if (npcId == archery_knight)
@@ -1311,7 +1308,6 @@ public class _4_FreyaEasyAndHard extends Quest
 				handleWorldState(44, killer.getInstanceId());
 			}
 		}
-		// Easy
 		else if (_isEasy)
 		{
 			FreyaWorld world = getWorld(killer);
@@ -1388,10 +1384,7 @@ public class _4_FreyaEasyAndHard extends Quest
 		{
 			return npc.getNpcId() + ".htm";
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 	
 	@Override
@@ -1416,19 +1409,14 @@ public class _4_FreyaEasyAndHard extends Quest
 		{
 			return npc.getNpcId() + ".htm";
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 	
 	private void enterInstance(L2PcInstance player, String template)
 	{
 		_log.info("starter=" + player.getName());
 		int instanceId = 0;
-		// check for existing instances for this player
 		InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player);
-		// existing instance
 		if (world != null)
 		{
 			if (!(world instanceof FreyaWorld))
@@ -1439,27 +1427,43 @@ public class _4_FreyaEasyAndHard extends Quest
 			teleportPlayer(player, (FreyaWorld) world);
 			return;
 		}
-		// New instance
-		else
+		if (!checkConditions(player))
 		{
-			if (!checkConditions(player))
+			return;
+		}
+		L2Party party = player.getParty();
+		instanceId = InstanceManager.getInstance().createDynamicInstance(template);
+		world = new FreyaWorld();
+		
+		world.instanceId = instanceId;
+		world.templateId = INSTANCE_ID;
+		world.status = 0;
+		
+		InstanceManager.getInstance().addWorld(world);
+		_log.info("Freya started " + template + " Instance: " + instanceId + " created by player: " + player.getName());
+		
+		if ((debug) || (player.isGM()))
+		{
+			QuestState qs = player.getQuestState("Q10286_ReunionWithSirra");
+			if (qs != null)
 			{
-				return;
+				if (qs.getInt("cond") == 5)
+				{
+					qs.set("cond", "6");
+					qs.playSound("ItemSound.quest_middle");
+				}
 			}
-			L2Party party = player.getParty();
-			instanceId = InstanceManager.getInstance().createDynamicInstance(template);
-			world = new FreyaWorld();
-			
-			world.instanceId = instanceId;
-			world.templateId = INSTANCE_ID;
-			world.status = 0;
-			
-			InstanceManager.getInstance().addWorld(world);
-			_log.info("Freya started " + template + " Instance: " + instanceId + " created by player: " + player.getName());
-			
-			if ((debug) || (player.isGM()))
+			world.allowed.add(player.getObjectId());
+			teleportPlayer(player, (FreyaWorld) world);
+			ThreadPoolManager.getInstance().scheduleGeneral(new spawnWave(1, world.instanceId), 100);
+			return;
+		}
+		
+		if ((party != null) && party.isInCommandChannel())
+		{
+			for (L2PcInstance plr : party.getCommandChannel().getMembers())
 			{
-				QuestState qs = player.getQuestState("10286_ReunionWithSirra");
+				QuestState qs = plr.getQuestState("Q10286_ReunionWithSirra");
 				if (qs != null)
 				{
 					if (qs.getInt("cond") == 5)
@@ -1468,32 +1472,12 @@ public class _4_FreyaEasyAndHard extends Quest
 						qs.playSound("ItemSound.quest_middle");
 					}
 				}
-				world.allowed.add(player.getObjectId());
-				teleportPlayer(player, (FreyaWorld) world);
-				ThreadPoolManager.getInstance().scheduleGeneral(new spawnWave(1, world.instanceId), 100);
-				return;
+				world.allowed.add(plr.getObjectId());
+				teleportPlayer(plr, (FreyaWorld) world);
 			}
 			
-			if ((party != null) && party.isInCommandChannel())
-			{
-				for (L2PcInstance plr : party.getCommandChannel().getMembers())
-				{
-					QuestState qs = plr.getQuestState("10286_ReunionWithSirra");
-					if (qs != null)
-					{
-						if (qs.getInt("cond") == 5)
-						{
-							qs.set("cond", "6");
-							qs.playSound("ItemSound.quest_middle");
-						}
-					}
-					world.allowed.add(plr.getObjectId());
-					teleportPlayer(plr, (FreyaWorld) world);
-				}
-				
-				ThreadPoolManager.getInstance().scheduleGeneral(new spawnWave(1, world.instanceId), 100);
-				return;
-			}
+			ThreadPoolManager.getInstance().scheduleGeneral(new spawnWave(1, world.instanceId), 100);
+			return;
 		}
 	}
 	
@@ -1501,6 +1485,7 @@ public class _4_FreyaEasyAndHard extends Quest
 	{
 		if ((debug) || (player.isGM()))
 		{
+			_log.info("Freya Hard and Easy is now in test mode - DEBUG OR GM PLAYER");
 			return true;
 		}
 		
@@ -1521,11 +1506,9 @@ public class _4_FreyaEasyAndHard extends Quest
 			player.sendPacket(SystemMessageId.ONLY_PARTY_LEADER_CAN_ENTER);
 			return false;
 		}
-		
-		// Hard
 		if (_isHard)
 		{
-			if (player.getParty().getCommandChannel().getMemberCount() < 36)
+			if (player.getParty().getCommandChannel().getMemberCount() < 2)
 			{
 				player.getParty().getCommandChannel().broadcastPacket(SystemMessage.getSystemMessage(2793).addNumber(10));
 				return false;
@@ -1537,10 +1520,9 @@ public class _4_FreyaEasyAndHard extends Quest
 				return false;
 			}
 		}
-		// Easy
 		else if (_isEasy)
 		{
-			if (player.getParty().getCommandChannel().getMemberCount() < 18)
+			if (player.getParty().getCommandChannel().getMemberCount() < 2)
 			{
 				player.getParty().getCommandChannel().broadcastPacket(SystemMessage.getSystemMessage(2793).addNumber(10));
 				return false;
@@ -1555,7 +1537,6 @@ public class _4_FreyaEasyAndHard extends Quest
 		
 		for (L2PcInstance partyMember : player.getParty().getCommandChannel().getMembers())
 		{
-			// Hard
 			if (_isHard)
 			{
 				if (partyMember.getLevel() < 82)
@@ -1566,7 +1547,6 @@ public class _4_FreyaEasyAndHard extends Quest
 					return false;
 				}
 			}
-			// Easy
 			else if (_isEasy)
 			{
 				if (partyMember.getLevel() < 78)
@@ -1594,11 +1574,10 @@ public class _4_FreyaEasyAndHard extends Quest
 				player.getParty().getCommandChannel().broadcastPacket(sm);
 				return false;
 			}
-			// Hard
 			if (_isHard)
 			{
-				QuestState st = partyMember.getQuestState("10286_ReunionWithSirra");
-				if ((st == null) || !st.isCompleted())
+				QuestState st = partyMember.getQuestState("Q10286_ReunionWithSirra");
+				if ((st == null) || st.isCompleted())
 				{
 					SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.C1_QUEST_REQUIREMENT_NOT_SUFFICIENT);
 					sm.addPcName(partyMember);
@@ -1606,11 +1585,10 @@ public class _4_FreyaEasyAndHard extends Quest
 					return false;
 				}
 			}
-			// Easy
 			if (_isEasy)
 			{
-				QuestState st = partyMember.getQuestState("10286_ReunionWithSirra");
-				if ((st == null) || !st.isCompleted())
+				QuestState st = partyMember.getQuestState("Q10286_ReunionWithSirra");
+				if ((st == null) || st.isCompleted())
 				{
 					SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.C1_QUEST_REQUIREMENT_NOT_SUFFICIENT);
 					sm.addPcName(partyMember);
@@ -1643,7 +1621,6 @@ public class _4_FreyaEasyAndHard extends Quest
 		Calendar reenter = Calendar.getInstance();
 		reenter.set(Calendar.MINUTE, 30);
 		reenter.set(Calendar.HOUR_OF_DAY, 6);
-		// if time is >= RESET_HOUR - roll to the next day
 		if (reenter.getTimeInMillis() <= System.currentTimeMillis())
 		{
 			reenter.add(Calendar.DAY_OF_MONTH, 1);
@@ -1665,8 +1642,6 @@ public class _4_FreyaEasyAndHard extends Quest
 		
 		SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.INSTANT_ZONE_S1_RESTRICTED);
 		sm.addString(InstanceManager.getInstance().getInstanceIdName(INSTANCE_ID));
-		
-		// set instance reenter time for all allowed players
 		for (int objectId : world.allowed)
 		{
 			L2PcInstance player = L2World.getInstance().getPlayer(objectId);
@@ -1698,7 +1673,6 @@ public class _4_FreyaEasyAndHard extends Quest
 		{
 			String[] params = event.split("_");
 			FreyaWorld world = getWorld(Integer.parseInt(params[5]));
-			// hard
 			if (_isHard)
 			{
 				if ((world != null) && (world.status < 44))
@@ -1709,7 +1683,6 @@ public class _4_FreyaEasyAndHard extends Quest
 					world._simple_knights.put(mob.getObjectId(), mob);
 				}
 			}
-			// Easy
 			else if (_isEasy)
 			{
 				if ((world != null) && (world.status < 44))
@@ -1784,7 +1757,6 @@ public class _4_FreyaEasyAndHard extends Quest
 		{
 			return;
 		}
-		// Hard
 		if (_isHard)
 		{
 			if ((world._freyaStand_hard != null) && !world._freyaStand_hard.isDead())
@@ -1800,7 +1772,6 @@ public class _4_FreyaEasyAndHard extends Quest
 				}
 			}
 		}
-		// Easy
 		else if (_isEasy)
 		{
 			if ((world._freyaStand != null) && !world._freyaStand.isDead())
@@ -1886,7 +1857,6 @@ public class _4_FreyaEasyAndHard extends Quest
 	public _4_FreyaEasyAndHard(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		// addFirstTalkId(32781);
 		addTalkId(Superior_Knight);
 		addTalkId(Jinia);
 		
@@ -1907,14 +1877,18 @@ public class _4_FreyaEasyAndHard extends Quest
 		addSpawnId(archery_knight);
 		addSpawnId(18854);
 		addSpawnId(glacier);
-		// hard
 		addKillId(Glakias_hard);
 		addAttackId(archery_knight_hard);
 		addAttackId(freyaStand_hard);
 		addKillId(freyaStand_hard);
 		addKillId(archery_knight_hard);
 		addSpawnId(archery_knight_hard);
-		// hard - end
+	}
+	
+	private void broadcastString(int strId, int instanceId)
+	{
+		ExFreyaMessages sm = new ExFreyaMessages(strId, 10000, ExFreyaMessages.ScreenMessageAlign.TOP_CENTER, true, false, -1, true);
+		Scenkos.toPlayersInInstance(sm, instanceId);
 	}
 	
 	public static void main(String[] args)

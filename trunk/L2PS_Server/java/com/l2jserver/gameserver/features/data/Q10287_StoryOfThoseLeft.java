@@ -24,8 +24,6 @@ import com.l2jserver.gameserver.model.quest.State;
 
 public class Q10287_StoryOfThoseLeft extends Quest
 {
-	private static final String qn = "10287_StoryOfThoseLeft";
-	
 	private static final int _rafforty = 32020;
 	private static final int _jinia = 32760;
 	private static final int _kegor = 32761;
@@ -44,7 +42,7 @@ public class Q10287_StoryOfThoseLeft extends Quest
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
 		{
@@ -112,7 +110,7 @@ public class Q10287_StoryOfThoseLeft extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
 		{
@@ -124,7 +122,7 @@ public class Q10287_StoryOfThoseLeft extends Quest
 			switch (st.getState())
 			{
 				case State.CREATED:
-					QuestState _prev = player.getQuestState("10286_ReunionWithSirra");
+					QuestState _prev = player.getQuestState("Q10286_ReunionWithSirra");
 					if ((_prev != null) && (_prev.getState() == State.COMPLETED) && (player.getLevel() >= 82))
 					{
 						htmltext = "32020-01.htm";
@@ -199,6 +197,6 @@ public class Q10287_StoryOfThoseLeft extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q10287_StoryOfThoseLeft(10287, qn, "Story of Those Left");
+		new Q10287_StoryOfThoseLeft(10287, Q10287_StoryOfThoseLeft.class.getSimpleName(), "Story of Those Left");
 	}
 }

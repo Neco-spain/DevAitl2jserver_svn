@@ -26,8 +26,6 @@ import handlers.bypasshandlers.QuestLink;
 
 public class Q10285_MeetingSirra extends Quest
 {
-	private static final String qn = "10285_MeetingSirra";
-	// NPC's
 	private static final int _rafforty = 32020;
 	private static final int _steward = 32029;
 	private static final int _jinia = 32760;
@@ -53,7 +51,7 @@ public class Q10285_MeetingSirra extends Quest
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
 		{
@@ -147,7 +145,7 @@ public class Q10285_MeetingSirra extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
 		{
@@ -159,7 +157,7 @@ public class Q10285_MeetingSirra extends Quest
 			switch (st.getState())
 			{
 				case State.CREATED:
-					QuestState _prev = player.getQuestState("10284_AcquisitionOfDivineSword");
+					QuestState _prev = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 					if ((_prev != null) && (_prev.getState() == State.COMPLETED) && (player.getLevel() >= 82))
 					{
 						htmltext = "32020-01.htm";
@@ -259,6 +257,6 @@ public class Q10285_MeetingSirra extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q10285_MeetingSirra(10285, qn, "Meeting Sirra");
+		new Q10285_MeetingSirra(10285, Q10285_MeetingSirra.class.getSimpleName(), "Meeting Sirra");
 	}
 }

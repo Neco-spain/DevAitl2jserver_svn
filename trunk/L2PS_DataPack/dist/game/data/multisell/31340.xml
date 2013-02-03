@@ -45,6 +45,14 @@
     <ingredient id="21750" count="1"/>
     <production id="9818" count="10"/>
   </item>
-
+  <item id="9">
+    <ingredient id="21750" count="2"/>
+    <production id="21752" count="1"/>
+  </item>
+      <!-- Pablo's Box -->
+  <item id="10">
+    <ingredient id="21750" count="40"/>
+    <production id="21753" count="1"/>
+  </item>
 
 </list>

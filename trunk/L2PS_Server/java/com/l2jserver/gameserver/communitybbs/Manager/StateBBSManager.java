@@ -80,12 +80,10 @@ public class StateBBSManager extends BaseBBSManager
 	{
 		
 		CBStatMan tp;
-		Connection con = null;
 		PreparedStatement statement = null;
 		ResultSet rs = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
 			statement = con.prepareStatement("SELECT * FROM characters WHERE accesslevel = '0' ORDER BY pvpkills DESC LIMIT 20;");
 			rs = statement.executeQuery();
 			
@@ -153,23 +151,16 @@ public class StateBBSManager extends BaseBBSManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
-		}
-		
 	}
 	
 	private void showPK(L2PcInstance player)
 	{
 		
 		CBStatMan tp;
-		Connection con = null;
 		PreparedStatement statement = null;
 		ResultSet rs = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
 			statement = con.prepareStatement("SELECT * FROM characters WHERE accesslevel = '0' ORDER BY pkkills DESC LIMIT 20;");
 			rs = statement.executeQuery();
 			
@@ -237,11 +228,6 @@ public class StateBBSManager extends BaseBBSManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
-		}
-		
 	}
 	
 	private void showPcBang(L2PcInstance player)
@@ -249,12 +235,10 @@ public class StateBBSManager extends BaseBBSManager
 		if (Config.PC_BANG_ENABLED)
 		{
 			CBStatMan tp;
-			Connection con = null;
 			PreparedStatement statement = null;
 			ResultSet rs = null;
-			try
+			try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 			{
-				con = L2DatabaseFactory.getInstance().getConnection();
 				statement = con.prepareStatement("SELECT * FROM characters WHERE accesslevel = '0' ORDER BY pccafe_points DESC LIMIT 20;");
 				rs = statement.executeQuery();
 				
@@ -319,10 +303,6 @@ public class StateBBSManager extends BaseBBSManager
 			{
 				e.printStackTrace();
 			}
-			finally
-			{
-				L2DatabaseFactory.close(con);
-			}
 		}
 		else
 		{
@@ -335,12 +315,10 @@ public class StateBBSManager extends BaseBBSManager
 	{
 		
 		CBStatMan tp;
-		Connection con = null;
 		PreparedStatement statement = null;
 		ResultSet rs = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
 			statement = con.prepareStatement("SELECT clan_name,clan_level,reputation_score,ally_name FROM clan_data WHERE clan_level>0 order by clan_level desc limit 20;");
 			rs = statement.executeQuery();
 			
@@ -397,11 +375,6 @@ public class StateBBSManager extends BaseBBSManager
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
-		}
-		
 	}
 	
 	String OnlineTime(int time)
@@ -424,7 +397,6 @@ public class StateBBSManager extends BaseBBSManager
 		
 	}
 	
-	@SuppressWarnings("synthetic-access")
 	private static class SingletonHolder
 	{
 		protected static final StateBBSManager _instance = new StateBBSManager();

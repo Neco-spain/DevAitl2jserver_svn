@@ -797,8 +797,12 @@
 	<item id="21752" type="EtcItem" name="Rune Jewelry Box - Talisman">
 		<!-- Description: Jewelry box containing the precious treasure of Rune. When used, you can obtain a Talisman with a certain rate of chance. -->
 		<set name="icon" val="icon.etc_treasure_box_i06" />
-		<set name="material" val="crystal" />
-		<set name="is_stackable" val="true" />
+		<set name="default_action" val="skill_reduce" />
+		<set name="immediate_effect" val="1" />
+		<set name="material" val="liquid" />
+ 		<set name="is_stackable" val="true" />
+		<set name="handler" val="ItemSkills" />
+		<set name="item_skill" val="22276-1" />
 	</item>
 	<item id="21753" type="EtcItem" name="Pablo's Box">
 		<!-- Description: Box containing the precious treasure of Elmore's renowned scholar Pablo. When used, you can obtain a hat with a certain rate of chance. -->

@@ -80,10 +80,8 @@ public class AdventTable
 	public void reload()
 	{
 		hunting.clear();
-		Connection con = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement(SQL_RESTORE);
 			ResultSet rset = statement.executeQuery();
 			
@@ -100,10 +98,6 @@ public class AdventTable
 		catch (Exception e)
 		{
 			_log.log(Level.SEVERE, "Could not restore Hunting Bonus", e);
-		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
 		}
 	}
 	
@@ -170,21 +164,15 @@ public class AdventTable
 	
 	private void store(HuntingState rec, int charId)
 	{
-		Connection con = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement(SQL_REPLACE);
 			storeExecute(rec, charId, statement);
 			statement.close();
 		}
 		catch (Exception e)
 		{
-			// _log.log(Level.SEVERE, "Could not update Hunting for player: "+charId, e);
-		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
+			_log.log(Level.SEVERE, "Could not update Hunting for player: " + charId, e);
 		}
 	}
 	
@@ -203,10 +191,8 @@ public class AdventTable
 			rec.setAdventTime(0);
 		}
 		
-		Connection con = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement(SQL_REPLACE);
 			for (Entry<Integer, HuntingState> e : hunting.entrySet())
 			{
@@ -219,11 +205,7 @@ public class AdventTable
 		}
 		catch (Exception e)
 		{
-			// _log.log(Level.SEVERE, "Could not update Hunting task for players", e);
-		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
+			_log.log(Level.SEVERE, "Could not update Hunting task for players", e);
 		}
 	}
 	

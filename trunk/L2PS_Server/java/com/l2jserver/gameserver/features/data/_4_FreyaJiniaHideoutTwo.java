@@ -120,32 +120,29 @@ public class _4_FreyaJiniaHideoutTwo extends Quest
 			teleportplayer(player, teleto);
 			return instanceId;
 		}
-		else
+		if (!checkConditions(player))
 		{
-			if (!checkConditions(player))
-			{
-				return 0;
-			}
-			
-			instanceId = InstanceManager.getInstance().createDynamicInstance(template);
-			final Instance inst = InstanceManager.getInstance().getInstance(instanceId);
-			inst.setSpawnLoc(new int[]
-			{
-				player.getX(),
-				player.getY(),
-				player.getZ()
-			});
-			world = new JiniasWorld();
-			world.instanceId = instanceId;
-			world.templateId = INSTANCEID;
-			world.status = 0;
-			((JiniasWorld) world).storeTime[0] = System.currentTimeMillis();
-			InstanceManager.getInstance().addWorld(world);
-			teleto.instanceId = instanceId;
-			teleportplayer(player, teleto);
-			world.allowed.add(player.getObjectId());
-			return instanceId;
+			return 0;
 		}
+		
+		instanceId = InstanceManager.getInstance().createDynamicInstance(template);
+		final Instance inst = InstanceManager.getInstance().getInstance(instanceId);
+		inst.setSpawnLoc(new int[]
+		{
+			player.getX(),
+			player.getY(),
+			player.getZ()
+		});
+		world = new JiniasWorld();
+		world.instanceId = instanceId;
+		world.templateId = INSTANCEID;
+		world.status = 0;
+		((JiniasWorld) world).storeTime[0] = System.currentTimeMillis();
+		InstanceManager.getInstance().addWorld(world);
+		teleto.instanceId = instanceId;
+		teleportplayer(player, teleto);
+		world.allowed.add(player.getObjectId());
+		return instanceId;
 	}
 	
 	@Override
@@ -165,7 +162,7 @@ public class _4_FreyaJiniaHideoutTwo extends Quest
 			tele.y = ENTRY_POINT[1];
 			tele.z = ENTRY_POINT[2];
 			
-			QuestState hostQuest = player.getQuestState("10285_MeetingSirra");
+			QuestState hostQuest = player.getQuestState("Q10285_MeetingSirra");
 			
 			if ((hostQuest != null) && (hostQuest.getState() == State.STARTED) && (hostQuest.getInt("progress") == 1))
 			{
@@ -185,7 +182,7 @@ public class _4_FreyaJiniaHideoutTwo extends Quest
 			tele.z = -845;
 			exitInstance(player, tele);
 			
-			QuestState hostQuest = player.getQuestState("10285_MeetingSirra");
+			QuestState hostQuest = player.getQuestState("Q10285_MeetingSirra");
 			
 			if ((hostQuest != null) && (hostQuest.getState() == State.STARTED) && (hostQuest.getInt("progress") == 2))
 			{

@@ -177,22 +177,22 @@ public class _4_FreyaJiniaHideout extends Quest
 				switch (questId)
 				{
 					case 10284:
-						hostQuest = player.getQuestState("10284_AcquisitionOfDivineSword");
+						hostQuest = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 						tmpl = "FreyaJiniaHideout.xml";
 						htmltext = "10284_failed.htm";
 						break;
 					case 10285:
-						hostQuest = player.getQuestState("10285_MeetingSirra");
+						hostQuest = player.getQuestState("Q10285_MeetingSirra");
 						tmpl = "FreyaJiniaHideoutTwo.xml";
 						htmltext = "10285_failed.htm";
 						break;
 					case 10286:
-						hostQuest = player.getQuestState("10286_ReunionWithSirra");
+						hostQuest = player.getQuestState("Q10286_ReunionWithSirra");
 						tmpl = "FreyaJiniaHideoutTwo.xml";
 						htmltext = "10286_failed.htm";
 						break;
 					case 10287:
-						hostQuest = player.getQuestState("10287_StoryOfThoseLeft");
+						hostQuest = player.getQuestState("Q10287_StoryOfThoseLeft");
 						tmpl = "FreyaJiniaHideoutTwo.xml";
 						htmltext = "10287_failed.htm";
 						break;
@@ -234,13 +234,13 @@ public class _4_FreyaJiniaHideout extends Quest
 			switch (((JiniasWorld) world).questId)
 			{
 				case 10285:
-					hostQuest = player.getQuestState("10285_MeetingSirra");
+					hostQuest = player.getQuestState("Q10285_MeetingSirra");
 					break;
 				case 10286:
-					hostQuest = player.getQuestState("10286_ReunionWithSirra");
+					hostQuest = player.getQuestState("Q10286_ReunionWithSirra");
 					break;
 				case 10287:
-					hostQuest = player.getQuestState("10287_StoryOfThoseLeft");
+					hostQuest = player.getQuestState("Q10287_StoryOfThoseLeft");
 					break;
 			}
 			
@@ -249,15 +249,15 @@ public class _4_FreyaJiniaHideout extends Quest
 				switch (((JiniasWorld) world).questId)
 				{
 					case 10285:
-						htmltext = "10285_goodbye.htm";
+						htmltext = "Q10285_goodbye.htm";
 						break;
 					case 10286:
-						htmltext = "10286_goodbye.htm";
+						htmltext = "Q10286_goodbye.htm";
 						hostQuest.playSound("ItemSound.quest_middle");
 						hostQuest.set("cond", "5");
 						break;
 					case 10287:
-						htmltext = "10287_goodbye.htm";
+						htmltext = "Q10287_goodbye.htm";
 						hostQuest.playSound("ItemSound.quest_middle");
 						hostQuest.set("cond", "5");
 				}
