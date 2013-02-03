@@ -185,33 +185,30 @@ public class _4_FreyaKegonSolo extends Quest
 			teleportplayer(player, teleto);
 			return instanceId;
 		}
-		else
+		if (!checkConditions(player))
 		{
-			if (!checkConditions(player))
-			{
-				return 0;
-			}
-			
-			instanceId = InstanceManager.getInstance().createDynamicInstance(template);
-			final Instance inst = InstanceManager.getInstance().getInstance(instanceId);
-			inst.setSpawnLoc(new int[]
-			{
-				player.getX(),
-				player.getY(),
-				player.getZ()
-			});
-			world = new KegorWorld();
-			world.instanceId = instanceId;
-			world.templateId = INSTANCEID;
-			world.status = 0;
-			
-			((KegorWorld) world).storeTime[0] = System.currentTimeMillis();
-			InstanceManager.getInstance().addWorld(world);
-			teleto.instanceId = instanceId;
-			teleportplayer(player, teleto);
-			world.allowed.add(player.getObjectId());
-			return instanceId;
+			return 0;
 		}
+		
+		instanceId = InstanceManager.getInstance().createDynamicInstance(template);
+		final Instance inst = InstanceManager.getInstance().getInstance(instanceId);
+		inst.setSpawnLoc(new int[]
+		{
+			player.getX(),
+			player.getY(),
+			player.getZ()
+		});
+		world = new KegorWorld();
+		world.instanceId = instanceId;
+		world.templateId = INSTANCEID;
+		world.status = 0;
+		
+		((KegorWorld) world).storeTime[0] = System.currentTimeMillis();
+		InstanceManager.getInstance().addWorld(world);
+		teleto.instanceId = instanceId;
+		teleportplayer(player, teleto);
+		world.allowed.add(player.getObjectId());
+		return instanceId;
 	}
 	
 	@Override
@@ -283,7 +280,7 @@ public class _4_FreyaKegonSolo extends Quest
 		int npcId = npc.getNpcId();
 		String htmltext = getNoQuestMsg(player);
 		
-		QuestState hostQuest = player.getQuestState("10284_AcquisitionOfDivineSword");
+		QuestState hostQuest = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 		
 		if (hostQuest == null)
 		{
@@ -352,7 +349,7 @@ public class _4_FreyaKegonSolo extends Quest
 	@Override
 	public String onFirstTalk(L2Npc npc, L2PcInstance player)
 	{
-		QuestState hostQuest = player.getQuestState("10284_AcquisitionOfDivineSword");
+		QuestState hostQuest = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 		if (hostQuest == null)
 		{
 			return null;
@@ -399,11 +396,10 @@ public class _4_FreyaKegonSolo extends Quest
 		return null;
 	}
 	
-	@SuppressWarnings("cast")
 	@Override
 	public final String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
 	{
-		QuestState hostQuest = player.getQuestState("10284_AcquisitionOfDivineSword");
+		QuestState hostQuest = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 		if ((hostQuest == null) || (hostQuest.getState() != State.STARTED))
 		{
 			return null;
@@ -421,7 +417,7 @@ public class _4_FreyaKegonSolo extends Quest
 			{
 				if (world.liveMobs != null)
 				{
-					world.liveMobs.remove((L2Attackable) npc);
+					world.liveMobs.remove(npc);
 					if (world.liveMobs.isEmpty() && (world.KEGOR != null) && !world.KEGOR.isDead() && (hostQuest.getInt("progress") == 2))
 					{
 						world.underAttack = false;

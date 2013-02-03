@@ -24,8 +24,6 @@ import com.l2jserver.gameserver.model.quest.State;
 
 public class Q10284_AcquisitionOfDivineSword extends Quest
 {
-	private static final String qn = "10284_AcquisitionOfDivineSword";
-	// NPC's
 	private static final int _rafforty = 32020;
 	private static final int _jinia = 32760;
 	private static final int _kroon = 32653;
@@ -46,7 +44,7 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
 		{
@@ -142,7 +140,7 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
 			return htmltext;
@@ -246,6 +244,6 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q10284_AcquisitionOfDivineSword(10284, qn, "Acquisition of Divine Sword");
+		new Q10284_AcquisitionOfDivineSword(10284, Q10284_AcquisitionOfDivineSword.class.getSimpleName(), "Acquisition of Divine Sword");
 	}
 }

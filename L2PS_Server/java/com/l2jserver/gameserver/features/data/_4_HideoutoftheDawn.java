@@ -128,21 +128,18 @@ public class _4_HideoutoftheDawn extends Quest
 			teleportplayer(player, teleto);
 			return instanceId;
 		}
-		else
-		{
-			instanceId = InstanceManager.getInstance().createDynamicInstance(template);
-			world = new HoDWorld();
-			world.instanceId = instanceId;
-			world.templateId = INSTANCEID;
-			world.status = 0;
-			((HoDWorld) world).storeTime[0] = System.currentTimeMillis();
-			InstanceManager.getInstance().addWorld(world);
-			teleto.instanceId = instanceId;
-			teleportplayer(player, teleto);
-			world.allowed.add(player.getObjectId());
-			
-			return instanceId;
-		}
+		instanceId = InstanceManager.getInstance().createDynamicInstance(template);
+		world = new HoDWorld();
+		world.instanceId = instanceId;
+		world.templateId = INSTANCEID;
+		world.status = 0;
+		((HoDWorld) world).storeTime[0] = System.currentTimeMillis();
+		InstanceManager.getInstance().addWorld(world);
+		teleto.instanceId = instanceId;
+		teleportplayer(player, teleto);
+		world.allowed.add(player.getObjectId());
+		
+		return instanceId;
 	}
 	
 	protected void exitInstance(L2PcInstance player, teleCoord tele)

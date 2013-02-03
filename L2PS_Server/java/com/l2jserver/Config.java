@@ -2391,7 +2391,7 @@ public final class Config
 			
 			EVERYBODY_HAS_ADMIN_RIGHTS = Boolean.parseBoolean(General.getProperty("EverybodyHasAdminRights", "false"));
 			SERVER_LIST_BRACKET = Boolean.parseBoolean(General.getProperty("ServerListBrackets", "false"));
-			SERVER_LIST_TYPE = getServerTypeId(General.getProperty("ServerListType", "Free").split(","));
+			SERVER_LIST_TYPE = getServerTypeId(General.getProperty("ServerListType", "Normal").split(","));
 			SERVER_LIST_AGE = Integer.parseInt(General.getProperty("ServerListAge", "0"));
 			SERVER_GMONLY = Boolean.parseBoolean(General.getProperty("ServerGMOnly", "false"));
 			GM_HERO_AURA = Boolean.parseBoolean(General.getProperty("GMHeroAura", "False"));

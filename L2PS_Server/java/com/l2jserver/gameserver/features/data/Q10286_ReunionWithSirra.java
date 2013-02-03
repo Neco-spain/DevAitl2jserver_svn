@@ -24,9 +24,6 @@ import com.l2jserver.gameserver.model.quest.State;
 
 public class Q10286_ReunionWithSirra extends Quest
 {
-	private static final String qn = "10286_ReunionWithSirra";
-	
-	// NPC's
 	private static final int _rafforty = 32020;
 	private static final int _jinia = 32760;
 	private static final int _sirra = 32762;
@@ -50,7 +47,7 @@ public class Q10286_ReunionWithSirra extends Quest
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
 		{
@@ -114,17 +111,14 @@ public class Q10286_ReunionWithSirra extends Quest
 	@Override
 	public String onFirstTalk(L2Npc npc, L2PcInstance player)
 	{
-		QuestState st = player.getQuestState(qn);
-		QuestState _prev = player.getQuestState("10285_MeetingSirra");
+		QuestState st = player.getQuestState(getName());
+		QuestState _prev = player.getQuestState("Q10285_MeetingSirra");
 		
 		if ((npc.getNpcId() == _rafforty) && (_prev != null) && (_prev.getState() == State.COMPLETED) && (st == null) && (player.getLevel() >= 82))
 		{
 			return "32020-00.htm";
 		}
-		else
-		{
-			npc.showChatWindow(player);
-		}
+		npc.showChatWindow(player);
 		return null;
 	}
 	
@@ -132,7 +126,7 @@ public class Q10286_ReunionWithSirra extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
 		{
@@ -144,7 +138,7 @@ public class Q10286_ReunionWithSirra extends Quest
 			switch (st.getState())
 			{
 				case State.CREATED:
-					QuestState _prev = player.getQuestState("10285_MeetingSirra");
+					QuestState _prev = player.getQuestState("Q10285_MeetingSirra");
 					if ((_prev != null) && (_prev.getState() == State.COMPLETED) && (player.getLevel() >= 82))
 					{
 						htmltext = "32020-01.htm";
@@ -218,6 +212,6 @@ public class Q10286_ReunionWithSirra extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q10286_ReunionWithSirra(10286, qn, "Reunion With Sirra");
+		new Q10286_ReunionWithSirra(10286, Q10286_ReunionWithSirra.class.getSimpleName(), "Reunion With Sirra");
 	}
 }

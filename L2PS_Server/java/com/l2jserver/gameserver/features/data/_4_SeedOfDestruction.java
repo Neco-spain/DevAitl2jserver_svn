@@ -1,3 +1,18 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://com.l2jserver.ru/>.
+ */
+
 package com.l2jserver.gameserver.features.data;
 
 import java.util.Calendar;
@@ -41,6 +56,9 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Util;
 import com.l2jserver.util.Rnd;
 
+/**
+ * Author: RobikBobik L2PS Team
+ */
 public class _4_SeedOfDestruction extends Quest
 {
 	
@@ -71,7 +89,7 @@ public class _4_SeedOfDestruction extends Quest
 	
 	private static final String qn = "SeedOfDestruction";
 	private static final int INSTANCEID = 110; // this is the client number
-	private static final int MIN_PLAYERS = 36;
+	private static final int MIN_PLAYERS = 2;
 	private static final int MAX_PLAYERS = 45;
 	private static final int MAX_DEVICESPAWNEDMOBCOUNT = 100;
 	private static final boolean debug = false;
@@ -4423,58 +4441,56 @@ public class _4_SeedOfDestruction extends Quest
 	{
 		if (debug)
 		{
+			_log.info("SoD is now in test mode - DEBUG OR GM PLAYER");
 			return true;
 		}
-		else
+		if (player.getParty() == null)
 		{
-			if (player.getParty() == null)
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_PARTY_CANT_ENTER));
-				return false;
-			}
-			L2CommandChannel channel = player.getParty().getCommandChannel();
-			if (channel == null)
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_COMMAND_CHANNEL_CANT_ENTER));
-				return false;
-			}
-			else if (channel.getLeader() != player)
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ONLY_PARTY_LEADER_CAN_ENTER));
-				return false;
-			}
-			else if ((channel.getMemberCount() < MIN_PLAYERS) || (channel.getMemberCount() > MAX_PLAYERS))
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.PARTY_EXCEEDED_THE_LIMIT_CANT_ENTER));
-				return false;
-			}
-			for (L2PcInstance channelMember : channel.getMembers())
-			{
-				if (channelMember.getLevel() < 78)
-				{
-					SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_LEVEL_REQUIREMENT_NOT_SUFFICIENT));
-					sm.addPcName(channelMember);
-					channel.broadcastPacket(sm);
-					return false;
-				}
-				if (!Util.checkIfInRange(1000, player, channelMember, true))
-				{
-					SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_IS_IN_LOCATION_THAT_CANNOT_BE_ENTERED));
-					sm.addPcName(channelMember);
-					channel.broadcastPacket(sm);
-					return false;
-				}
-				Long reentertime = InstanceManager.getInstance().getInstanceTime(channelMember.getObjectId(), INSTANCEID);
-				if (System.currentTimeMillis() < reentertime)
-				{
-					SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_MAY_NOT_REENTER_YET));
-					sm.addPcName(channelMember);
-					channel.broadcastPacket(sm);
-					return false;
-				}
-			}
-			return true;
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_PARTY_CANT_ENTER));
+			return false;
 		}
+		L2CommandChannel channel = player.getParty().getCommandChannel();
+		if (channel == null)
+		{
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_COMMAND_CHANNEL_CANT_ENTER));
+			return false;
+		}
+		else if (channel.getLeader() != player)
+		{
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ONLY_PARTY_LEADER_CAN_ENTER));
+			return false;
+		}
+		else if ((channel.getMemberCount() < MIN_PLAYERS) || (channel.getMemberCount() > MAX_PLAYERS))
+		{
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.PARTY_EXCEEDED_THE_LIMIT_CANT_ENTER));
+			return false;
+		}
+		for (L2PcInstance channelMember : channel.getMembers())
+		{
+			if (channelMember.getLevel() < 78)
+			{
+				SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_LEVEL_REQUIREMENT_NOT_SUFFICIENT));
+				sm.addPcName(channelMember);
+				channel.broadcastPacket(sm);
+				return false;
+			}
+			if (!Util.checkIfInRange(1000, player, channelMember, true))
+			{
+				SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_IS_IN_LOCATION_THAT_CANNOT_BE_ENTERED));
+				sm.addPcName(channelMember);
+				channel.broadcastPacket(sm);
+				return false;
+			}
+			Long reentertime = InstanceManager.getInstance().getInstanceTime(channelMember.getObjectId(), INSTANCEID);
+			if (System.currentTimeMillis() < reentertime)
+			{
+				SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_MAY_NOT_REENTER_YET));
+				sm.addPcName(channelMember);
+				channel.broadcastPacket(sm);
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private int checkworld(L2PcInstance player)
@@ -4672,7 +4688,7 @@ public class _4_SeedOfDestruction extends Quest
 				spawn(world, ENTRANCE_UPPER_SPAWNS, false, true);
 				break;
 			case 1:
-				ExShowScreenMessage message1 = new ExShowScreenMessage(NpcStringId.THE_ENEMIES_HAVE_ATTACKED_EVERYONE_COME_OUT_AND_FIGHT_URGH, 5, 1);
+				ExShowScreenMessage message1 = new ExShowScreenMessage(NpcStringId.THE_ENEMIES_HAVE_ATTACKED_EVERYONE_COME_OUT_AND_FIGHT_URGH, 5, 5000);
 				sendScreenMessage(world, message1);
 				for (int i : ENTRANCE_ROOM_DOORS)
 				{
@@ -4686,7 +4702,7 @@ public class _4_SeedOfDestruction extends Quest
 				// handled elsewhere
 				return;
 			case 4:
-				ExShowScreenMessage message2 = new ExShowScreenMessage(NpcStringId.OBELISK_HAS_COLLAPSED_DONT_LET_THE_ENEMIES_JUMP_AROUND_WILDLY_ANYMORE, 5, 1);
+				ExShowScreenMessage message2 = new ExShowScreenMessage(NpcStringId.OBELISK_HAS_COLLAPSED_DONT_LET_THE_ENEMIES_JUMP_AROUND_WILDLY_ANYMORE, 5, 5000);
 				sendScreenMessage(world, message2);
 				for (int i : SQUARE_DOORS)
 				{
@@ -4702,7 +4718,7 @@ public class _4_SeedOfDestruction extends Quest
 				spawn(world, SCOUTPASS_SPAWNS_UPPER, false, true);
 				spawn(world, SCOUTPASS_SPAWNS_GROUND, false, false);
 				spawn(world, PREFORT_SPAWNS, false, false);
-				ExShowScreenMessage message3 = new ExShowScreenMessage(NpcStringId.ENEMIES_ARE_TRYING_TO_DESTROY_THE_FORTRESS_EVERYONE_DEFEND_THE_FORTRESS, 5, 1);
+				ExShowScreenMessage message3 = new ExShowScreenMessage(NpcStringId.ENEMIES_ARE_TRYING_TO_DESTROY_THE_FORTRESS_EVERYONE_DEFEND_THE_FORTRESS, 5, 5000);
 				sendScreenMessage(world, message3);
 				spawn(world, FORT_SPAWNS_UPPER, false, true);
 				spawn(world, FORT_SPAWNS_GROUND, false, false);
@@ -4866,7 +4882,7 @@ public class _4_SeedOfDestruction extends Quest
 				{
 					if (_numAtk < 1)
 					{
-						ExShowScreenMessage message4 = new ExShowScreenMessage(NpcStringId.COME_OUT_WARRIORS_PROTECT_SEED_OF_DESTRUCTION, 5, 1);
+						ExShowScreenMessage message4 = new ExShowScreenMessage(NpcStringId.COME_OUT_WARRIORS_PROTECT_SEED_OF_DESTRUCTION, 5, 5000);
 						sendScreenMessage(world, message4);
 						world._tiada.doCast(SkillTable.getInstance().getInfo(5818, 1));
 						world._tiada.doCast(SkillTable.getInstance().getInfo(181, 1));

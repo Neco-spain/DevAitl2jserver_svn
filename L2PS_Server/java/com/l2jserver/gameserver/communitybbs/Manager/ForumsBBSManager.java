@@ -1,22 +1,8 @@
-/*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://com.l2jserver.ru/>.
- */
 package com.l2jserver.gameserver.communitybbs.Manager;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,37 +19,23 @@ public class ForumsBBSManager extends BaseBBSManager
 	private final List<Forum> _table;
 	private int _lastid = 1;
 	
-	public static ForumsBBSManager getInstance()
-	{
-		return SingletonHolder._instance;
-	}
-	
-	private ForumsBBSManager()
+	protected ForumsBBSManager()
 	{
 		_table = new FastList<>();
-		
-		Connection con = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
+			Statement s = con.createStatement();
+			ResultSet rs = s.executeQuery("SELECT forum_id FROM forums WHERE forum_type = 0"))
 		{
-			con = L2DatabaseFactory.getInstance().getConnection();
-			PreparedStatement statement = con.prepareStatement("SELECT forum_id FROM forums WHERE forum_type=0");
-			ResultSet result = statement.executeQuery();
-			while (result.next())
+			while (rs.next())
 			{
-				int forumId = result.getInt("forum_id");
+				int forumId = rs.getInt("forum_id");
 				Forum f = new Forum(forumId, null);
 				addForum(f);
 			}
-			result.close();
-			statement.close();
 		}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "Data error on Forum (root): " + e.getMessage(), e);
-		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
 		}
 	}
 	
@@ -96,16 +68,15 @@ public class ForumsBBSManager extends BaseBBSManager
 	{
 	}
 	
-	public Forum getForumByName(String Name)
+	public Forum getForumByName(String name)
 	{
 		for (Forum f : _table)
 		{
-			if (f.getName().equals(Name))
+			if (f.getName().equals(name))
 			{
 				return f;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -136,9 +107,14 @@ public class ForumsBBSManager extends BaseBBSManager
 	@Override
 	public void parsewrite(String ar1, String ar2, String ar3, String ar4, String ar5, L2PcInstance activeChar)
 	{
+		
 	}
 	
-	@SuppressWarnings("synthetic-access")
+	public static ForumsBBSManager getInstance()
+	{
+		return SingletonHolder._instance;
+	}
+	
 	private static class SingletonHolder
 	{
 		protected static final ForumsBBSManager _instance = new ForumsBBSManager();
