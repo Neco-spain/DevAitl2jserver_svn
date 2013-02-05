@@ -161,6 +161,7 @@ import handlers.bypasshandlers.TerritoryStatus;
 import handlers.bypasshandlers.TerritoryWar;
 import handlers.bypasshandlers.VoiceCommand;
 import handlers.bypasshandlers.Wear;
+import handlers.bypasshandlers.DropInfo;
 import handlers.chathandlers.ChatAll;
 import handlers.chathandlers.ChatAlliance;
 import handlers.chathandlers.ChatBattlefield;
@@ -495,6 +496,7 @@ public class MasterHandler
 			TerritoryWar.class,
 			VoiceCommand.class,
 			Wear.class,
+			DropInfo.class,
 		},
 		{
 			// Chat Handlers
