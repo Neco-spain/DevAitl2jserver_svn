@@ -478,6 +478,6 @@ public class Q00386_StolenDignity extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00386_StolenDignity(386, Q00386_StolenDignity.class.getName(), "Stolen Dignity");
+		new Q00386_StolenDignity(386, Q00386_StolenDignity.class.getSimpleName(), "Stolen Dignity");
 	}
 }

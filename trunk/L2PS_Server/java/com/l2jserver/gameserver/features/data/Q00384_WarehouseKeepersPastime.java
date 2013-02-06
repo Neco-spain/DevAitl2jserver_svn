@@ -362,6 +362,6 @@ public class Q00384_WarehouseKeepersPastime extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00384_WarehouseKeepersPastime(384, Q00384_WarehouseKeepersPastime.class.getName(), "Warehouse Keepers Pastime");
+		new Q00384_WarehouseKeepersPastime(384, Q00384_WarehouseKeepersPastime.class.getSimpleName(), "Warehouse Keepers Pastime");
 	}
 }

@@ -245,6 +245,6 @@ public final class Q00117_OceanOfDistantStar extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00117_OceanOfDistantStar(117, Q00117_OceanOfDistantStar.class.getName(), "Ocean of Distant Star");
+		new Q00117_OceanOfDistantStar(117, Q00117_OceanOfDistantStar.class.getSimpleName(), "Ocean of Distant Star");
 	}
 }

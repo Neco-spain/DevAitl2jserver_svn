@@ -155,6 +155,6 @@ public final class Q00316_DestroyPlaguebringers extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00316_DestroyPlaguebringers(316, Q00316_DestroyPlaguebringers.class.getName(), "Destroy Plague Bringers");
+		new Q00316_DestroyPlaguebringers(316, Q00316_DestroyPlaguebringers.class.getSimpleName(), "Destroy Plague Bringers");
 	}
 }

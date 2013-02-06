@@ -390,6 +390,6 @@ public final class Q00063_PathOfTheWarder extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00063_PathOfTheWarder(63, Q00063_PathOfTheWarder.class.getName(), "Path of the Warder");
+		new Q00063_PathOfTheWarder(63, Q00063_PathOfTheWarder.class.getSimpleName(), "Path of the Warder");
 	}
 }

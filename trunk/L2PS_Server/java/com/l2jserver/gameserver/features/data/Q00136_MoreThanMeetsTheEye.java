@@ -292,6 +292,6 @@ public final class Q00136_MoreThanMeetsTheEye extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00136_MoreThanMeetsTheEye(136, Q00136_MoreThanMeetsTheEye.class.getName(), "More Than Meets The Eye");
+		new Q00136_MoreThanMeetsTheEye(136, Q00136_MoreThanMeetsTheEye.class.getSimpleName(), "More Than Meets The Eye");
 	}
 }

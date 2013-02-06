@@ -14,18 +14,17 @@
  */
 package com.l2jserver.gameserver.eventsmanager;
 
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
-
 import java.util.logging.Logger;
 
 import javolution.util.FastList;
-import java.util.List;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.MapRegionManager;
 import com.l2jserver.gameserver.instancemanager.MapRegionManager.TeleportWhereType;
-import com.l2jserver.gameserver.model.*;
+import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.ExPVPMatchUserDie;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
@@ -40,11 +39,11 @@ public class UCArena
 	private final int _minLevel;
 	private final int _maxLevel;
 	
-	private UCPoint[] _points = new UCPoint[4];
-	private UCTeam[] _teams = new UCTeam[2];
+	private final UCPoint[] _points = new UCPoint[4];
+	private final UCTeam[] _teams = new UCTeam[2];
 	
 	private ScheduledFuture<?> _taskFuture = null;
-	private List<UCWaiting> _waitingPartys = new FastList<UCWaiting>().shared();
+	private final List<UCWaiting> _waitingPartys = new FastList<UCWaiting>().shared();
 	
 	public UCArena(int id, int curator, int min_level, int max_level)
 	{
@@ -105,8 +104,10 @@ public class UCArena
 	
 	public void switchStatus(boolean start)
 	{
-		if (_taskFuture == null && start)
+		if ((_taskFuture == null) && start)
+		{
 			runNewTask();
+		}
 		else
 		{
 			_taskFuture.cancel(true);
@@ -115,7 +116,9 @@ public class UCArena
 			checkLost(true);
 			
 			for (UCTeam team : _teams)
+			{
 				team.clean(true);
+			}
 		}
 	}
 	
@@ -124,7 +127,6 @@ public class UCArena
 		_taskFuture = ThreadPoolManager.getInstance().scheduleGeneral(new UCRunningTask(this), MINUTES_IN_MILISECONDS);
 	}
 	
-	@Deprecated
 	public void runTaskNow()
 	{
 		_taskFuture.cancel(true);
@@ -133,7 +135,6 @@ public class UCArena
 		task.run();
 	}
 	
-	@Deprecated
 	public void checkLost(boolean removeWinners)
 	{
 		UCTeam blueTeam = _teams[0];
@@ -142,7 +143,7 @@ public class UCArena
 		
 		Continue:
 		{
-			if (blueTeam.getStatus() == UCTeam.WIN || redTeam.getStatus() == UCTeam.WIN)
+			if ((blueTeam.getStatus() == UCTeam.WIN) || (redTeam.getStatus() == UCTeam.WIN))
 			{
 				winnerTeam = blueTeam.getStatus() == UCTeam.WIN ? blueTeam : redTeam;
 				break Continue;
@@ -199,37 +200,41 @@ public class UCArena
 		blueTeam.setLastParty(redTeam.getParty());
 		redTeam.setLastParty(blueTeam.getParty());
 		
-		if (removeWinners && winnerTeam != null)
+		if (removeWinners && (winnerTeam != null))
 		{
 			UCPoint[] pointzor = getPoints();
 			for (UCPoint point : pointzor)
+			{
 				point.actionDoors(false);
+			}
 			winnerTeam.clean(true);
 		}
 	}
 	
-	@Deprecated
 	public void broadcastToAll(L2GameServerPacket packet)
 	{
 		for (UCTeam team : getTeams())
 		{
 			L2Party party = team.getParty();
 			if (party != null)
-				party.broadcastToPartyMembers(packet);
+			{
+				party.broadcastPacket(packet);
+			}
 		}
 	}
 	
-	@Deprecated
 	public void startFight()
 	{
 		for (UCTeam team : _teams)
 		{
 			team.spawnTower();
 			
-			for (L2PcInstance player : team.getParty().getPartyMembers())
+			for (L2PcInstance player : team.getParty().getMembers())
 			{
 				if (player != null)
+				{
 					player.setTeam(team.getIndex() + 1);
+				}
 			}
 		}
 		runNewTask();
@@ -240,21 +245,24 @@ public class UCArena
 		return MapRegionManager.TeleportWhereType.Town;
 	}
 	
-	@Deprecated
 	public void removeTeam()
 	{
 		for (UCTeam team : _teams)
 		{
-			for (L2PcInstance player : team.getParty().getPartyMembers())
+			for (L2PcInstance player : team.getParty().getMembers())
 			{
 				if (player == null)
+				{
 					continue;
+				}
 				
 				player.setTeam(0);
 				player.cleanUCStats();
 				player.setUCState(L2PcInstance.UC_STATE_NONE);
 				if (player.isDead())
+				{
 					UCTeam.resPlayer(player);
+				}
 				
 				player.teleToLocation(getLocation());
 			}

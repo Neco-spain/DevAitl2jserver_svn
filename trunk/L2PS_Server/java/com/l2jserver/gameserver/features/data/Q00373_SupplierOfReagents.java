@@ -1106,6 +1106,6 @@ public class Q00373_SupplierOfReagents extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00373_SupplierOfReagents(373, Q00373_SupplierOfReagents.class.getName(), "Supplier Of Reagents");
+		new Q00373_SupplierOfReagents(373, Q00373_SupplierOfReagents.class.getSimpleName(), "Supplier Of Reagents");
 	}
 }

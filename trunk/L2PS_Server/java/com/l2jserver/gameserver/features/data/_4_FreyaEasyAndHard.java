@@ -18,6 +18,7 @@ import java.util.Calendar;
 
 import javolution.util.FastMap;
 
+import com.l2jserver.Config;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.NpcTable;
@@ -607,7 +608,7 @@ public class _4_FreyaEasyAndHard extends Quest
 		for (int objId : world.allowed)
 		{
 			L2PcInstance plr = L2World.getInstance().getPlayer(objId);
-			ExSendUIEvent time_packet = new ExSendUIEvent(plr, false, false, 60, 0, "Time for prepare to next stage. Buffs please and wait for next stage!");
+			ExSendUIEvent time_packet = new ExSendUIEvent(plr, false, false, 60, 0, "Time for prepare to next stage!");
 			plr.sendPacket(time_packet);
 		}
 	}
@@ -1508,13 +1509,13 @@ public class _4_FreyaEasyAndHard extends Quest
 		}
 		if (_isHard)
 		{
-			if (player.getParty().getCommandChannel().getMemberCount() < 2)
+			if (player.getParty().getCommandChannel().getMemberCount() < Config.MIN_PLAYERS_TO_HARD)
 			{
 				player.getParty().getCommandChannel().broadcastPacket(SystemMessage.getSystemMessage(2793).addNumber(10));
 				return false;
 			}
 			
-			if (player.getParty().getCommandChannel().getMemberCount() > 45)
+			if (player.getParty().getCommandChannel().getMemberCount() > Config.MAX_PLAYERS_TO_HARD)
 			{
 				player.getParty().getCommandChannel().broadcastPacket(SystemMessage.getSystemMessage(2102));
 				return false;
@@ -1522,13 +1523,13 @@ public class _4_FreyaEasyAndHard extends Quest
 		}
 		else if (_isEasy)
 		{
-			if (player.getParty().getCommandChannel().getMemberCount() < 2)
+			if (player.getParty().getCommandChannel().getMemberCount() < Config.MIN_PLAYERS_TO_EASY)
 			{
 				player.getParty().getCommandChannel().broadcastPacket(SystemMessage.getSystemMessage(2793).addNumber(10));
 				return false;
 			}
 			
-			if (player.getParty().getCommandChannel().getMemberCount() > 27)
+			if (player.getParty().getCommandChannel().getMemberCount() > Config.MAX_PLAYERS_TO_EASY)
 			{
 				player.getParty().getCommandChannel().broadcastPacket(SystemMessage.getSystemMessage(2102));
 				return false;
@@ -1539,7 +1540,7 @@ public class _4_FreyaEasyAndHard extends Quest
 		{
 			if (_isHard)
 			{
-				if (partyMember.getLevel() < 82)
+				if (partyMember.getLevel() < Config.MIN_PLAYER_LEVEL_TO_HARD)// 82
 				{
 					SystemMessage sm = SystemMessage.getSystemMessage(2097);
 					sm.addPcName(partyMember);
@@ -1549,7 +1550,7 @@ public class _4_FreyaEasyAndHard extends Quest
 			}
 			else if (_isEasy)
 			{
-				if (partyMember.getLevel() < 78)
+				if (partyMember.getLevel() < Config.MIN_PLAYER_LEVEL_TO_EASY)// 78
 				{
 					SystemMessage sm = SystemMessage.getSystemMessage(2097);
 					sm.addPcName(partyMember);

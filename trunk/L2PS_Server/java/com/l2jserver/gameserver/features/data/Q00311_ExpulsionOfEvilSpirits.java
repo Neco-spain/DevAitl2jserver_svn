@@ -390,6 +390,6 @@ public class Q00311_ExpulsionOfEvilSpirits extends QuestJython
 		Itens.put(9629, 48); // Adamantine
 		Itens.put(9630, 36); // Orichalcum
 		
-		new Q00311_ExpulsionOfEvilSpirits(311, Q00311_ExpulsionOfEvilSpirits.class.getName(), "Expulsion Of Evil Spirits");
+		new Q00311_ExpulsionOfEvilSpirits(311, Q00311_ExpulsionOfEvilSpirits.class.getSimpleName(), "Expulsion Of Evil Spirits");
 	}
 }

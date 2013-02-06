@@ -89,7 +89,7 @@ public class _4_SeedOfDestruction extends Quest
 	
 	private static final String qn = "SeedOfDestruction";
 	private static final int INSTANCEID = 110; // this is the client number
-	private static final int MIN_PLAYERS = 2;
+	private static final int MIN_PLAYERS = 36;
 	private static final int MAX_PLAYERS = 45;
 	private static final int MAX_DEVICESPAWNEDMOBCOUNT = 100;
 	private static final boolean debug = false;

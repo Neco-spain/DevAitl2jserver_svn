@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
 import javolution.util.FastMap;
+
 import com.l2jserver.gameserver.eventengine.Configuration;
 import com.l2jserver.gameserver.eventengine.io.Out;
 import com.l2jserver.gameserver.eventengine.model.EventPlayer;
@@ -35,7 +36,7 @@ public class Buffer
 		public static final Buffer _instance = new Buffer();
 	}
 	
-	private class UpdateTask implements Runnable
+	protected class UpdateTask implements Runnable
 	{
 		@Override
 		public void run()
@@ -49,16 +50,12 @@ public class Buffer
 		return SingletonHolder._instance;
 	}
 	
-	private FastMap<String, FastList<Integer>> buffTemplates;
+	private final FastMap<String, FastList<Integer>> buffTemplates;
 	
-	private FastMap<String, Boolean> changes;
+	private final FastMap<String, Boolean> changes;
 	
-	private UpdateTask updateTask;
+	private final UpdateTask updateTask;
 	
-	@SuppressWarnings(
-	{
-		"synthetic-access"
-	})
 	public Buffer()
 	{
 		updateTask = new UpdateTask();
@@ -80,7 +77,9 @@ public class Buffer
 		for (int skillId : buffTemplates.get(playerId))
 		{
 			if (player.isInOlympiadMode())
+			{
 				return;
+			}
 			player.getEffects(skillId, 99);
 		}
 	}
@@ -114,7 +113,6 @@ public class Buffer
 		
 	}
 	
-	@SuppressWarnings("unused")
 	private void loadSQL()
 	{
 		if (!Configuration.getInstance().getBoolean(0, "eventBufferEnabled"))
@@ -138,7 +136,7 @@ public class Buffer
 				
 				StringTokenizer st = new StringTokenizer(rset.getString("buffs"), ",");
 				
-				FastList<Integer> templist = new FastList<Integer>();
+				FastList<Integer> templist = new FastList<>();
 				
 				while (st.hasMoreTokens())
 				{
@@ -228,17 +226,17 @@ public class Buffer
 					skillStr = "" + skillId;
 				}
 				
-				if (c % 2 == 1)
+				if ((c % 2) == 1)
 				{
 					sb.append("<tr><td width=33><img src=\"Icon.skill" + skillStr + "\" width=32 height=32></td><td width=100><a action=\"bypass -h phoenix buffer " + skillId + " 0\"><font color=9f9f9f>" + Out.getSkillName(skillId) + "</font></a></td>");
 				}
-				if (c % 2 == 0)
+				if ((c % 2) == 0)
 				{
 					sb.append("<td width=33><img src=\"Icon.skill" + skillStr + "\" width=32 height=32></td><td width=100><a action=\"bypass -h phoenix buffer " + skillId + " 0\"><font color=9f9f9f>" + Out.getSkillName(skillId) + "</font></a></td></tr>");
 				}
 			}
 			
-			if (c % 2 == 1)
+			if ((c % 2) == 1)
 			{
 				sb.append("<td width=33></td><td width=100></td></tr>");
 			}
@@ -276,18 +274,18 @@ public class Buffer
 				if (!buffTemplates.get(playerId).contains(skillId))
 				{
 					c++;
-					if (c % 2 == 1)
+					if ((c % 2) == 1)
 					{
 						sb.append("<tr><td width=32><img src=\"Icon.skill" + skillStr + "\" width=32 height=32></td><td width=100>" + ((Configuration.getInstance().getInt(0, "maxBuffNum") - buffTemplates.get(playerId).size()) != 0 ? "<a action=\"bypass -h phoenix buffer " + skillId + " 1\"><font color=9f9f9f>" : "") + Out.getSkillName(skillId) + ((Configuration.getInstance().getInt(0, "maxBuffNum") - buffTemplates.get(playerId).size()) != 0 ? "</font></a>" : "") + "</td>");
 					}
-					if (c % 2 == 0)
+					if ((c % 2) == 0)
 					{
 						sb.append("<td width=32><img src=\"Icon.skill" + skillStr + "\" width=32 height=32></td><td width=100>" + ((Configuration.getInstance().getInt(0, "maxBuffNum") - buffTemplates.get(playerId).size()) != 0 ? "<a action=\"bypass -h phoenix buffer " + skillId + " 1\"><font color=9f9f9f>" : "") + Out.getSkillName(skillId) + ((Configuration.getInstance().getInt(0, "maxBuffNum") - buffTemplates.get(playerId).size()) != 0 ? "</font></a>" : "") + "</td></tr>");
 					}
 				}
 			}
 			
-			if (c % 2 == 1)
+			if ((c % 2) == 1)
 			{
 				sb.append("<td width=33></td><td width=100></td></tr>");
 			}

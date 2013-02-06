@@ -14,47 +14,52 @@
  */
 package com.l2jserver.gameserver.eventsmanager;
 
-import org.w3c.dom.*;
-
+import java.io.File;
+import java.util.Calendar;
 import java.util.logging.Logger;
-
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.map.hash.TIntObjectHashMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import java.io.File;
-import java.util.Calendar;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.ThreadPoolManager;
 
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.hash.TIntObjectHashMap;
+
 public class UCManager
 {
 	private final static Logger _log = Logger.getLogger(UCManager.class.getName());
-
-	private TIntObjectHashMap<UCArena> _arenas = new TIntObjectHashMap<>(5);
+	
+	private final TIntObjectHashMap<UCArena> _arenas = new TIntObjectHashMap<>(5);
 	private boolean _isStarted;
 	private final TIntArrayList _hourList = new TIntArrayList(Config.UC_END_HOUR - Config.UC_START_HOUR);
-
+	
 	public static UCManager getInstance()
 	{
 		return SingletonHolder._instance;
 	}
-
-	private UCManager()
+	
+	protected UCManager()
 	{
-		load();	
-
-		for(int i = Config.UC_START_HOUR; i < Config.UC_END_HOUR; i++)
+		load();
+		
+		for (int i = Config.UC_START_HOUR; i < Config.UC_END_HOUR; i++)
+		{
 			_hourList.add(i);
-
+		}
+		
 		_log.info("UndergroundColiseumManager: loaded " + _arenas.size() + " coliseum arenas");
-
-		for(int day : Config.UC_WARDAYS)
+		
+		for (int day : Config.UC_WARDAYS)
+		{
 			runStartTask(day);
+		}
 	}
-
+	
 	private void load()
 	{
 		try
@@ -82,47 +87,47 @@ public class UCManager
 							int id = Integer.parseInt(map.getNamedItem("id").getNodeValue());
 							int min_level = Integer.parseInt(map.getNamedItem("min_level").getNodeValue());
 							int max_level = Integer.parseInt(map.getNamedItem("max_level").getNodeValue());
-							int curator =  Integer.parseInt(map.getNamedItem("curator").getNodeValue());
-
+							int curator = Integer.parseInt(map.getNamedItem("curator").getNodeValue());
+							
 							UCArena arena = new UCArena(id, curator, min_level, max_level);
 							int index = 0;
 							int index2 = 0;
-
-							for(Node und = d.getFirstChild(); und != null; und = und.getNextSibling())
+							
+							for (Node und = d.getFirstChild(); und != null; und = und.getNextSibling())
 							{
-								if("tower".equalsIgnoreCase(und.getNodeName()))
+								if ("tower".equalsIgnoreCase(und.getNodeName()))
 								{
 									map = und.getAttributes();
-
+									
 									int npc_id = Integer.parseInt(map.getNamedItem("npc_id").getNodeValue());
 									int x = Integer.parseInt(map.getNamedItem("x").getNodeValue());
 									int y = Integer.parseInt(map.getNamedItem("y").getNodeValue());
 									int z = Integer.parseInt(map.getNamedItem("z").getNodeValue());
-
+									
 									UCTeam team = new UCTeam(index, arena, x, y, z, npc_id);
-
+									
 									arena.setUCTeam(index, team);
-
-									index ++;
+									
+									index++;
 								}
-								else if("point".equalsIgnoreCase(und.getNodeName()))
+								else if ("point".equalsIgnoreCase(und.getNodeName()))
 								{
 									map = und.getAttributes();
-
+									
 									int door1 = Integer.parseInt(map.getNamedItem("door1").getNodeValue());
 									int door2 = Integer.parseInt(map.getNamedItem("door2").getNodeValue());
-
+									
 									int x = Integer.parseInt(map.getNamedItem("x").getNodeValue());
 									int y = Integer.parseInt(map.getNamedItem("y").getNodeValue());
 									int z = Integer.parseInt(map.getNamedItem("z").getNodeValue());
-
+									
 									UCPoint point = new UCPoint(door1, door2, x, y, z);
 									arena.setUCPoint(index2, point);
-
-									index2 ++;
+									
+									index2++;
 								}
 							}
-
+							
 							_arenas.put(arena.getId(), arena);
 						}
 					}
@@ -134,108 +139,113 @@ public class UCManager
 			_log.info("Exception: " + e);
 		}
 	}
-
+	
 	public UCArena getArena(int id)
 	{
 		return _arenas.get(id);
 	}
-
+	
 	public void setStarted(boolean started)
 	{
 		_isStarted = started;
-
+		
 		for (UCArena arena : getAllArenas())
-		   	arena.switchStatus(started);
+		{
+			arena.switchStatus(started);
+		}
 	}
-
+	
 	public boolean isStarted()
 	{
 		return _isStarted;
 	}
-
+	
 	public UCArena[] getAllArenas()
 	{
 		return _arenas.values(new UCArena[_arenas.size()]);
 	}
-
+	
 	public void runStartTask(int calendarDayOfWeek)
 	{
 		Calendar cal = Calendar.getInstance();
-
-		if(cal.get(Calendar.DAY_OF_WEEK) == calendarDayOfWeek)
+		
+		if (cal.get(Calendar.DAY_OF_WEEK) == calendarDayOfWeek)
 		{
 			int hour = cal.get(Calendar.HOUR_OF_DAY);
-
-			if(_hourList.contains(hour))
+			
+			if (_hourList.contains(hour))
 			{
 				ThreadPoolManager.getInstance().scheduleGeneral(new UCRegistrationTask(true, calendarDayOfWeek), 0);
 				return;
 			}
 		}
-
+		
 		Calendar startDate = Calendar.getInstance();
 		startDate.set(Calendar.DAY_OF_WEEK, calendarDayOfWeek);
 		startDate.set(Calendar.HOUR_OF_DAY, Config.UC_START_HOUR);
 		startDate.set(Calendar.MINUTE, 0);
 		startDate.set(Calendar.SECOND, 0);
-
-		while(startDate.getTimeInMillis() < System.currentTimeMillis())
+		
+		while (startDate.getTimeInMillis() < System.currentTimeMillis())
 		{
-			startDate.add(Calendar.WEEK_OF_MONTH, 1);	
+			startDate.add(Calendar.WEEK_OF_MONTH, 1);
 		}
-
+		
 		ThreadPoolManager.getInstance().scheduleGeneral(new UCRegistrationTask(true, calendarDayOfWeek), startDate.getTimeInMillis() - System.currentTimeMillis());
 	}
-
+	
 	public void runEndTask(int calendarDayOfWeek)
 	{
-   		Calendar cal = Calendar.getInstance();
-
-		if(cal.get(Calendar.DAY_OF_WEEK) == calendarDayOfWeek)
+		Calendar cal = Calendar.getInstance();
+		
+		if (cal.get(Calendar.DAY_OF_WEEK) == calendarDayOfWeek)
 		{
 			int hour = cal.get(Calendar.HOUR_OF_DAY);
-
-			if(_hourList.contains(hour))
+			
+			if (_hourList.contains(hour))
 			{
 				cal.set(Calendar.HOUR_OF_DAY, Config.UC_END_HOUR);
 				cal.set(Calendar.MINUTE, 0);
 				cal.set(Calendar.SECOND, 0);
-
+				
 				long tms = cal.getTimeInMillis() - System.currentTimeMillis();
-
+				
 				ThreadPoolManager.getInstance().scheduleGeneral(new UCRegistrationTask(false, calendarDayOfWeek), tms);
-
+				
 				return;
 			}
 		}
-
+		
 		throw new IllegalArgumentException("Try run End Task from not active time");
 	}
-
-	public class UCRegistrationTask implements  Runnable
+	
+	public class UCRegistrationTask implements Runnable
 	{
 		private final boolean _start;
 		private final int _calendarDayOfWeek;
-
+		
 		public UCRegistrationTask(boolean s, int a)
 		{
 			_start = s;
 			_calendarDayOfWeek = a;
 		}
-
+		
 		@Override
 		public void run()
 		{
 			setStarted(_start);
-
-			if(_start)
+			
+			if (_start)
+			{
 				runEndTask(_calendarDayOfWeek);
+			}
 			else
+			{
 				runStartTask(_calendarDayOfWeek);
+			}
 		}
 	}
-
-	@SuppressWarnings("synthetic-access")
+	
 	private static class SingletonHolder
 	{
 		protected static final UCManager _instance = new UCManager();

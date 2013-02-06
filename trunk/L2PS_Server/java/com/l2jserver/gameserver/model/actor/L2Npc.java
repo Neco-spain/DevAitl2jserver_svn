@@ -1923,7 +1923,7 @@ public class L2Npc extends L2Character
 	{
 		if (_scriptVal == null)
 		{
-			_scriptVal = new HashMap<Integer, Integer>();
+			_scriptVal = new HashMap<>();
 		}
 		
 		_scriptVal.put(index, val);

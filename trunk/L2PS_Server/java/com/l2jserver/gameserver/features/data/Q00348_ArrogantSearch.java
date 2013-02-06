@@ -811,6 +811,6 @@ public class Q00348_ArrogantSearch extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00348_ArrogantSearch(348, Q00348_ArrogantSearch.class.getName(), "Arrogant Search");
+		new Q00348_ArrogantSearch(348, Q00348_ArrogantSearch.class.getSimpleName(), "Arrogant Search");
 	}
 }

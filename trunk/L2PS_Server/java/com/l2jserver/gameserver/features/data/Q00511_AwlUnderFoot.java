@@ -42,7 +42,7 @@ import com.l2jserver.gameserver.util.Util;
  */
 public final class Q00511_AwlUnderFoot extends Quest
 {
-	protected static final Logger log = Logger.getLogger(Q00511_AwlUnderFoot.class.getName());
+	protected static final Logger log = Logger.getLogger(Q00511_AwlUnderFoot.class.getSimpleName());
 	
 	protected class FAUWorld extends InstanceWorld
 	{
