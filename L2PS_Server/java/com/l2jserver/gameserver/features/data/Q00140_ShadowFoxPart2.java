@@ -249,6 +249,6 @@ public class Q00140_ShadowFoxPart2 extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00140_ShadowFoxPart2(140, Q00140_ShadowFoxPart2.class.getName(), "Shadow Fox - 2");
+		new Q00140_ShadowFoxPart2(140, Q00140_ShadowFoxPart2.class.getSimpleName(), "Shadow Fox - 2");
 	}
 }

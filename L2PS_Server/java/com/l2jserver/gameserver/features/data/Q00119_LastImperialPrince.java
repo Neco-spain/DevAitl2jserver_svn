@@ -138,6 +138,6 @@ public final class Q00119_LastImperialPrince extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00119_LastImperialPrince(119, Q00119_LastImperialPrince.class.getName(), "Last Imperial Prince");
+		new Q00119_LastImperialPrince(119, Q00119_LastImperialPrince.class.getSimpleName(), "Last Imperial Prince");
 	}
 }

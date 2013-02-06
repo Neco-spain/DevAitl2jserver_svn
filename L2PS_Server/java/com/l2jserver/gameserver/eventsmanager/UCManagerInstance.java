@@ -36,19 +36,22 @@ public class UCManagerInstance extends L2Npc
 		String pom = "";
 		
 		if (val == 0)
+		{
 			pom = "" + npcId;
+		}
 		else
+		{
 			pom = npcId + "-" + val;
+		}
 		
 		return "data/html/underground_coliseum/" + pom + ".htm";
 	}
-
+	
 	@Override
-	@Deprecated
 	public void onBypassFeedback(L2PcInstance player, String command)
 	{
 		NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
-
+		
 		StringTokenizer token = new StringTokenizer(command, " ");
 		String actualCommand = token.nextToken();
 		
@@ -94,12 +97,14 @@ public class UCManagerInstance extends L2Npc
 				
 				int realCount = 0;
 				
-				for (L2PcInstance member : player.getParty().getPartyMembers())
+				for (L2PcInstance member : player.getParty().getMembers())
 				{
 					if (member == null)
+					{
 						continue;
+					}
 					
-					if (!(member.getLevel() >= arena.getMinLevel() && member.getLevel() <= arena.getMaxLevel()))
+					if (!((member.getLevel() >= arena.getMinLevel()) && (member.getLevel() <= arena.getMaxLevel())))
 					{
 						NpcHtmlMessage packet = new NpcHtmlMessage(getObjectId());
 						packet.setFile(member.getLang(), "data/html/underground_coliseum/wrongLevel.htm");
@@ -108,7 +113,9 @@ public class UCManagerInstance extends L2Npc
 						return;
 					}
 					else
+					{
 						realCount++;
+					}
 				}
 				
 				if (realCount < Config.UC_PARTY_LIMIT)
@@ -138,8 +145,10 @@ public class UCManagerInstance extends L2Npc
 		}
 		else if (actualCommand.equalsIgnoreCase("cancel"))
 		{
-			if (player.getParty() == null || (player.getParty() != null && !player.getParty().isLeader(player)))
+			if ((player.getParty() == null) || ((player.getParty() != null) && !player.getParty().isLeader(player)))
+			{
 				return;
+			}
 			
 			if (player.getParty().getUCState() instanceof UCWaiting)
 			{
@@ -163,7 +172,9 @@ public class UCManagerInstance extends L2Npc
 			for (UCTeam team : arena.getTeams())
 			{
 				if (team == null)
+				{
 					continue;
+				}
 				
 				if (top < team.getConsecutiveWins())
 				{
@@ -205,14 +216,18 @@ public class UCManagerInstance extends L2Npc
 			for (UCPoint point : arena.getPoints())
 			{
 				if (point.getParty() == null)
-					list += i + ". ����� <br>";
+				{
+					list += i + ". ???????????????????? <br>";
+				}
 				else
 				{
 					String teamList = "";
-					for (L2PcInstance m : point.getParty().getPartyMembers())
+					for (L2PcInstance m : point.getParty().getMembers())
 					{
 						if (m != null)
+						{
 							teamList += m.getName() + ";";
+						}
 					}
 					
 					list += i + ". (Participating Team: <font color=00ffff>" + teamList + "</font>)<br>";
@@ -224,6 +239,8 @@ public class UCManagerInstance extends L2Npc
 			player.sendPacket(packet);
 		}
 		else
+		{
 			super.onBypassFeedback(player, command);
+		}
 	}
 }

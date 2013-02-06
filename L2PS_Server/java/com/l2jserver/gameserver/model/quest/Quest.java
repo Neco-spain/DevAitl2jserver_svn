@@ -1470,11 +1470,6 @@ public class Quest extends ManagedScript
 	 */
 	public boolean showError(L2PcInstance player, Throwable t)
 	{
-		_log.log(Level.WARNING, getScriptFile().getAbsolutePath(), t);
-		if (t.getMessage() == null)
-		{
-			_log.warning(getClass().getSimpleName() + ": " + t.getMessage());
-		}
 		if ((player != null) && player.getAccessLevel().isGm())
 		{
 			String res = "<html><body><title>Script error</title>" + Util.getStackTrace(t) + "</body></html>";

@@ -77,7 +77,7 @@ public class Q10292_SevenSignGirlofDoubt extends Quest
 		boolean spawned = false;
 	}
 	
-	private class teleCoord
+	protected class teleCoord
 	{
 		int instanceId;
 		int x;

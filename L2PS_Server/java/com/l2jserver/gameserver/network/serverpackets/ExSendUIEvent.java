@@ -15,44 +15,45 @@
 package com.l2jserver.gameserver.network.serverpackets;
 
 import com.l2jserver.gameserver.model.L2Object;
+import com.l2jserver.gameserver.network.NpcStringId;
 
-public class ExSendUIEvent extends L2GameServerPacket
+public class ExSendUIEvent extends NpcStringContainer
 {
-	private final L2Object _player;
+	private final int _objectId;
 	private final boolean _isHide;
 	private final boolean _isIncrease;
 	private final int _startTime;
 	private final int _endTime;
-	private final String _text;
 	
-	public ExSendUIEvent(L2Object player, boolean isHide, boolean isIncrease, int startTime, int endTime, String text)
+	public ExSendUIEvent(L2Object player, boolean isHide, boolean isIncrease, int startTime, int endTime, String... params)
 	{
-		_player = player;
+		this(player, isHide, isIncrease, startTime, endTime, NpcStringId.NONE, params);
+	}
+	
+	public ExSendUIEvent(L2Object player, boolean isHide, boolean isIncrease, int startTime, int endTime, NpcStringId npcString, String... params)
+	{
+		super(npcString, params);
+		_objectId = player.getObjectId();
 		_isHide = isHide;
 		_isIncrease = isIncrease;
 		_startTime = startTime;
 		_endTime = endTime;
-		_text = text;
 	}
 	
-	/**
-	 * FIXME: Structure is wrong <br />
-	 * _isHide = <s>0: show timer, 1: hide timer</s> Its a type of the UI actually
-	 */
 	@Override
 	protected void writeImpl()
 	{
 		writeC(0xFE);
 		writeH(0x8E);
-		writeD(_player.getObjectId());
-		writeD(_isHide ? 0x01 : 0x00); // <s>0: show timer, 1: hide timer</s> Its a type of the UI actually
+		writeD(_objectId);
+		writeD(_isHide ? 0x01 : 0x00); // 0: show timer, 1: hide timer
 		writeD(0x00); // unknown
 		writeD(0x00); // unknown
 		writeS(_isIncrease ? "1" : "0"); // "0": count negative, "1": count positive
 		writeS(String.valueOf(_startTime / 60)); // timer starting minute(s)
 		writeS(String.valueOf(_startTime % 60)); // timer starting second(s)
-		writeS(_text); // text above timer
 		writeS(String.valueOf(_endTime / 60)); // timer length minute(s) (timer will disappear 10 seconds before it ends)
 		writeS(String.valueOf(_endTime % 60)); // timer length second(s) (timer will disappear 10 seconds before it ends)
+		writeElements();
 	}
 }

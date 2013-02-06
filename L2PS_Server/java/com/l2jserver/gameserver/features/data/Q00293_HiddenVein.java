@@ -212,6 +212,6 @@ public class Q00293_HiddenVein extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00293_HiddenVein(293, Q00293_HiddenVein.class.getName(), "Hidden Vein");
+		new Q00293_HiddenVein(293, Q00293_HiddenVein.class.getSimpleName(), "Hidden Vein");
 	}
 }

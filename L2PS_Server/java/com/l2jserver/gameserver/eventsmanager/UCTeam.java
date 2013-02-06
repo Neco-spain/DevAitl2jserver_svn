@@ -14,7 +14,6 @@
  */
 package com.l2jserver.gameserver.eventsmanager;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -24,8 +23,8 @@ import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.SystemMessageId;
-import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.ExPVPMatchUserDie;
+import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 import com.l2jserver.util.Rnd;
 
@@ -115,7 +114,7 @@ public class UCTeam
 		}
 		
 		_tower = new UCTowerInstance(this, IdFactory.getInstance().getNextId(), template);
-		//_tower.setTeam(_index);
+		// _tower.setTeam(_index);
 		_tower.setIsInvul(false);
 		_tower.setCurrentHpMp(_tower.getMaxHp(), _tower.getMaxMp());
 		_tower.spawnMe(_x, _y, _z);
@@ -124,30 +123,24 @@ public class UCTeam
 	public void deleteTower()
 	{
 		if (_tower == null)
+		{
 			return;
+		}
 		
 		_tower.deleteMe();
 		_tower = null;
 	}
 	
-	@Deprecated
 	public void splitMembersAndTeleport()
 	{
-		//int count = getParty().getMemberCount() % 3 == 1 ? 0 : 1;
 		UCPoint[] pointzor = _baseArena.getPoints();
-		for (L2PcInstance player : getParty().getPartyMembers())
+		for (L2PcInstance player : getParty().getMembers())
 		{
-		if (player == null)
+			if (player == null)
+			{
 				continue;
+			}
 			
-			//if (_team1[] < 3)
-			//_team1[_team1[].length] = player;
-			
-			//else if (_team2[].length < 2 + count)
-			//				_team2[_team2[].length] = player;
-			
-			//		else
-			//		_team3[_team3[].length] = player;
 			player.setUCState(L2PcInstance.UC_STATE_POINT);
 		}
 		pointzor[1].teleportPeoples(_team1);
@@ -155,35 +148,43 @@ public class UCTeam
 		pointzor[3].teleportPeoples(_team3);
 	}
 	
-	@Deprecated
 	public boolean isKilledByThisTeam(final L2PcInstance killer)
 	{
-		if (getParty() == null || killer == null)
-			return false;
-		
-		for (L2PcInstance member : getParty().getPartyMembers())
+		if ((getParty() == null) || (killer == null))
 		{
-			if (member != null && member == killer)
+			return false;
+		}
+		
+		for (L2PcInstance member : getParty().getMembers())
+		{
+			if ((member != null) && (member == killer))
+			{
 				return true;
+			}
 		}
 		
 		return false;
 	}
 	
-	@Deprecated
 	public void onKill(final L2PcInstance player, final L2PcInstance killer)
 	{
-		if (player == null || killer == null || getParty() == null)
+		if ((player == null) || (killer == null) || (getParty() == null))
+		{
 			return;
+		}
 		
 		if (!player.isDead())
+		{
 			return;
+		}
 		
 		UCTeam otherTeam = getOtherTeam();
 		UCPoint[] pointzor = _baseArena.getPoints();
 		
 		if (!otherTeam.isKilledByThisTeam(killer))
+		{
 			return;
+		}
 		
 		otherTeam.increaseKillCount();
 		player.increaseDeathCountUC();
@@ -196,52 +197,72 @@ public class UCTeam
 			boolean deadzor = true;
 			for (L2PcInstance member1 : _team1)
 			{
-				if (member1 != null && !member1.isDead())
+				if ((member1 != null) && !member1.isDead())
+				{
 					deadzor = false;
+				}
 			}
 			if (deadzor)
 			{
 				pointzor[1].actionDoors(true);
 				for (L2PcInstance memberzor1 : _team1)
+				{
 					memberzor1.setUCState(L2PcInstance.UC_STATE_ARENA);
+				}
 			}
 			else
+			{
 				deadzor = true;
+			}
 			for (L2PcInstance member2 : _team2)
 			{
-				if (member2 != null && !member2.isDead())
+				if ((member2 != null) && !member2.isDead())
+				{
 					deadzor = false;
+				}
 			}
 			if (deadzor)
 			{
 				pointzor[2].actionDoors(true);
 				for (L2PcInstance memberzor2 : _team2)
+				{
 					memberzor2.setUCState(L2PcInstance.UC_STATE_ARENA);
+				}
 			}
 			else
+			{
 				deadzor = true;
+			}
 			for (L2PcInstance member3 : _team3)
 			{
-				if (member3 != null && !member3.isDead())
+				if ((member3 != null) && !member3.isDead())
+				{
 					deadzor = false;
+				}
 			}
 			if (deadzor)
 			{
 				pointzor[3].actionDoors(true);
 				for (L2PcInstance memberzor3 : _team3)
+				{
 					memberzor3.setUCState(L2PcInstance.UC_STATE_ARENA);
+				}
 			}
 			else
+			{
 				deadzor = true;
+			}
 		}
 		
 		if (_tower == null)
 		{
 			boolean flag = true;
-			for (L2PcInstance member : getParty().getPartyMembers())
+			for (L2PcInstance member : getParty().getMembers())
 			{
-				if (member != null && !member.isDead())
+				if ((member != null) && !member.isDead())
+				{
 					flag = false;
+				}
 			}
 			
 			if (flag)
@@ -274,7 +295,9 @@ public class UCTeam
 	public static void resPlayer(L2PcInstance player)
 	{
 		if (player == null)
+		{
 			return;
+		}
 		
 		player.restoreExp(100.0);
 		player.doRevive();
@@ -312,10 +335,9 @@ public class UCTeam
 		return _baseArena;
 	}
 	
-	@Deprecated
 	public void computeReward()
 	{
-		if (_lastParty == null || _lastParty != getOtherTeam().getParty())
+		if ((_lastParty == null) || (_lastParty != getOtherTeam().getParty()))
 		{
 			int reward = 0;
 			switch (_consecutiveWins)
@@ -352,11 +374,13 @@ public class UCTeam
 					break;
 				default:
 					if (_consecutiveWins > 10)
-						reward = 110 + _consecutiveWins - 10;
+					{
+						reward = (110 + _consecutiveWins) - 10;
+					}
 					break;
 			}
 			
-			for (L2PcInstance member : getParty().getPartyMembers())
+			for (L2PcInstance member : getParty().getMembers())
 			{
 				if (member != null)
 				{
@@ -370,7 +394,6 @@ public class UCTeam
 		}
 	}
 	
-	@Deprecated
 	public void setStatus(byte status)
 	{
 		_status = status;
@@ -378,9 +401,13 @@ public class UCTeam
 		if (_status == WIN)
 		{
 			if (getIndex() == 0)
+			{
 				_baseArena.broadcastToAll(SystemMessage.getSystemMessage(SystemMessageId.THE_BLUE_TEAM_IS_VICTORIOUS));
+			}
 			else
+			{
 				_baseArena.broadcastToAll(SystemMessage.getSystemMessage(SystemMessageId.THE_RED_TEAM_IS_VICTORIOUS));
+			}
 		}
 		
 		switch (_status)
@@ -406,9 +433,13 @@ public class UCTeam
 	public int getOtherTeamIndex()
 	{
 		if (_index == 0)
+		{
 			return 1;
+		}
 		if (_index == 1)
+		{
 			return 0;
+		}
 		
 		throw new IllegalArgumentException("Incorrect index: " + _index);
 	}
@@ -424,10 +455,14 @@ public class UCTeam
 		_party = pa;
 		
 		if (oldParty != null)
+		{
 			oldParty.setUCState(null);
+		}
 		
 		if (_party != null)
+		{
 			_party.setUCState(this);
+		}
 	}
 	
 	public L2Party getParty()

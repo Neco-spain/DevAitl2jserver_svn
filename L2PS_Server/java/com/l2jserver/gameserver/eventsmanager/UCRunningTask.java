@@ -16,35 +16,40 @@ package com.l2jserver.gameserver.eventsmanager;
 
 public class UCRunningTask implements Runnable
 {
-	private UCArena _arena;
-
+	private final UCArena _arena;
+	
 	public UCRunningTask(UCArena arena)
 	{
 		_arena = arena;
 	}
-
+	
 	@Override
-	@Deprecated
 	public void run()
 	{
 		_arena.removeTeam();
 		_arena.checkLost(false);
-
+		
 		UCTeam winnerTeam = null;
-		for(UCTeam team : _arena.getTeams())
+		for (UCTeam team : _arena.getTeams())
 		{
-			if(team.getStatus() == UCTeam.WIN)
+			if (team.getStatus() == UCTeam.WIN)
+			{
 				winnerTeam = team;
+			}
 		}
-
-		if(winnerTeam != null)
+		
+		if (winnerTeam != null)
+		{
 			winnerTeam.setStatus(UCTeam.NOT_DECIDED);
-
+		}
+		
 		UCPoint[] pointzor = _arena.getPoints();
 		for (UCPoint point : pointzor)
+		{
 			point.actionDoors(false);
+		}
 		
-		if(winnerTeam != null && _arena.getWaitingList().size() >= 1)
+		if ((winnerTeam != null) && (_arena.getWaitingList().size() >= 1))
 		{
 			UCTeam other = winnerTeam.getOtherTeam();
 			UCWaiting otherWaiting = _arena.getWaitingList().get(0);
@@ -53,18 +58,18 @@ public class UCRunningTask implements Runnable
 			_arena.getWaitingList().remove(0);
 			winnerTeam.splitMembersAndTeleport();
 			other.splitMembersAndTeleport();
-
+			
 			_arena.startFight();
 			return;
 		}
-
+		
 		while (true)
 		{
-			if(_arena.getWaitingList().size() >= 2)
+			if (_arena.getWaitingList().size() >= 2)
 			{
 				int i = 0;
 				UCWaiting teamWaiting = null;
-				for(UCTeam team : _arena.getTeams())
+				for (UCTeam team : _arena.getTeams())
 				{
 					teamWaiting = _arena.getWaitingList().get(i);
 					team.setParty(teamWaiting.getParty());
@@ -73,7 +78,7 @@ public class UCRunningTask implements Runnable
 					team.splitMembersAndTeleport();
 					i++;
 				}
-
+				
 				_arena.startFight();
 				break;
 			}

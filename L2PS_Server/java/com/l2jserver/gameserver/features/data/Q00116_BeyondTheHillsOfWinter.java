@@ -166,6 +166,6 @@ public final class Q00116_BeyondTheHillsOfWinter extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00116_BeyondTheHillsOfWinter(116, Q00116_BeyondTheHillsOfWinter.class.getName(), "Beyond the Hills of Winter");
+		new Q00116_BeyondTheHillsOfWinter(116, Q00116_BeyondTheHillsOfWinter.class.getSimpleName(), "Beyond the Hills of Winter");
 	}
 }

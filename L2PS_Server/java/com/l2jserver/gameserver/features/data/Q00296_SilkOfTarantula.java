@@ -195,6 +195,6 @@ public class Q00296_SilkOfTarantula extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00296_SilkOfTarantula(296, Q00296_SilkOfTarantula.class.getName(), "Silk Of Tarantula");
+		new Q00296_SilkOfTarantula(296, Q00296_SilkOfTarantula.class.getSimpleName(), "Silk Of Tarantula");
 	}
 }

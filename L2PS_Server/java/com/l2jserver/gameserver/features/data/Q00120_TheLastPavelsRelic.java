@@ -636,6 +636,6 @@ public final class Q00120_TheLastPavelsRelic extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00120_TheLastPavelsRelic(120, Q00120_TheLastPavelsRelic.class.getName(), "The Last Pavel's Relic");
+		new Q00120_TheLastPavelsRelic(120, Q00120_TheLastPavelsRelic.class.getSimpleName(), "The Last Pavel's Relic");
 	}
 }

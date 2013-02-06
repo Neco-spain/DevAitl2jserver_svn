@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
+
 import com.l2jserver.gameserver.eventengine.Configuration;
 import com.l2jserver.gameserver.eventengine.container.EventContainer;
 import com.l2jserver.gameserver.eventengine.io.Out;
@@ -30,7 +31,7 @@ import com.l2jserver.gameserver.eventengine.model.ManagerNpcHtml;
 public class Scheduler
 {
 	
-	private class SchedulerTask implements Runnable
+	protected class SchedulerTask implements Runnable
 	{
 		
 		@Override
@@ -45,16 +46,19 @@ public class Scheduler
 				if (element[0].equals(hour) && element[1].equals(mins))
 				{
 					if (element[2].equals(0))
+					{
 						EventContainer.getInstance().createRandomEvent();
+					}
 					else
+					{
 						EventContainer.getInstance().createEvent(element[2]);
+					}
 				}
 			}
 		}
 		
 	}
 	
-	@SuppressWarnings("synthetic-access")
 	private static class SingletonHolder
 	{
 		protected static final Scheduler _instance = new Scheduler();
@@ -69,8 +73,7 @@ public class Scheduler
 	
 	public FastList<Integer[]> scheduleList;
 	
-	@SuppressWarnings("synthetic-access")
-	private Scheduler()
+	protected Scheduler()
 	{
 		scheduleList = new FastList<>();
 		makeList();
@@ -126,7 +129,7 @@ public class Scheduler
 		for (Integer[] event : scheduleList)
 		{
 			count++;
-			builder.append("<center><table width=270 " + (count % 2 == 1 ? "" : "bgcolor=4f4f4f") + "><tr><td width=30><font color=ac9775>" + (event[0] < 10 ? "0" + event[0] : event[0]) + ":" + (event[1] < 10 ? "0" + event[1] : event[1]) + "</font></td><td width=210><font color=9f9f9f>" + Configuration.getInstance().getString(event[2], "eventName") + "</font></td></tr></table>");
+			builder.append("<center><table width=270 " + ((count % 2) == 1 ? "" : "bgcolor=4f4f4f") + "><tr><td width=30><font color=ac9775>" + (event[0] < 10 ? "0" + event[0] : event[0]) + ":" + (event[1] < 10 ? "0" + event[1] : event[1]) + "</font></td><td width=210><font color=9f9f9f>" + Configuration.getInstance().getString(event[2], "eventName") + "</font></td></tr></table>");
 		}
 		
 		Out.html(player, new ManagerNpcHtml(builder.toString()).string());

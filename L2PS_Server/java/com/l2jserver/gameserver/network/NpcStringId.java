@@ -21607,8 +21607,11 @@ public final class NpcStringId
 	 */
 	private static NpcStringId[] VALUES;
 	
+	public static NpcStringId NONE;
+	
 	static
 	{
+		NONE = new NpcStringId(65535);
 		HELLO_I_AM_S1_YOU_ARE_S2_RIGHT_HEHEHE = new NpcStringId(1);
 		S1_S2_S3_S4_S5_HEHEHE = new NpcStringId(2);
 		WITHDRAW_THE_FEE_FOR_THE_NEXT_TIME_AT_S1_S2_S4 = new NpcStringId(5);

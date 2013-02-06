@@ -7316,7 +7316,7 @@ public abstract class L2Character extends L2Object
 		}
 		catch (Exception e)
 		{
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": callSkill() failed.", e);
+			// _log.log(Level.WARNING, getClass().getSimpleName() + ": callSkill() failed.", e);
 		}
 	}
 	
