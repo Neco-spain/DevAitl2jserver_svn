@@ -350,7 +350,7 @@ public class TerritoryWarSuperClass extends Quest
 		int kills = 0;
 		int cond = 0;
 		// Additional Handle for Quest
-		QuestState _sfh = player.getQuestState("176_StepsForHonor");
+		QuestState _sfh = player.getQuestState("Q00176_StepsForHonor");
 		if ((_sfh != null) && (_sfh.getState() == State.STARTED))
 		{
 			cond = _sfh.getInt("cond");

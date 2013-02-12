@@ -87,7 +87,9 @@ public class L2VillageMasterInstance extends L2NpcInstance
 			pom = npcId + "-" + val;
 		}
 		if (Config.PC_BANG_ENABLED)
-				return "data/html/adventurer_guildsman/" + pom + "-pcbangpoint.htm";
+		{
+			return "data/html/adventurer_guildsman/" + pom + "-pcbangpoint.htm";
+		}
 		return "data/html/villagemaster/" + pom + ".htm";
 	}
 	
@@ -629,13 +631,13 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		{
 			return true;
 		}
-		
+		// TODO: Quests
 		QuestState qs = player.getQuestState("234_FatesWhisper");
 		if ((qs == null) || !qs.isCompleted())
 		{
 			return false;
 		}
-		
+		// TODO: Quests
 		qs = player.getQuestState("235_MimirsElixir");
 		if ((qs == null) || !qs.isCompleted())
 		{

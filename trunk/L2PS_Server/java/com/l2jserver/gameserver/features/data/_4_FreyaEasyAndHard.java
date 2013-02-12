@@ -1578,7 +1578,7 @@ public class _4_FreyaEasyAndHard extends Quest
 			if (_isHard)
 			{
 				QuestState st = partyMember.getQuestState("Q10286_ReunionWithSirra");
-				if ((st == null) || st.isCompleted())
+				if (!st.isCompleted())
 				{
 					SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.C1_QUEST_REQUIREMENT_NOT_SUFFICIENT);
 					sm.addPcName(partyMember);

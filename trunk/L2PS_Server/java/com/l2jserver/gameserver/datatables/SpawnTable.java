@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -382,5 +383,10 @@ public class SpawnTable
 	public FastMap<Integer, L2Spawn> getSpawntable()
 	{
 		return _spawngetnpc;
+	}
+	
+	public Collection<L2Spawn> getAllSpawns()
+	{
+		return _spawntable;
 	}
 }

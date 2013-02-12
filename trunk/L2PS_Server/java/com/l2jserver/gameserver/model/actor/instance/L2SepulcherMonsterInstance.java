@@ -283,6 +283,7 @@ public class L2SepulcherMonsterInstance extends L2MonsterInstance
 	
 	private void giveCup(L2Character killer)
 	{
+		// TODO: Quests
 		String questId = "620_FourGoblets";
 		int cupId = 0;
 		int oldBrooch = 7262;

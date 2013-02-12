@@ -1316,8 +1316,8 @@ public class _4_CrystalCaverns extends Quest
 			-12165,
 			64147
 		},// {22308, 147849, 152854, -12165, 60534},
-		// {22308, 147754, 152908, -12141, 59827},{22308, 148194, 152681, -12165, 63620},
-		// {22308, 147767, 152939, -12133, 63381},{22309, 147737, 152671, -12165, 65320},
+			// {22308, 147754, 152908, -12141, 59827},{22308, 148194, 152681, -12165, 63620},
+			// {22308, 147767, 152939, -12133, 63381},{22309, 147737, 152671, -12165, 65320},
 		{
 			22418,
 			148207,
@@ -1906,7 +1906,7 @@ public class _4_CrystalCaverns extends Quest
 		}
 		else if (npc.getNpcId() == 32279)
 		{
-			QuestState st = player.getQuestState("131_BirdInACage");
+			QuestState st = player.getQuestState("Q00131_BirdInACage");
 			String htmltext = "32279.htm";
 			if ((st != null) && !st.isCompleted())
 			{

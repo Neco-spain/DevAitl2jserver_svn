@@ -38,6 +38,9 @@ import com.l2jserver.util.Rnd;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
+/**
+ * Author: RobikBobik L2PS Team
+ */
 public final class Q00512_BladeUnderFoot extends Quest
 {
 	private class CAUWorld extends InstanceWorld
