@@ -38,7 +38,7 @@ public class RequestTutorialPassCmdToServer extends L2GameClientPacket
 		{
 			return;
 		}
-		
+		// TODO: After reworked to java
 		QuestState qs = player.getQuestState("255_Tutorial");
 		if (qs != null)
 		{

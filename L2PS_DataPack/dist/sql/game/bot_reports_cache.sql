@@ -1,4 +1,4 @@
-CREATE TABLE `bot_reports_cache` (
+CREATE TABLE IF NOT EXISTS `bot_reports_cache` (
 `id` BIGINT( 24 ) NOT NULL ,
 `reporter_name` VARCHAR( 100 ) NOT NULL ,
 `reported_name` VARCHAR( 100 ) NOT NULL ,

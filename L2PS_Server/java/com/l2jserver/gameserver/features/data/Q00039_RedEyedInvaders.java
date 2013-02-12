@@ -116,7 +116,7 @@ public class Q00039_RedEyedInvaders extends Quest
 			}
 			else
 			{
-				htmltext = "� ��� ���� ������ ���������.";
+				htmltext = "You don't have required items";
 			}
 		}
 		return htmltext;

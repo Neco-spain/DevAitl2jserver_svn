@@ -30,8 +30,7 @@ public class CustomSQLs
 	
 	public static void updateDatabase(L2PcInstance player, boolean newHero)
 	{
-		Connection con = null;
-		try
+		try (Connection con = L2DatabaseFactory.getInstance().getConnection())
 		{
 			if (player == null)
 			{
@@ -42,10 +41,7 @@ public class CustomSQLs
 			int charId = player.getObjectId();
 			boolean insert = newHero;
 			
-			con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement stmt = con.prepareStatement(insert ? DATA_INSERT : DATA_DELETE);
-			
-			boolean isHero = player.isHero();
 			
 			if (newHero)
 			{
@@ -66,10 +62,6 @@ public class CustomSQLs
 		catch (Exception e)
 		{
 			_log.warning("Error: could not update database");
-		}
-		finally
-		{
-			L2DatabaseFactory.close(con);
 		}
 	}
 }

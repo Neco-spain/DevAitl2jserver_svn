@@ -1003,7 +1003,7 @@ public class Q00373_SupplierOfReagents extends Quest
 						}
 						if (item == MIMIRS_ELIXIR)
 						{
-							QuestState mimirs = st.getPlayer().getQuestState("Q00235_MimirsElixir");
+							QuestState mimirs = st.getPlayer().getQuestState("235_MimirsElixir");
 							if (mimirs != null)
 							{
 								chance = 100;

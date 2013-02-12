@@ -24,6 +24,9 @@ import com.l2jserver.gameserver.model.quest.State;
 
 import handlers.bypasshandlers.QuestLink;
 
+/**
+ * Author: RobikBobik L2PS Team
+ */
 public class Q10285_MeetingSirra extends Quest
 {
 	private static final int _rafforty = 32020;

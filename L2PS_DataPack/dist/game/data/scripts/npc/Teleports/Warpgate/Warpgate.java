@@ -18,7 +18,6 @@ import npc.AbstractNpcAI;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.features.data.Q00130_PathToHellbound;
-import com.l2jserver.gameserver.features.data.Q00133_ThatsBloodyHot;
 import com.l2jserver.gameserver.instancemanager.HellboundManager;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -62,7 +61,8 @@ public class Warpgate extends AbstractNpcAI
 				return true;
 			}
 		}
-		st = player.getQuestState(Q00133_ThatsBloodyHot.class.getSimpleName());
+		// st = player.getQuestState(Q00133_ThatsBloodyHot.class.getSimpleName());
+		st = player.getQuestState("133_ThatsBloodyHot");
 		return ((st != null) && st.isCompleted());
 	}
 	

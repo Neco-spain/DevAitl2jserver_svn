@@ -359,6 +359,7 @@ public final class CharacterCreate extends L2GameClientPacket
 	 */
 	public void startTutorialQuest(L2PcInstance player)
 	{
+		// TODO: After reworked to java
 		final QuestState qs = player.getQuestState("255_Tutorial");
 		Quest q = null;
 		if (qs == null)

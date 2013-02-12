@@ -64,7 +64,7 @@ public class Q00024_InhabitantsOfTheForestOfTheDead extends Quest
 		{
 		// Dorian
 			case "31389-02.htm":
-				final QuestState qs = player.getQuestState("23_LidiasHeart");
+				final QuestState qs = player.getQuestState("Q00023_LidiasHeart");
 				if ((player.getLevel() > 65) && (qs != null) && qs.isCompleted())
 				{
 					st.startQuest();
@@ -262,7 +262,7 @@ public class Q00024_InhabitantsOfTheForestOfTheDead extends Quest
 				}
 				else if (st.isCompleted())
 				{
-					final QuestState qs = player.getQuestState("25_HidingBehindTheTruth");
+					final QuestState qs = player.getQuestState("Q00025_HidingBehindTheTruth");
 					if (!((qs != null) && (qs.isStarted() || qs.isStarted())))
 					{
 						htmltext = "31522-22.html";

@@ -67,6 +67,7 @@ public class DimensionalRift
 		party.setDimensionalRift(this);
 		for (L2PcInstance p : party.getMembers())
 		{
+			// TODO: After reworked to java
 			Quest riftQuest = QuestManager.getInstance().getQuest(635);
 			if (riftQuest != null)
 			{
