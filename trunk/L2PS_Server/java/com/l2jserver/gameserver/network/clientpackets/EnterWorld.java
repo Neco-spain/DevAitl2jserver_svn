@@ -47,6 +47,7 @@ import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.instance.L2ClassMasterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.entity.Castle;
 import com.l2jserver.gameserver.model.entity.Couple;
 import com.l2jserver.gameserver.model.entity.Fort;
 import com.l2jserver.gameserver.model.entity.FortSiege;
@@ -89,6 +90,7 @@ import com.l2jserver.gameserver.network.serverpackets.ShortCutInit;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.scripting.scriptengine.listeners.player.PlayerSpawnListener;
+import com.l2jserver.gameserver.util.Broadcast;
 
 /**
  * Enter World Packet Handler
@@ -509,6 +511,19 @@ public class EnterWorld extends L2GameClientPacket
 			}
 		}
 		
+		if (Config.ANNOUNCE_HERO_LOGIN)
+		{
+			if (activeChar.isHero())
+			{
+				Broadcast.toAllOnlinePlayers(new CreatureSay(1, Say2.BATTLEFIELD, "Hero System", "Hero " + activeChar.getName() + " has been logged in."));
+			}
+		}
+		
+		if (Config.ANNOUNCE_CASTLE_LORDS)
+		{
+			notifyCastleOwner(activeChar);
+		}
+		
 		if (showClanNotice)
 		{
 			NpcHtmlMessage notice = new NpcHtmlMessage(1);
@@ -796,5 +811,22 @@ public class EnterWorld extends L2GameClientPacket
 	public static void removeSpawnListener(PlayerSpawnListener listener)
 	{
 		listeners.remove(listener);
+	}
+	
+	private void notifyCastleOwner(L2PcInstance activeChar)
+	{
+		L2Clan clan = activeChar.getClan();
+		
+		if (clan != null)
+		{
+			if (clan.getCastleId() > 0)
+			{
+				Castle castle = CastleManager.getInstance().getCastleById(clan.getCastleId());
+				if ((castle != null) && (activeChar.getObjectId() == clan.getLeaderId()))
+				{
+					Broadcast.toAllOnlinePlayers(new CreatureSay(1, Say2.BATTLEFIELD, "Castle System", "Lord " + activeChar.getName() + " Ruler Of " + castle.getName() + " Castle is Now Online!"));
+				}
+			}
+		}
 	}
 }

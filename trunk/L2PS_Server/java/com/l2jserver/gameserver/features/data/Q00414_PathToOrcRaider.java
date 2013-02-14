@@ -214,7 +214,7 @@ public class Q00414_PathToOrcRaider extends Quest
 			String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 			if (isFinished.equalsIgnoreCase(""))
 			{
-				st.addExpAndSp(295862, 2600);
+				st.addExpAndSp(228064, 21055);
 			}
 			st.giveItems(MARK_OF_RAIDER, 1);
 			st.saveGlobalQuestVar("1ClassQuestFinished", "1");
@@ -238,7 +238,8 @@ public class Q00414_PathToOrcRaider extends Quest
 				htmltext = "31978-05.htm";
 				st.unset("cond");
 				st.takeItems(TIMORA_ORC_HEAD, -1);
-				st.addExpAndSp(160267, 1300);
+				st.addExpAndSp(228064, 21055);
+				st.giveItems(57, 81900);
 				st.giveItems(MARK_OF_RAIDER, 1);
 				talker.sendPacket(new SocialAction(talker.getObjectId(), 3));
 				st.exitQuest(false);

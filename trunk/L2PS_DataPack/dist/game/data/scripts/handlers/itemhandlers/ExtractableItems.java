@@ -76,7 +76,19 @@ public class ExtractableItems implements IItemHandler
 				max = (int) (expi.getMax() * Config.RATE_EXTRACTABLE);
 				
 				createitemAmount = (max == min) ? min : (Rnd.get((max - min) + 1) + min);
-				activeChar.addItem("Extract", expi.getId(), createitemAmount, activeChar, true);
+				// activeChar.addItem("Extract", expi.getId(), createitemAmount, activeChar, true);
+				if ((createitemAmount > 1) && !ItemTable.getInstance().getTemplate(expi.getId()).isStackable())
+				{
+					while (createitemAmount > 0)
+					{
+						activeChar.addItem("Extract", expi.getId(), 1, activeChar, true);
+						createitemAmount--;
+					}
+				}
+				else
+				{
+					activeChar.addItem("Extract", expi.getId(), createitemAmount, activeChar, true);
+				}
 				created = true;
 			}
 		}

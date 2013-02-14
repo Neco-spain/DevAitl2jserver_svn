@@ -14,13 +14,12 @@
  */
 package com.l2jserver.gameserver.features.data;
 
-
 /**
  * Author: RobikBobik L2PS Team
  */
 public class Q00087_SagaOfTheEvasSaint extends Sagas3rdClass
 {
-	public static String qn1 = "Q00087_SagaOfEvasSaint";
+	public static String qn1 = "Q00087_SagaOfTheEvasSaint";
 	public static int qnu = 87;
 	public static String qna = "Saga of Eva's Saint";
 	

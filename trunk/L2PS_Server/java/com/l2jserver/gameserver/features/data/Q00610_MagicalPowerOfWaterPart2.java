@@ -134,7 +134,7 @@ public class Q00610_MagicalPowerOfWaterPart2 extends Quest
 			}
 			else
 			{
-				cancelQuestTimer("FixMinuteTick", npc, null);
+				this.cancelQuestTimer("FixMinuteTick", npc, null);
 				npc.reduceCurrentHp(999999999, npc, null);
 				L2Npc alterInstance = FindTemplate(Alter);
 				
@@ -217,7 +217,7 @@ public class Q00610_MagicalPowerOfWaterPart2 extends Quest
 				npc.teleToLocation(105236, -36826, -1071);
 				isAttacked = true;
 				_log.info("Fix minute 1");
-				startQuestTimer("FixMinuteTick", 1, spawnedNpc, null, true);
+				this.startQuestTimer("FixMinuteTick", 1, spawnedNpc, null, true);
 				AutoChat(spawnedNpc, NpcStringId.THE_MAGICAL_POWER_OF_FIRE_IS_ALSO_THE_POWER_OF_FLAMES_AND_LAVA_IF_YOU_DARE_TO_CONFRONT_IT_ONLY_DEATH_WILL_AWAIT_YOU);
 			}
 			
@@ -301,7 +301,7 @@ public class Q00610_MagicalPowerOfWaterPart2 extends Quest
 							npc.teleToLocation(105236, -36826, -1071);
 							isAttacked = true;
 							_log.info("Fix minute 1-1");
-							startQuestTimer("FixMinuteTick", 1, spawnedNpc, null, true);
+							this.startQuestTimer("FixMinuteTick", 1, spawnedNpc, null, true);
 							AutoChat(spawnedNpc, NpcStringId.THE_MAGICAL_POWER_OF_FIRE_IS_ALSO_THE_POWER_OF_FLAMES_AND_LAVA_IF_YOU_DARE_TO_CONFRONT_IT_ONLY_DEATH_WILL_AWAIT_YOU);
 						}
 					}
@@ -342,7 +342,7 @@ public class Q00610_MagicalPowerOfWaterPart2 extends Quest
 				alterInstance.setIsInvul(false);
 				alterInstance.reduceCurrentHp(999999999, alterInstance, null);
 			}
-			cancelQuestTimer("FixMinuteTick", npc, null);
+			this.cancelQuestTimer("FixMinuteTick", npc, null);
 			L2Party party = player.getParty();
 			if (party != null)
 			{

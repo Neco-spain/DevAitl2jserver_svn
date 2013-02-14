@@ -106,7 +106,7 @@ public class RainbowSpringsChateau extends Quest
 							clan = actingClan;
 						}
 					}
-					if ((clan != null) && _acceptedClans.size() < 4)
+					if ((clan != null) && (_acceptedClans.size() < 4))
 					{
 						_acceptedClans.add(clan);
 						L2PcInstance leader = clan.getLeader().getPlayerInstance();
@@ -836,7 +836,7 @@ public class RainbowSpringsChateau extends Quest
 		else
 		{
 			_usedTextPassages.put(message, new ArrayList<L2Clan>());
-			int shout = Say2.SHOUT;
+			int shout = Say2.NPC_SHOUT;
 			int objId = npc.getObjectId();
 			NpcSay say = new NpcSay(objId, shout, npc.getNpcId(), message);
 			npc.broadcastPacket(say);

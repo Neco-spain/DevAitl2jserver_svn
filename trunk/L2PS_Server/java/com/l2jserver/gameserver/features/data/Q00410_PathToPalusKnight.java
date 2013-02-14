@@ -196,7 +196,8 @@ public class Q00410_PathToPalusKnight extends Quest
 				String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 				if (isFinished.equalsIgnoreCase(""))
 				{
-					st.addExpAndSp(295862, 5050);
+					st.addExpAndSp(228064, 21055);
+					st.giveItems(57, 81900);
 				}
 				st.giveItems(GAZE_OF_ABYSS, 1);
 				st.saveGlobalQuestVar("1ClassQuestFinished", "1");

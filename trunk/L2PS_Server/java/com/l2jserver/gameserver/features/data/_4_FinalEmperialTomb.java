@@ -161,6 +161,8 @@ public class _4_FinalEmperialTomb extends Quest
 	private static final int GUIDE = 32011;
 	private static final int CUBE = 29061;
 	
+	private static final int DEWDROP_OF_DESTRUCTION_ITEM_ID = 8556;
+	
 	// mobs
 	private static final int SCARLET1 = 29046;
 	private static final int SCARLET2 = 29047;
@@ -176,6 +178,7 @@ public class _4_FinalEmperialTomb extends Quest
 		29051
 	};
 	private static final int HALL_ALARM = 18328;
+	private static final int HALL_KEEPER_CAPTAIN = 18329;
 	private static final int HALL_KEEPER_SUICIDAL_SOLDIER = 18333;
 	private static final int DARK_CHOIR_PLAYER = 18339;
 	private static final int[] AI_DISABLED_MOBS =
@@ -196,6 +199,9 @@ public class _4_FinalEmperialTomb extends Quest
 		new FrintezzaSong(new SkillHolder(5007, 4), new SkillHolder(5008, 4), NpcStringId.FUGUE_OF_JUBILATION, 90),
 		new FrintezzaSong(new SkillHolder(5007, 5), new SkillHolder(5008, 5), NpcStringId.HYPNOTIC_MAZURKA, 100),
 	};
+	
+	private static final int DEWDROP_OF_DESTRUCTION_SKILL_ID = 2276;
+	private static final int SOUL_BREAKING_ARROW_SKILL_ID = 2234;
 	
 	// Doors/Walls/Zones
 	protected static final int[] FIRST_ROOM_DOORS =
@@ -649,6 +655,7 @@ public class _4_FinalEmperialTomb extends Quest
 		// teleport players
 		if ((player.getParty() == null) || (player.getParty().getCommandChannel() == null))
 		{
+			player.destroyItemByItemId(getName(), DEWDROP_OF_DESTRUCTION_ITEM_ID, player.getInventory().getInventoryItemCount(DEWDROP_OF_DESTRUCTION_ITEM_ID, -1), null, true);
 			world.allowed.add(player.getObjectId());
 			teleportPlayer(player, coords, instanceId);
 		}
@@ -656,6 +663,7 @@ public class _4_FinalEmperialTomb extends Quest
 		{
 			for (L2PcInstance channelMember : player.getParty().getCommandChannel().getMembers())
 			{
+				channelMember.destroyItemByItemId(getName(), DEWDROP_OF_DESTRUCTION_ITEM_ID, channelMember.getInventory().getInventoryItemCount(DEWDROP_OF_DESTRUCTION_ITEM_ID, -1), null, true);
 				world.allowed.add(channelMember.getObjectId());
 				teleportPlayer(channelMember, coords, instanceId);
 			}
@@ -866,6 +874,22 @@ public class _4_FinalEmperialTomb extends Quest
 		}
 	}
 	
+	private class SoulBreakingArrow implements Runnable
+	{
+		private final L2Npc _npc;
+		
+		protected SoulBreakingArrow(L2Npc npc)
+		{
+			_npc = npc;
+		}
+		
+		@Override
+		public void run()
+		{
+			_npc.setScriptValue(0);
+		}
+	}
+	
 	private class SongTask implements Runnable
 	{
 		private final FETWorld _world;
@@ -893,18 +917,25 @@ public class _4_FinalEmperialTomb extends Quest
 					}
 					else if ((_world.frintezza != null) && !_world.frintezza.isDead())
 					{
-						int rnd = getRandom(100);
-						for (FrintezzaSong element : FRINTEZZASONGLIST)
+						if (_world.frintezza.getScriptValue() != 1)
 						{
-							if (rnd < element.chance)
+							int rnd = getRandom(100);
+							for (FrintezzaSong element : FRINTEZZASONGLIST)
 							{
-								_world.OnSong = element;
-								broadCastPacket(_world, new ExShowScreenMessage(2, -1, 2, 0, 0, 0, 0, true, 4000, false, null, element.songName));
-								broadCastPacket(_world, new MagicSkillUse(_world.frintezza, _world.frintezza, element.skill.getSkillId(), element.skill.getSkillLvl(), element.skill.getSkill().getHitTime(), 0));
-								_world.songEffectTask = ThreadPoolManager.getInstance().scheduleGeneral(new SongTask(_world, 1), element.skill.getSkill().getHitTime() - 10000);
-								_world.songTask = ThreadPoolManager.getInstance().scheduleGeneral(new SongTask(_world, 0), element.skill.getSkill().getHitTime());
-								break;
+								if (rnd < element.chance)
+								{
+									_world.OnSong = element;
+									broadCastPacket(_world, new ExShowScreenMessage(2, -1, 2, 0, 0, 0, 0, true, 4000, false, null, element.songName, null));
+									broadCastPacket(_world, new MagicSkillUse(_world.frintezza, _world.frintezza, element.skill.getSkillId(), element.skill.getSkillLvl(), element.skill.getSkill().getHitTime(), 0));
+									_world.songEffectTask = ThreadPoolManager.getInstance().scheduleGeneral(new SongTask(_world, 1), element.skill.getSkill().getHitTime() - 10000);
+									_world.songTask = ThreadPoolManager.getInstance().scheduleGeneral(new SongTask(_world, 0), element.skill.getSkill().getHitTime());
+									break;
+								}
 							}
+						}
+						else
+						{
+							ThreadPoolManager.getInstance().scheduleGeneral(new SoulBreakingArrow(_world.frintezza), 35000);
 						}
 					}
 					break;
@@ -1474,6 +1505,17 @@ public class _4_FinalEmperialTomb extends Quest
 			{
 				controlStatus(world);
 			}
+			// When Dewdrop of Destruction is used on Portraits they suicide.
+			if (Util.contains(PORTRAITS, npc.getNpcId()) && (skill.getId() == DEWDROP_OF_DESTRUCTION_SKILL_ID))
+			{
+				npc.doDie(attacker);
+			}
+			else if ((npc.getNpcId() == FRINTEZZA) && (skill.getId() == SOUL_BREAKING_ARROW_SKILL_ID))
+			{
+				npc.setScriptValue(1);
+				npc.setTarget(null);
+				npc.getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
+			}
 		}
 		return null;
 	}
@@ -1518,6 +1560,13 @@ public class _4_FinalEmperialTomb extends Quest
 			else if (npc.getNpcId() == SCARLET2)
 			{
 				controlStatus(world);
+			}
+			else if (npc.getNpcId() == HALL_KEEPER_CAPTAIN)
+			{
+				if (getRandom(100) < 5)
+				{
+					((L2MonsterInstance) npc).dropItem(player, DEWDROP_OF_DESTRUCTION_ITEM_ID, 1);
+				}
 			}
 			else if (world.status <= 2)
 			{
@@ -1566,10 +1615,11 @@ public class _4_FinalEmperialTomb extends Quest
 		super(questId, name, descr);
 		
 		load();
-		addAttackId(SCARLET1);
+		addAttackId(SCARLET1, FRINTEZZA);
+		addAttackId(PORTRAITS);
 		addStartNpc(GUIDE, CUBE);
 		addTalkId(GUIDE, CUBE);
-		addKillId(HALL_ALARM, DARK_CHOIR_PLAYER, SCARLET2);
+		addKillId(HALL_ALARM, HALL_KEEPER_CAPTAIN, DARK_CHOIR_PLAYER, SCARLET2);
 		addKillId(PORTRAITS);
 		addKillId(DEMONS);
 		addKillId(_mustKillMobsId);

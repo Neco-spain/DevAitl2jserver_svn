@@ -103,6 +103,22 @@ public class ExShowScreenMessage extends L2GameServerPacket
 		_npcString = npcString.getId();
 	}
 	
+	public ExShowScreenMessage(int type, int messageId, int position, int unk1, int size, int unk2, int unk3, boolean showEffect, int time, boolean fade, String text, NpcStringId npcString, String params)
+	{
+		_type = type;
+		_sysMessageId = messageId;
+		_unk1 = unk1;
+		_unk2 = unk2;
+		_unk3 = unk3;
+		_fade = fade;
+		_position = position;
+		_text = text;
+		_time = time;
+		_size = size;
+		_effect = showEffect;
+		_npcString = npcString.getId();
+	}
+	
 	/**
 	 * String parameter for argument S1,S2,.. in npcstring-e.dat
 	 * @param text

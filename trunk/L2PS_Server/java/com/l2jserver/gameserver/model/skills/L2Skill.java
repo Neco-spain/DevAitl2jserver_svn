@@ -102,6 +102,10 @@ public abstract class L2Skill implements IChanceSkillTrigger
 	/** Identifier for a skill that client can't display */
 	private int _displayId;
 	
+	private final int _faceId;
+	private final int _hairColorId;
+	private final int _hairStyleId;
+	
 	// not needed, just for easier debug
 	private final String _name;
 	private final L2SkillOpType _operateType;
@@ -530,6 +534,9 @@ public abstract class L2Skill implements IChanceSkillTrigger
 		_maxTargets = set.getInteger("maxTargets", -1);
 		_isStaticHeal = set.getBool("isStaticHeal", false);
 		_npcId = set.getInteger("npcId", 0);
+		_faceId = set.getInteger("faceId", -1);
+		_hairColorId = set.getInteger("hairColorId", -1);
+		_hairStyleId = set.getInteger("hairStyleId", -1);
 	}
 	
 	public abstract void useSkill(L2Character caster, L2Object[] targets);
@@ -2246,5 +2253,20 @@ public abstract class L2Skill implements IChanceSkillTrigger
 		}
 		
 		return (!geoEnabled) || (GeoData.getInstance().canSeeTarget(activeChar, target));
+	}
+	
+	public int getFaceId()
+	{
+		return _faceId;
+	}
+	
+	public int getHairColorId()
+	{
+		return _hairColorId;
+	}
+	
+	public int getHairStyleId()
+	{
+		return _hairStyleId;
 	}
 }

@@ -22,7 +22,12 @@ import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 
+/**
+ * Updated: RobikBobik L2PS Team
+ */
 public class ManaPotion extends ItemSkills
 {
 	@Override
@@ -31,6 +36,12 @@ public class ManaPotion extends ItemSkills
 		if (!Config.ENABLE_MANA_POTIONS_SUPPORT)
 		{
 			playable.sendPacket(SystemMessageId.NOTHING_HAPPENED);
+			return false;
+		}
+		if ((!Config.ENABLE_MANA_POTIONS_IN_PVP) && (playable.getPvpFlag() > 0))
+		{
+			CreatureSay msg3 = new CreatureSay(2, Say2.BATTLEFIELD, "[RESTRICTION]", "You cant use mana potions in PvP.");
+			playable.sendPacket(msg3);
 			return false;
 		}
 		return super.useItem(playable, item, forceUse);

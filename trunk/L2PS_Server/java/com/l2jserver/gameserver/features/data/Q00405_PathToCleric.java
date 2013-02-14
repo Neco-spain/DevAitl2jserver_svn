@@ -171,7 +171,8 @@ public class Q00405_PathToCleric extends Quest
 			String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 			if (isFinished.equalsIgnoreCase(""))
 			{
-				st.addExpAndSp(295862, 2910);
+				st.addExpAndSp(295862, 17664);
+				st.giveItems(57, 81900);
 			}
 			st.giveItems(MARK_OF_FAITH, 1);
 			st.set("cond", "0");

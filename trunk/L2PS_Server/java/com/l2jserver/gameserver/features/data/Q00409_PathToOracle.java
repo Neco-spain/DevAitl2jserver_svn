@@ -198,7 +198,8 @@ public class Q00409_PathToOracle extends Quest
 					String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 					if (isFinished.equalsIgnoreCase(""))
 					{
-						st.addExpAndSp(295862, 1910);
+						st.addExpAndSp(228064, 21055);
+						st.giveItems(57, 81900);
 					}
 					st.giveItems(LEAF_OF_ORACLE, 1);
 					st.saveGlobalQuestVar("1ClassQuestFinished", "1");
