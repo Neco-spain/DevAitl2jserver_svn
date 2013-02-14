@@ -219,7 +219,7 @@ public class Q00415_PathToOrcMonk extends Quest
 			String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 			if (isFinished.equalsIgnoreCase(""))
 			{
-				st.addExpAndSp(295862, 4590);
+				st.addExpAndSp(228064, 21055);
 			}
 			st.giveItems(KHAVATARI_TOTEM, 1);
 			st.saveGlobalQuestVar("1ClassQuestFinished", "1");
@@ -360,8 +360,8 @@ public class Q00415_PathToOrcMonk extends Quest
 			st.takeItems(SCROLL_FIERY_SPIRIT, 1);
 			st.takeItems(TORUKUS_LETTER, 1);
 			st.giveItems(KHAVATARI_TOTEM, 1);
-			st.giveReward(57, 81900);
-			st.addExpAndSp(295862, 19344);
+			st.addExpAndSp(228064, 21055);
+			st.giveItems(57, 81900);
 			talker.sendPacket(new SocialAction(talker.getObjectId(), 3));
 			st.set("cond", "0");
 			st.set("onlyone", "1");

@@ -31,8 +31,7 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Util;
 
 /**
- * @Fixed by L2Ps Team
- * www.l2ps.tode.cz
+ * @Fixed by L2Ps Team www.l2ps.tode.cz
  */
 public class FreyaCelebration extends Quest
 {
@@ -43,7 +42,13 @@ public class FreyaCelebration extends Quest
 	
 	private static final int[] _skills =
 	{
-		9150, 9151, 9152, 9153, 9154, 9155, 9156
+		9150,
+		9151,
+		9152,
+		9153,
+		9154,
+		9155,
+		9156
 	};
 	
 	private static final NpcStringId[] _freya_texts =
@@ -148,7 +153,7 @@ public class FreyaCelebration extends Quest
 		{
 			if (getRandom(100) < 5)
 			{
-				CreatureSay cs = new CreatureSay(npc.getObjectId(), Say2.ALL, npc.getName(), NpcStringId.DEAR_S1_THINK_OF_THIS_AS_MY_APPRECIATION_FOR_THE_GIFT_TAKE_THIS_WITH_YOU_THERES_NOTHING_STRANGE_ABOUT_IT_ITS_JUST_A_BIT_OF_MY_CAPRICIOUSNESS);
+				CreatureSay cs = new CreatureSay(npc.getObjectId(), Say2.NPC_ALL, npc.getName(), NpcStringId.DEAR_S1_THINK_OF_THIS_AS_MY_APPRECIATION_FOR_THE_GIFT_TAKE_THIS_WITH_YOU_THERES_NOTHING_STRANGE_ABOUT_IT_ITS_JUST_A_BIT_OF_MY_CAPRICIOUSNESS);
 				cs.addStringParameter(caster.getName());
 				
 				npc.broadcastPacket(cs);
@@ -159,7 +164,7 @@ public class FreyaCelebration extends Quest
 			{
 				if (getRandom(10) < 2)
 				{
-					npc.broadcastPacket(new CreatureSay(npc.getObjectId(), Say2.ALL, npc.getName(), _freya_texts[getRandom(_freya_texts.length - 1)]));
+					npc.broadcastPacket(new CreatureSay(npc.getObjectId(), Say2.NPC_ALL, npc.getName(), _freya_texts[getRandom(_freya_texts.length - 1)]));
 				}
 			}
 		}

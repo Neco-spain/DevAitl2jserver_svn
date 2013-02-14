@@ -311,26 +311,6 @@ public class _4_PailakaDevilsLegacy extends Quest
 				st.playSound("ItemSound.quest_middle");
 			}
 		}
-		else if (event.equalsIgnoreCase("32510-02.htm"))
-		{
-			st.unset("cond");
-			st.playSound("ItemSound.quest_finish");
-			st.exitQuest(false);
-			
-			Instance inst = InstanceManager.getInstance().getInstance(npc.getInstanceId());
-			inst.setDuration(EXIT_TIME * 60000);
-			inst.setEmptyDestroyTime(0);
-			
-			if (inst.containsPlayer(player.getObjectId()))
-			{
-				player.setVitalityPoints(20000, true);
-				st.addExpAndSp(810000, 50000);
-				for (int id : REWARDS)
-				{
-					st.giveItems(id, 1);
-				}
-			}
-		}
 		else if (event.equalsIgnoreCase("lematan_teleport"))
 		{
 			if ((npc.getNpcId() == LEMATAN) && !npc.isMovementDisabled() && !_isOnShip)

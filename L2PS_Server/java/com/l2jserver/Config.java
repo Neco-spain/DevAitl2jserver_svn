@@ -135,6 +135,21 @@ public final class Config
 	public static final String TELNET_FILE = "./config/Telnet.properties";
 	public static final String EMAIL_CONFIG_FILE = "./config/Email.properties";
 	
+	public static boolean ALLOW_PVP_REWARD;
+	public static int GIVE_ITEM_FOR_PVP_KILL;
+	public static long GIVE_ITEM__COUNT_FOR_PVP_KILL;
+	
+	public static boolean ENABLE_MANA_POTIONS_IN_PVP;
+	
+	public static boolean CHAR_TITLE;
+	public static String ADD_CHAR_TITLE;
+	
+	public static boolean ANNOUNCE_HERO_LOGIN;
+	
+	public static boolean ANNOUNCE_CASTLE_LORDS;
+	
+	public static boolean ENTER_HELLBOUND_WITHOUT_QUEST;
+	
 	public static int MIN_PLAYERS_TO_HARD;
 	public static int MAX_PLAYERS_TO_HARD;
 	public static int MIN_PLAYERS_TO_EASY;
@@ -3230,6 +3245,18 @@ public final class Config
 			{
 				_log.log(Level.SEVERE, "Error while loading L2PSMod settings!", e);
 			}
+			ALLOW_PVP_REWARD = Boolean.parseBoolean(L2PsMods.getProperty("AllowPvPReward", "false"));
+			GIVE_ITEM_FOR_PVP_KILL = Integer.parseInt(L2PsMods.getProperty("RewardIdForPvP", "57"));
+			GIVE_ITEM__COUNT_FOR_PVP_KILL = Integer.parseInt(L2PsMods.getProperty("RewardCountForPvP", "10000"));
+			
+			CHAR_TITLE = Boolean.parseBoolean(L2PsMods.getProperty("CharTitle", "true"));
+			ADD_CHAR_TITLE = L2PsMods.getProperty("CharAddTitle", "L][ Mineral");
+			
+			ANNOUNCE_HERO_LOGIN = Boolean.parseBoolean(L2PsMods.getProperty("AnnounceHero", "false"));
+			ANNOUNCE_CASTLE_LORDS = Boolean.parseBoolean(L2PsMods.getProperty("AnnounceCastleLord", "false"));
+			
+			ENTER_HELLBOUND_WITHOUT_QUEST = Boolean.parseBoolean(L2PsMods.getProperty("EnterHelbboundNoQ", "false"));
+			
 			VOTE_ITEM_ID = Integer.parseInt(L2PsMods.getProperty("VoteItemId", "3470"));
 			VOTE_ITEM_A = Integer.parseInt(L2PsMods.getProperty("VoteItemRequired", "5"));
 			VOTE_BUFF_ID = Integer.parseInt(L2PsMods.getProperty("VoteBuffId", "3132"));
@@ -3252,6 +3279,7 @@ public final class Config
 			ENABLE_WAREHOUSESORTING_PRIVATE = Boolean.parseBoolean(L2PsMods.getProperty("EnableWarehouseSortingPrivate", "False"));
 			BANKING_SYSTEM_GOLDBARS = Integer.parseInt(L2PsMods.getProperty("BankingGoldbarCount", "1"));
 			BANKING_SYSTEM_ADENA = Integer.parseInt(L2PsMods.getProperty("BankingAdenaCount", "500000000"));
+			ENABLE_MANA_POTIONS_IN_PVP = Boolean.parseBoolean(L2PsMods.getProperty("EnableManaPotionInPvP", "false"));
 			ENABLE_MANA_POTIONS_SUPPORT = Boolean.parseBoolean(L2PsMods.getProperty("EnableManaPotionSupport", "false"));
 			WELCOME_MESSAGE_ENABLED = Boolean.parseBoolean(L2PsMods.getProperty("ScreenWelcomeMessageEnable", "false"));
 			WELCOME_MESSAGE_TEXT = L2PsMods.getProperty("ScreenWelcomeMessageText", "Welcome to L2J server!");

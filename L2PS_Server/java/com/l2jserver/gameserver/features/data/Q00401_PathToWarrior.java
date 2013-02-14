@@ -223,8 +223,8 @@ public class Q00401_PathToWarrior extends Quest
 				st.set("cond", "0");
 				st.takeItems(POISON_SPIDER_LEG2, st.getQuestItemsCount(POISON_SPIDER_LEG2));
 				st.takeItems(RUSTED_BRONZE_SWORD3, 1);
-				st.addExpAndSp(0, 2450);
-				st.giveReward(57, 81900);
+				st.addExpAndSp(228064, 21055);
+				st.giveItems(57, 81900);
 				st.giveItems(MEDALLION_OF_WARRIOR, 1);
 				st.exitQuest(false);
 				st.playSound("ItemSound.quest_finish");

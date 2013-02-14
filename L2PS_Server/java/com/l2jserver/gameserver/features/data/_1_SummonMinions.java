@@ -30,7 +30,6 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.gameserver.network.serverpackets.NpcSay;
 
 /**
  * Summon Minions AI. Based on work of Slyce.
@@ -82,6 +81,15 @@ public class _1_SummonMinions extends AbstractNpcAI
 		// Tanta Lizardman Summoner
 		MINIONS.put(22774, Arrays.asList(22768, 22768));
 	}
+	
+	// Timak Orc Troop Messages
+	private static final NpcStringId[] ATTACK_LEADER_MSG =
+	{
+		NpcStringId.FORCES_OF_DARKNESS_FOLLOW_ME,
+		NpcStringId.DESTROY_THE_ENEMY_MY_BROTHERS,
+		NpcStringId.SHOW_YOURSELVES,
+		NpcStringId.COME_OUT_YOU_CHILDREN_OF_DARKNESS
+	};
 	
 	private _1_SummonMinions(String name, String descr)
 	{
@@ -196,14 +204,11 @@ public class _1_SummonMinions extends AbstractNpcAI
 					}
 					else
 					{
+						broadcastNpcSay(npc, Say2.NPC_ALL, ATTACK_LEADER_MSG[getRandom(ATTACK_LEADER_MSG.length)]);
 						for (int val : MINIONS.get(npcId))
 						{
 							this.addSpawn(val, (npc.getX() + getRandom(-100, 100)), (npc.getY() + getRandom(-100, 100)), npc.getZ(), 0, false, 0);
 						}
-					}
-					if (npcId == 20767)
-					{
-						npc.broadcastPacket(new NpcSay(npcObjId, Say2.NPC_ALL, npcId, NpcStringId.COME_OUT_YOU_CHILDREN_OF_DARKNESS));
 					}
 					break;
 				}
@@ -228,6 +233,6 @@ public class _1_SummonMinions extends AbstractNpcAI
 	
 	public static void main(String[] args)
 	{
-		new _1_SummonMinions(_1_SummonMinions.class.getSimpleName(), "data");
+		new _1_SummonMinions(_1_SummonMinions.class.getSimpleName(), "ai");
 	}
 }

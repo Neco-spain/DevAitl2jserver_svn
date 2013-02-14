@@ -3490,4 +3490,17 @@ public class Quest extends ManagedScript
 		}
 		return false;
 	}
+	
+	public boolean hasAtLeastOneQuestItem(L2PcInstance player, int... itemIds)
+	{
+		final PcInventory inv = player.getInventory();
+		for (int itemId : itemIds)
+		{
+			if (inv.getItemByItemId(itemId) != null)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -206,7 +206,8 @@ public class Q00406_PathToElvenKnight extends Quest
 				String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 				if (isFinished.equalsIgnoreCase(""))
 				{
-					st.addExpAndSp(228064, 3520);
+					st.addExpAndSp(228064, 21055);
+					st.giveItems(57, 81900);
 				}
 				if (st.getQuestItemsCount(ELVEN_KNIGHT_BROOCH) == 0)
 				{

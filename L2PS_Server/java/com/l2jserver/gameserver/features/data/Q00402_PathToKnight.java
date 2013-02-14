@@ -369,7 +369,8 @@ public class Q00402_PathToKnight extends Quest
 					st.takeItems(item, -1);
 				}
 				st.takeItems(MARK_OF_ESQUIRE, -1);
-				st.addExpAndSp(3200, 2450);
+				st.addExpAndSp(228064, 21055);
+				st.giveItems(57, 81900);
 				st.giveItems(SWORD_OF_RITUAL, 1);
 				st.exitQuest(false);
 				st.playSound("ItemSound.quest_finish");
@@ -389,7 +390,8 @@ public class Q00402_PathToKnight extends Quest
 					st.takeItems(item, -1);
 				}
 				st.takeItems(MARK_OF_ESQUIRE, -1);
-				st.addExpAndSp(3200, 2450);
+				st.addExpAndSp(228064, 21055);
+				st.giveItems(57, 81900);
 				st.giveItems(SWORD_OF_RITUAL, 1);
 				st.exitQuest(false);
 				st.playSound("ItemSound.quest_finish");
@@ -469,7 +471,8 @@ public class Q00402_PathToKnight extends Quest
 						st.takeItems(item, -1);
 					}
 					st.takeItems(MARK_OF_ESQUIRE, -1);
-					st.addExpAndSp(3200, 2450);
+					st.addExpAndSp(228064, 21055);
+					st.giveItems(57, 81900);
 					st.giveItems(SWORD_OF_RITUAL, 1);
 					st.exitQuest(false);
 					st.playSound("ItemSound.quest_finish");

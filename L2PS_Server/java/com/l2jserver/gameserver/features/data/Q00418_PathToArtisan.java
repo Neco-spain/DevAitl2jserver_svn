@@ -158,7 +158,7 @@ public class Q00418_PathToArtisan extends Quest
 				String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 				if (isFinished.equalsIgnoreCase(""))
 				{
-					st.addExpAndSp(160267, 3670);
+					st.addExpAndSp(228064, 21055);
 				}
 				st.giveItems(PASS_FINAL, 1);
 				st.saveGlobalQuestVar("1ClassQuestFinished", "1");
@@ -184,7 +184,8 @@ public class Q00418_PathToArtisan extends Quest
 				st.takeItems(PASS_1ST, 1);
 				st.takeItems(PASS_2ND, 1);
 				st.takeItems(SECRET_BOX2, 1);
-				st.addExpAndSp(228064, 3670);
+				st.addExpAndSp(228064, 21055);
+				st.giveItems(57, 81900);
 				st.giveItems(PASS_FINAL, 1);
 				st.exitQuest(false);
 				st.playSound("ItemSound.quest_finish");

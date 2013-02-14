@@ -16,6 +16,7 @@ package npc.Teleports.Warpgate;
 
 import npc.AbstractNpcAI;
 
+import com.l2jserver.Config;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.features.data.Q00130_PathToHellbound;
 import com.l2jserver.gameserver.instancemanager.HellboundManager;
@@ -47,6 +48,11 @@ public class Warpgate extends AbstractNpcAI
 	
 	private static final boolean canEnter(L2PcInstance player)
 	{
+		if (Config.ENTER_HELLBOUND_WITHOUT_QUEST)
+		{
+			return true;
+		}
+		
 		if (player.isFlying())
 		{
 			return false;

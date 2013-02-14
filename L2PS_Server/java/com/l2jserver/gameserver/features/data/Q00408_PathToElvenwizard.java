@@ -344,7 +344,8 @@ public class Q00408_PathToElvenwizard extends Quest
 			String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 			if (isFinished.equalsIgnoreCase(""))
 			{
-				st.addExpAndSp(228064, 3210);
+				st.addExpAndSp(228064, 21055);
+				st.giveItems(57, 81900);
 			}
 			if (st.getQuestItemsCount(ETERNITY_DIAMOND) == 0)
 			{

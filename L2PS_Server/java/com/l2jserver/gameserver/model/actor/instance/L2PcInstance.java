@@ -5891,13 +5891,10 @@ public final class L2PcInstance extends L2Playable
 			L2PcInstance pk = killer.getActingPlayer();
 			if (pk != null)
 			{
-				if (pk != null)
+				if (Interface.isParticipating(getObjectId()) && Interface.isParticipating(pk.getObjectId()))
 				{
-					if (Interface.isParticipating(getObjectId()) && Interface.isParticipating(pk.getObjectId()))
-					{
-						Interface.onKill(getObjectId(), pk.getObjectId());
-						Interface.onDie(getObjectId(), pk.getObjectId());
-					}
+					Interface.onKill(getObjectId(), pk.getObjectId());
+					Interface.onDie(getObjectId(), pk.getObjectId());
 				}
 			}
 			if (L2Event.isParticipant(pk) && (pk != null))
@@ -6323,6 +6320,14 @@ public final class L2PcInstance extends L2Playable
 						addSkill(SkillTable.getInstance().getInfo(Config.PVP_SKILLS_LIST.get(i), SkillTable.getInstance().getMaxLevel(Config.PVP_SKILLS_LIST.get(i))), true);
 						break;
 					}
+				}
+			}
+			
+			if (Config.ALLOW_PVP_REWARD)
+			{
+				if (getPvpKills() > 0)
+				{
+					addItem("Reward for PvP kill:", Config.GIVE_ITEM_FOR_PVP_KILL, Config.GIVE_ITEM__COUNT_FOR_PVP_KILL, this, true);
 				}
 			}
 			

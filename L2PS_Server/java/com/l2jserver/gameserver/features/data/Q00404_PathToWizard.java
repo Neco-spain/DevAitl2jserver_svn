@@ -307,7 +307,8 @@ public class Q00404_PathToWizard extends Quest
 			st.takeItems(WIND_BANGEL, st.getQuestItemsCount(WIND_BANGEL));
 			st.takeItems(WATER_NECKLACE, st.getQuestItemsCount(WATER_NECKLACE));
 			st.takeItems(EARTH_RING, st.getQuestItemsCount(EARTH_RING));
-			st.addExpAndSp(228064, 3520);
+			st.addExpAndSp(228064, 21055);
+			st.giveItems(57, 81900);
 			if (st.getQuestItemsCount(BEAD_OF_SEASON) == 0)
 			{
 				st.giveItems(BEAD_OF_SEASON, 1);

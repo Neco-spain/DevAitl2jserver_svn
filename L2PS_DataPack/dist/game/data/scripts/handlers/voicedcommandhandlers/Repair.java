@@ -20,8 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.L2DatabaseFactory;
+import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.handler.IVoicedCommandHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
@@ -34,42 +34,47 @@ public class Repair implements IVoicedCommandHandler
 {
 	static final Logger _log = Logger.getLogger(Repair.class.getName());
 	
-	private static final String[]	 _voicedCommands	=
-		{ 
-		"repair", 
+	private static final String[] _voicedCommands =
+	{
+		"repair",
 		"startrepair",
 		"menu"
-		};
+	};
 	
+	@Override
 	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String target)
-	{		
-		if (activeChar==null)
-			return false;
-		
-		String repairChar=null;
-		
-		try		
+	{
+		if (activeChar == null)
 		{
-			if(target != null)
-				if(target.length() > 1)
-				  {
-				   String[] cmdParams = target.split(" ");
-				   repairChar=cmdParams[0];
-				  }
+			return false;
+		}
+		
+		String repairChar = null;
+		
+		try
+		{
+			if (target != null)
+			{
+				if (target.length() > 1)
+				{
+					String[] cmdParams = target.split(" ");
+					repairChar = cmdParams[0];
+				}
+			}
 		}
 		catch (Exception e)
 		{
 			repairChar = null;
-		}		
-				
+		}
+		
 		// Send activeChar HTML page
 		if (command.startsWith("repair"))
 		{
 			String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair.htm");
 			NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
-			npcHtmlMessage.setHtml(htmContent);		
+			npcHtmlMessage.setHtml(htmContent);
 			npcHtmlMessage.replace("%acc_chars%", getCharList(activeChar));
-			activeChar.sendPacket(npcHtmlMessage);	
+			activeChar.sendPacket(npcHtmlMessage);
 			return true;
 		}
 		// Send activeChar HTML page
@@ -77,58 +82,58 @@ public class Repair implements IVoicedCommandHandler
 		{
 			String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/menu/menu.htm");
 			NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
-			npcHtmlMessage.setHtml(htmContent);		
-			activeChar.sendPacket(npcHtmlMessage);	
+			npcHtmlMessage.setHtml(htmContent);
+			activeChar.sendPacket(npcHtmlMessage);
 			return true;
-		}    
+		}
 		// Command for enter repairFunction from html
 		if (command.startsWith("startrepair") && (repairChar != null))
 		{
-			//_log.warning("Repair Attempt: Character " + repairChar);
-				if (checkAcc(activeChar,repairChar))
+			// _log.warning("Repair Attempt: Character " + repairChar);
+			if (checkAcc(activeChar, repairChar))
+			{
+				if (checkChar(activeChar, repairChar))
 				{
-					if (checkChar(activeChar,repairChar))
-					{
-						String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-self.htm");
-						NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
-						npcHtmlMessage.setHtml(htmContent);
-						activeChar.sendPacket(npcHtmlMessage);
-						return false;
-					}
-					else if (checkJail(activeChar,repairChar))
-					{
-						String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-jail.htm");
-						NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
-						npcHtmlMessage.setHtml(htmContent);
-						activeChar.sendPacket(npcHtmlMessage);	
-						return false;
-					}
-					else
-					{
-						repairBadCharacter(repairChar);
-						String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-done.htm");
-						NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
-						npcHtmlMessage.setHtml(htmContent);
-						activeChar.sendPacket(npcHtmlMessage);
-						return true;
-					}
-				}
-				else
-				{
-					String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-error.htm");
+					String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-self.htm");
 					NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
 					npcHtmlMessage.setHtml(htmContent);
 					activeChar.sendPacket(npcHtmlMessage);
 					return false;
 				}
+				else if (checkJail(activeChar, repairChar))
+				{
+					String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-jail.htm");
+					NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
+					npcHtmlMessage.setHtml(htmContent);
+					activeChar.sendPacket(npcHtmlMessage);
+					return false;
+				}
+				else
+				{
+					repairBadCharacter(repairChar);
+					String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-done.htm");
+					NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
+					npcHtmlMessage.setHtml(htmContent);
+					activeChar.sendPacket(npcHtmlMessage);
+					return true;
+				}
+			}
+			else
+			{
+				String htmContent = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/repair/repair-error.htm");
+				NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(5);
+				npcHtmlMessage.setHtml(htmContent);
+				activeChar.sendPacket(npcHtmlMessage);
+				return false;
+			}
 		}
 		return false;
 	}
 	
 	private String getCharList(L2PcInstance activeChar)
 	{
-		String result="";
-		String repCharAcc=activeChar.getAccountName();
+		String result = "";
+		String repCharAcc = activeChar.getAccountName();
 		Connection con = null;
 		try
 		{
@@ -139,9 +144,11 @@ public class Repair implements IVoicedCommandHandler
 			while (rset.next())
 			{
 				if (activeChar.getName().compareTo(rset.getString(1)) != 0)
-					result += rset.getString(1)+";";
+				{
+					result += rset.getString(1) + ";";
+				}
 			}
-			//_log.warning("Repair Attempt: Output Result for searching characters on account:"+result);
+			// _log.warning("Repair Attempt: Output Result for searching characters on account:"+result);
 			rset.close();
 			statement.close();
 		}
@@ -155,20 +162,22 @@ public class Repair implements IVoicedCommandHandler
 			try
 			{
 				if (con != null)
+				{
 					con.close();
+				}
 			}
 			catch (SQLException e)
 			{
 				e.printStackTrace();
 			}
 		}
-		return result;	
+		return result;
 	}
 	
-	private boolean checkAcc(L2PcInstance activeChar,String repairChar)
+	private boolean checkAcc(L2PcInstance activeChar, String repairChar)
 	{
-		boolean result=false;
-		String repCharAcc="";
+		boolean result = false;
+		String repCharAcc = "";
 		Connection con = null;
 		try
 		{
@@ -182,7 +191,7 @@ public class Repair implements IVoicedCommandHandler
 			}
 			rset.close();
 			statement.close();
-
+			
 		}
 		catch (SQLException e)
 		{
@@ -194,21 +203,25 @@ public class Repair implements IVoicedCommandHandler
 			try
 			{
 				if (con != null)
+				{
 					con.close();
+				}
 			}
 			catch (SQLException e)
 			{
 				e.printStackTrace();
 			}
 		}
-		if (activeChar.getAccountName().compareTo(repCharAcc)==0)
-			result=true;
+		if (activeChar.getAccountName().compareTo(repCharAcc) == 0)
+		{
+			result = true;
+		}
 		return result;
 	}
-
-	private boolean checkJail(L2PcInstance activeChar,String repairChar)
+	
+	private boolean checkJail(L2PcInstance activeChar, String repairChar)
 	{
-		boolean result=false;
+		boolean result = false;
 		int repCharJail = 0;
 		Connection con = null;
 		try
@@ -223,7 +236,7 @@ public class Repair implements IVoicedCommandHandler
 			}
 			rset.close();
 			statement.close();
-
+			
 		}
 		catch (SQLException e)
 		{
@@ -235,38 +248,44 @@ public class Repair implements IVoicedCommandHandler
 			try
 			{
 				if (con != null)
+				{
 					con.close();
+				}
 			}
 			catch (SQLException e)
 			{
 				e.printStackTrace();
 			}
 		}
-		if (repCharJail > 1) // 0 norm, 1 chat ban, 2 jail, 3....
-			result=true;
+		if (repCharJail > 1)
+		{
+			result = true;
+		}
 		return result;
 	}
-
-	private boolean checkChar(L2PcInstance activeChar,String repairChar)
+	
+	private boolean checkChar(L2PcInstance activeChar, String repairChar)
 	{
-		boolean result=false;
-		if (activeChar.getName().compareTo(repairChar)==0)
-			result=true;
+		boolean result = false;
+		if (activeChar.getName().compareTo(repairChar) == 0)
+		{
+			result = true;
+		}
 		return result;
 	}
-
+	
 	private void repairBadCharacter(String charName)
 	{
 		Connection con = null;
 		try
 		{
 			con = L2DatabaseFactory.getInstance().getConnection();
-
+			
 			PreparedStatement statement;
 			statement = con.prepareStatement("SELECT charId FROM characters WHERE char_name=?");
 			statement.setString(1, charName);
 			ResultSet rset = statement.executeQuery();
-
+			
 			int objId = 0;
 			if (rset.next())
 			{
@@ -301,7 +320,9 @@ public class Repair implements IVoicedCommandHandler
 			try
 			{
 				if (con != null)
+				{
 					con.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -309,7 +330,8 @@ public class Repair implements IVoicedCommandHandler
 			}
 		}
 	}
-
+	
+	@Override
 	public String[] getVoicedCommandList()
 	{
 		return _voicedCommands;

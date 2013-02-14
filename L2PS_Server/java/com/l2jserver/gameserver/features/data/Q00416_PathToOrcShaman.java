@@ -217,7 +217,7 @@ public class Q00416_PathToOrcShaman extends Quest
 			String isFinished = st.getGlobalQuestVar("1ClassQuestFinished");
 			if (isFinished.equalsIgnoreCase(""))
 			{
-				st.addExpAndSp(295862, 3440);
+				st.addExpAndSp(228064, 21055);
 			}
 			st.giveItems(MASK_OF_MEDIUM, 1);
 			st.saveGlobalQuestVar("1ClassQuestFinished", "1");
@@ -280,8 +280,8 @@ public class Q00416_PathToOrcShaman extends Quest
 		else if ((npcId == MOIRA) && (cond == 21))
 		{
 			st.giveItems(MASK_OF_MEDIUM, 1);
-			st.giveReward(57, 81900);
-			st.addExpAndSp(295862, 18194);
+			st.addExpAndSp(228064, 21055);
+			st.giveItems(57, 81900);
 			talker.sendPacket(new SocialAction(talker.getObjectId(), 3));
 			talker.sendPacket(new SocialAction(talker.getObjectId(), 15));
 			st.set("cond", "0");
