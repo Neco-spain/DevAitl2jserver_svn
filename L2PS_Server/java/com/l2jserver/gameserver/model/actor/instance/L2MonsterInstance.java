@@ -35,10 +35,11 @@ import com.l2jserver.util.Rnd;
 public class L2MonsterInstance extends L2Attackable
 {
 	protected boolean _enableMinions = true;
-	private int _aggroRangeOverride = 0;
+	protected int _aggroRangeOverride = 0;
 	private boolean _canAgroWhileMoving = false;
 	private L2MonsterInstance _master = null;
 	private MinionList _minionList = null;
+	private boolean _isPassive = false;
 	
 	protected ScheduledFuture<?> _maintenanceTask = null;
 	
@@ -235,7 +236,16 @@ public class L2MonsterInstance extends L2Attackable
 	{
 		return true;
 	}
-
+	
+	/**
+	 * @return true if this L2MonsterInstance (or its master) is registered in WalkingManager
+	 */
+	@Override
+	public boolean isWalker()
+	{
+		return ((getLeader() == null) ? super.isWalker() : getLeader().isWalker());
+	}
+	
 	public void setIsAggresiveOverride(int aggroR)
 	{
 		_aggroRangeOverride = aggroR;
@@ -244,14 +254,30 @@ public class L2MonsterInstance extends L2Attackable
 	public void setClanOverride(String newClan)
 	{
 	}
-
-	public final boolean canAgroWhileMoving() 
+	
+	public final boolean canAgroWhileMoving()
 	{
 		return _canAgroWhileMoving;
 	}
-
-	public final void setCanAgroWhileMoving() 
+	
+	public final void setCanAgroWhileMoving()
 	{
 		_canAgroWhileMoving = true;
+	}
+	
+	@Override
+	public boolean giveRaidCurse()
+	{
+		return (isRaidMinion() && (getLeader() != null)) ? getLeader().giveRaidCurse() : super.giveRaidCurse();
+	}
+	
+	public void setPassive(boolean state)
+	{
+		_isPassive = state;
+	}
+	
+	public boolean isPassive()
+	{
+		return _isPassive;
 	}
 }

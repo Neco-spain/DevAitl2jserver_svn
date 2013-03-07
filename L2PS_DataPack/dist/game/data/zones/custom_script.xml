@@ -795,5 +795,24 @@
 		<stat name="targetClass" val="L2Playable"/>
 		<node X="96795" Y="85493"/>
 	</zone>
-
+	<zone name="a" id="200032" type="ScriptZone" shape="NPoly" minZ="-15590" maxZ="-15090">
+		<node X="-177965" Y="208655" />
+		<node X="-177964" Y="210478" />
+		<node X="-178652" Y="211086" />
+		<node X="-180438" Y="211085" />
+		<node X="-181117" Y="210460" />
+		<node X="-181116" Y="208656" />
+		<node X="-180437" Y="208028" />
+		<node X="-178666" Y="208025" />
+	</zone>
+	<zone name="z" id="200033" type="ScriptZone" shape="NPoly" minZ="-16233" maxZ="-6233">
+		<node X="-182265" Y="204880" />
+		<node X="-171874" Y="204865" />
+		<node X="-171884" Y="220348" />
+		<node X="-188714" Y="220333" />
+		<node X="-188581" Y="204678" />
+		<node X="-184537" Y="204665" />
+		<node X="-184536" Y="206967" />
+		<node X="-182259" Y="206962" />
+	</zone>
 </list>

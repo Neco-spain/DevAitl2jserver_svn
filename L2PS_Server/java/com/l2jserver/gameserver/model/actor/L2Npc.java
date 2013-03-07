@@ -146,7 +146,7 @@ public class L2Npc extends L2Character
 	private int _currentEnchant; // normally this shouldn't change from the template, but there exist exceptions
 	private double _currentCollisionHeight; // used for npc grow effect skills
 	private double _currentCollisionRadius; // used for npc grow effect skills
-	
+	private boolean _blocked;
 	private int _soulshotamount = 0;
 	private int _spiritshotamount = 0;
 	private int _displayEffect = 0;
@@ -1979,5 +1979,20 @@ public class L2Npc extends L2Character
 				}
 			}
 		}
+	}
+	
+	public void block()
+	{
+		_blocked = true;
+	}
+	
+	public void unblock()
+	{
+		_blocked = false;
+	}
+	
+	public boolean isBlocked()
+	{
+		return _blocked;
 	}
 }

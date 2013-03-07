@@ -51,9 +51,14 @@ public class L2PeaceZone extends L2ZoneType
 			}
 		}
 		
+		L2PcInstance player = character.getActingPlayer();
 		if (Config.PEACE_ZONE_MODE != 2)
 		{
 			character.setInsideZone(ZoneId.PEACE, true);
+			if (player != null)
+			{
+				player.pauseAdventTask();
+			}
 		}
 		
 		if (!getAllowStore())

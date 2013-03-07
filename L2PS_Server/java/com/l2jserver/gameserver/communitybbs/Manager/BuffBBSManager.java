@@ -21,12 +21,10 @@ import java.sql.SQLException;
 
 import com.l2jserver.Config;
 import com.l2jserver.L2DatabaseFactory;
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2Effect;
 import com.l2jserver.gameserver.model.skills.L2Skill;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 public class BuffBBSManager extends BaseBBSManager
 {
@@ -185,7 +183,7 @@ public class BuffBBSManager extends BaseBBSManager
 				}
 				else
 				{
-					activeChar.sendPacket(new ExShowScreenMessage(((new CustomMessage("BUFFER.BUFF_NOT_ITEM", activeChar.getLang())).toString()), 3000));
+					activeChar.sendMessage("You don't have adena for using service.");
 				}
 				continue;
 			}
@@ -233,7 +231,7 @@ public class BuffBBSManager extends BaseBBSManager
 				}
 				else
 				{
-					activeChar.sendPacket(new ExShowScreenMessage(((new CustomMessage("BUFFER.BUFF_NOT_ITEM", activeChar.getLang())).toString()), 3000));
+					activeChar.sendMessage("You don't have adena for using service.");
 				}
 				continue;
 			}
@@ -281,7 +279,7 @@ public class BuffBBSManager extends BaseBBSManager
 								}
 								else
 								{
-									activeChar.sendPacket(new ExShowScreenMessage(((new CustomMessage("BUFFER.BUFF_NOT_ITEM", activeChar.getLang())).toString()), 3000));
+									activeChar.sendMessage("You don't have adena for using service.");
 								}
 							}
 							else
@@ -316,7 +314,7 @@ public class BuffBBSManager extends BaseBBSManager
 							}
 							else
 							{
-								activeChar.sendPacket(new ExShowScreenMessage(((new CustomMessage("BUFFER.BUFF_NOT_ITEM", activeChar.getLang())).toString()), 3000));
+								activeChar.sendMessage("You don't have adena for using service.");
 							}
 						}
 						else
@@ -425,7 +423,7 @@ public class BuffBBSManager extends BaseBBSManager
 			}
 			else
 			{
-				activeChar.sendPacket(new ExShowScreenMessage(((new CustomMessage("BUFFER.BUFF_NOT_ITEM", activeChar.getLang())).toString()), 3000));
+				activeChar.sendMessage("You don't have adena for using service.");
 			}
 		}
 		else if (!petbuff)

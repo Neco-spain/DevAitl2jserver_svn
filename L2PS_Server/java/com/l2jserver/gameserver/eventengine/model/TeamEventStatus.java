@@ -23,8 +23,8 @@ import com.l2jserver.gameserver.eventengine.container.EventContainer;
 
 public class TeamEventStatus extends EventStatus
 {
-	private List<EventPlayer> team1;
-	private List<EventPlayer> team2;
+	private final List<EventPlayer> team1;
+	private final List<EventPlayer> team2;
 	
 	public TeamEventStatus(Integer eventContainerId)
 	{
@@ -39,13 +39,17 @@ public class TeamEventStatus extends EventStatus
 		sb.clear();
 		
 		for (EventPlayer player : event.getPlayersOfTeam(1))
+		{
 			team1.add(player);
+		}
 		
 		Collections.sort(team1);
 		Collections.reverse(team1);
 		
 		for (EventPlayer player : event.getPlayersOfTeam(2))
+		{
 			team2.add(player);
+		}
 		
 		Collections.sort(team2);
 		Collections.reverse(team2);

@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import com.l2jserver.L2DatabaseFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.taskmanager.tasks.SoIStageUpdater;
 import com.l2jserver.gameserver.taskmanager.tasks.TaskAdvent;
 import com.l2jserver.gameserver.taskmanager.tasks.TaskBirthday;
 import com.l2jserver.gameserver.taskmanager.tasks.TaskCleanUp;
@@ -181,6 +182,7 @@ public final class TaskManager
 	
 	private void initializate()
 	{
+		registerTask(new SoIStageUpdater());
 		registerTask(new TaskBirthday());
 		registerTask(new TaskCleanUp());
 		registerTask(new TaskDailySkillReuseClean());

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
@@ -24,12 +24,16 @@ public class ServerInfo
 	{
 		_log.info("--------------------------STOPPED LOADING SERVER-------------------------------");
 		_log.info("-------------------------------------------------------------------------------");
-		_log.info("                             พัฒนาโดยทีม L2JTH                                      ");
+		_log.info("                          Developed by L2PS Team                               ");
 		_log.info("                           Client: High Five                                   ");
-		_log.info("               Copyright 2012-2013 (hi5) L2JTH Developer Team                  ");
+		_log.info("               Copyright 2012-2013 (hi5) L2PS Developer Team                   ");
 		_log.info("-------------------------------------------------------------------------------");
-		_log.info("                            ติดตามอัปเดทข่าวสารการพัฒนาได้ที่                                                                                                 ");
-		_log.info("                          http://www.sv-games.com                              ");
+		_log.info("                                 Website                                       ");
+		_log.info("                          http://l2jpsproject.eu                               ");
+		_log.info("-------------------------------------------------------------------------------");
+		_log.info("                               MaxCheaters topic                               ");
+		_log.info("            http://maxcheaters.com/forum/index.php?topic=252860.90c            ");
+		_log.info("                          Please Support on forum :P                           ");
 		_log.info("-------------------------------------------------------------------------------");
 		_log.info("--------------------------CONTINUE LOADING SERVER------------------------------");
 	}

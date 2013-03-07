@@ -37,7 +37,9 @@ import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.NpcTable;
+import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.idfactory.IdFactory;
+import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.instancemanager.ZoneManager;
 import com.l2jserver.gameserver.model.IL2Procedure;
@@ -53,6 +55,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2TrapInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
+import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.itemcontainer.PcInventory;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -81,7 +84,7 @@ import com.l2jserver.util.Util;
  */
 public class Quest extends ManagedScript
 {
-	protected static final Logger _log = Logger.getLogger(Quest.class.getName());
+	public static final Logger _log = Logger.getLogger(Quest.class.getName());
 	private static Map<String, Quest> _allEventsS = new HashMap<>();
 	private final Map<String, List<QuestTimer>> _allEventTimers = new L2FastMap<>(true);
 	private final Set<Integer> _questInvolvedNpcs = new HashSet<>();
@@ -213,7 +216,6 @@ public class Quest extends ManagedScript
 	
 	/**
 	 * Scripts written in Jython will have trouble with protected, as Jython only knows private and public.<br>
-	 * Zoey76: TODO: Same as we register NPCs with addTalkId(..) we can register this items in Jython scripts using registerQuestItems(..).
 	 */
 	public int[] questItemIds = null;
 	
@@ -548,26 +550,19 @@ public class Quest extends ManagedScript
 	
 	// These are methods to call within the core to call the quest events.
 	
-	/**
-	 * @param npc the NPC that was attacked
-	 * @param attacker the attacking player
-	 * @param damage the damage dealt to the NPC by the player
-	 * @param isPet if {@code true}, the attack was actually made by the player's pet
-	 * @param skill the skill used to attack the NPC (can be null)
-	 * @return {@code false} if there was an error or the message was sent, {@code true} otherwise
-	 */
-	public final boolean notifyAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isPet, L2Skill skill)
+	public final void notifyAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, L2Skill skill)
 	{
 		String res = null;
 		try
 		{
-			res = onAttack(npc, attacker, damage, isPet, skill);
+			res = onAttack(npc, attacker, damage, isSummon, skill);
 		}
 		catch (Exception e)
 		{
-			return showError(attacker, e);
+			showError(attacker, e);
+			return;
 		}
-		return showResult(attacker, res);
+		showResult(attacker, res);
 	}
 	
 	/**
@@ -2308,6 +2303,11 @@ public class Quest extends ManagedScript
 		return getRandomPartyMember(player, "cond", value);
 	}
 	
+	public L2PcInstance getRandomPartyMember(L2PcInstance player, int cond)
+	{
+		return getRandomPartyMember(player, "cond", String.valueOf(cond));
+	}
+	
 	/**
 	 * Auxiliary function for party quests.<br>
 	 * Note: This function is only here because of how commonly it may be used by quest developers.<br>
@@ -3502,5 +3502,88 @@ public class Quest extends ManagedScript
 			}
 		}
 		return false;
+	}
+	
+	public L2Npc spawnNpc(int npcId, Location loc, int heading, int instId)
+	{
+		L2NpcTemplate npcTemplate = NpcTable.getInstance().getTemplate(npcId);
+		Instance inst = InstanceManager.getInstance().getInstance(instId);
+		try
+		{
+			L2Spawn npcSpawn = new L2Spawn(npcTemplate);
+			npcSpawn.setLocx(loc.getX());
+			npcSpawn.setLocy(loc.getY());
+			npcSpawn.setLocz(loc.getZ());
+			npcSpawn.setHeading(loc.getHeading());
+			npcSpawn.setAmount(1);
+			npcSpawn.setInstanceId(instId);
+			SpawnTable.getInstance().addNewSpawn(npcSpawn, false);
+			L2Npc npc = npcSpawn.spawnOne(false);
+			inst.addNpc(npc);
+			return npc;
+		}
+		catch (Exception ignored)
+		{
+		}
+		return null;
+	}
+	
+	public String onKillByMob(L2Npc npc, L2Npc killer)
+	{
+		return null;
+	}
+	
+	public List<L2PcInstance> getPartyMembers(L2PcInstance player, L2Npc npc, String var, String value)
+	{
+		ArrayList<L2PcInstance> candidates = new ArrayList<>();
+		
+		if ((player != null) && (player.isInParty()))
+		{
+			for (L2PcInstance partyMember : player.getParty().getMembers())
+			{
+				if (partyMember != null)
+				{
+					if (checkPlayerCondition(partyMember, npc, var, value) != null)
+					{
+						candidates.add(partyMember);
+					}
+				}
+			}
+		}
+		else if (checkPlayerCondition(player, npc, var, value) != null)
+		{
+			candidates.add(player);
+		}
+		return candidates;
+	}
+	
+	public QuestState checkPlayerCondition(L2PcInstance player, L2Npc npc, String var, String value)
+	{
+		if (player == null)
+		{
+			return null;
+		}
+		
+		QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		
+		if ((st.get(var) == null) || (!value.equalsIgnoreCase(st.get(var))))
+		{
+			return null;
+		}
+		
+		if (npc == null)
+		{
+			return null;
+		}
+		
+		if (!player.isInsideRadius(npc, Config.ALT_PARTY_RANGE, true, false))
+		{
+			return null;
+		}
+		return st;
 	}
 }

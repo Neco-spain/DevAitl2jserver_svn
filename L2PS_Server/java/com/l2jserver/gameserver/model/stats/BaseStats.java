@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 
 /**
  * @author DS
@@ -97,7 +98,14 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			return STRbonus[actor.getSTR()];
+			if ((actor instanceof L2MonsterInstance) && Config.MOBS_STATS_BONUS)
+			{
+				return 1;
+			}
+			else
+			{
+				return STRbonus[actor.getSTR()];
+			}
 		}
 	}
 	
@@ -106,7 +114,14 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			return INTbonus[actor.getINT()];
+			if ((actor instanceof L2MonsterInstance) && Config.MOBS_STATS_BONUS)
+			{
+				return 1;
+			}
+			else
+			{
+				return INTbonus[actor.getINT()];
+			}
 		}
 	}
 	
@@ -115,7 +130,14 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			return DEXbonus[actor.getDEX()];
+			if ((actor instanceof L2MonsterInstance) && Config.MOBS_STATS_BONUS)
+			{
+				return 1;
+			}
+			else
+			{
+				return DEXbonus[actor.getDEX()];
+			}
 		}
 	}
 	
@@ -124,7 +146,14 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			return WITbonus[actor.getWIT()];
+			if ((actor instanceof L2MonsterInstance) && Config.MOBS_STATS_BONUS)
+			{
+				return 1;
+			}
+			else
+			{
+				return WITbonus[actor.getWIT()];
+			}
 		}
 	}
 	
@@ -133,7 +162,14 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			return CONbonus[actor.getCON()];
+			if ((actor instanceof L2MonsterInstance) && Config.MOBS_STATS_BONUS)
+			{
+				return 1;
+			}
+			else
+			{
+				return CONbonus[actor.getCON()];
+			}
 		}
 	}
 	
@@ -142,7 +178,14 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			return MENbonus[actor.getMEN()];
+			if ((actor instanceof L2MonsterInstance) && Config.MOBS_STATS_BONUS)
+			{
+				return 1;
+			}
+			else
+			{
+				return MENbonus[actor.getMEN()];
+			}
 		}
 	}
 	

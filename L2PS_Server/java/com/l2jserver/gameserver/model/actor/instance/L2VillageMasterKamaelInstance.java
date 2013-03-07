@@ -52,14 +52,12 @@ public final class L2VillageMasterKamaelInstance extends L2VillageMasterInstance
 		{
 			return true;
 		}
-		// TODO: Quests
-		QuestState qs = player.getQuestState("234_FatesWhisper");
+		QuestState qs = player.getQuestState("Q00234_FatesWhisper");
 		if ((qs == null) || !qs.isCompleted())
 		{
 			return false;
 		}
-		// TODO: Quests
-		qs = player.getQuestState("236_SeedsOfChaos");
+		qs = player.getQuestState("Q00236_SeedsOfChaos");
 		if ((qs == null) || !qs.isCompleted())
 		{
 			return false;

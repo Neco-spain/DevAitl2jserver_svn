@@ -218,7 +218,15 @@ public class Q00455_WingsOfSand extends Quest
 			chance = getRandom(1000);
 			if (chance <= 250)
 			{
-				st.giveItems(getRandom(15660, 15691), 1); // Armor Parts
+				if (chance <= 15)
+				{
+					st.giveItems(15691, 1); // Sealed Vesper Sigil Piece
+				}
+				else
+				{
+					st.giveItems(getRandom(15660, 15675), 1); // Armor Parts
+				}
+				
 			}
 			else if ((chance > 250) && (chance <= 500))
 			{

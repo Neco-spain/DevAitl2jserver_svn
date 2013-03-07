@@ -22,7 +22,6 @@ import java.util.StringTokenizer;
 import javolution.text.TextBuilder;
 
 import com.l2jserver.L2DatabaseFactory;
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
@@ -31,7 +30,7 @@ import com.l2jserver.gameserver.network.serverpackets.ShowBoard;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 /**
- * Created by LordWinter 25.02.2011 Fixed by L2J Eternity-World
+ * Created by LordWinter Fixed by RobikBobik
  */
 public class TeleportBBSManager extends BaseBBSManager
 {
@@ -108,7 +107,7 @@ public class TeleportBBSManager extends BaseBBSManager
 	{
 		if (activeChar.isDead() || activeChar.isAlikeDead() || activeChar.isCastingNow() || activeChar.isInCombat() || activeChar.isAttackingNow() || activeChar.isInOlympiadMode() || activeChar.isInJail() || activeChar.isFlying() || (activeChar.getKarma() > 0) || activeChar.isInDuel())
 		{
-			activeChar.sendMessage((new CustomMessage("TeleportBBS.MSG_1", activeChar.getLang())).toString());
+			activeChar.sendMessage("Teleportation is not possible now.");
 			return;
 		}
 		
@@ -117,7 +116,7 @@ public class TeleportBBSManager extends BaseBBSManager
 			activeChar.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.YOU_NOT_ENOUGH_ADENA));
 			return;
 		}
-		if (priceTp > 0)
+		else if (priceTp > 0)
 		{
 			activeChar.reduceAdena("Teleport", priceTp, activeChar, true);
 		}
@@ -185,25 +184,25 @@ public class TeleportBBSManager extends BaseBBSManager
 	{
 		if (TpNameAdd.equals("") || TpNameAdd.equals(null))
 		{
-			activeChar.sendMessage((new CustomMessage("TeleportBBS.MSG_5", activeChar.getLang())).toString());
+			activeChar.sendMessage("You didn't enter a tab name.");
 			return;
 		}
 		
 		if (activeChar.isDead() || activeChar.isAlikeDead() || activeChar.isCastingNow() || activeChar.isAttackingNow())
 		{
-			activeChar.sendMessage((new CustomMessage("TeleportBBS.MSG_2", activeChar.getLang())).toString());
+			activeChar.sendMessage("You can't to save a tab in your status.");
 			return;
 		}
 		
 		if (activeChar.isInCombat())
 		{
-			activeChar.sendMessage((new CustomMessage("TeleportBBS.MSG_3", activeChar.getLang())).toString());
+			activeChar.sendMessage("You can't to save a tab in combat.");
 			return;
 		}
 		
 		if (activeChar.isInsideZone(ZoneId.SWAMP) || activeChar.isInsideZone(ZoneId.LANDING) || activeChar.isInsideZone(ZoneId.MONSTER_TRACK) || activeChar.isInsideZone(ZoneId.CASTLE) || activeChar.isInsideZone(ZoneId.MOTHER_TREE) || activeChar.isInsideZone(ZoneId.SCRIPT) || activeChar.isInsideZone(ZoneId.JAIL) || activeChar.isFlying())
 		{
-			activeChar.sendMessage((new CustomMessage("TeleportBBS.MSG_4", activeChar.getLang())).toString());
+			activeChar.sendMessage("You can't to save this location.");
 			return;
 		}
 		
@@ -243,7 +242,7 @@ public class TeleportBBSManager extends BaseBBSManager
 			}
 			else
 			{
-				activeChar.sendMessage((new CustomMessage("TeleportBBS.MSG_6", activeChar.getLang())).toString());
+				activeChar.sendMessage("You can't save more than ten tabs.");
 			}
 			
 		}

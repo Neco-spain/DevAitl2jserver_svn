@@ -26,7 +26,6 @@ import javolution.util.FastMap;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.GameServer;
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.datatables.ClassListData;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.model.BlockList;
@@ -205,22 +204,22 @@ public class RegionBBSManager extends BaseBBSManager
 				}
 				if (Config.JAIL_DISABLE_CHAT && receiver.isInJail())
 				{
-					activeChar.sendMessage((new CustomMessage("RegionBBS.JAIL_MSG", activeChar.getLang())).toString());
+					activeChar.sendMessage("Player is in jail.");
 					return;
 				}
 				if (receiver.isChatBanned())
 				{
-					activeChar.sendMessage((new CustomMessage("RegionBBS.BAN_MSG", activeChar.getLang())).toString());
+					activeChar.sendMessage("Player is chat banned.");
 					return;
 				}
 				if (activeChar.isInJail() && Config.JAIL_DISABLE_CHAT)
 				{
-					activeChar.sendMessage((new CustomMessage("RegionBBS.JAIL_MSG_1", activeChar.getLang())).toString());
+					activeChar.sendMessage("You can not chat while in jail.");
 					return;
 				}
 				if (activeChar.isChatBanned())
 				{
-					activeChar.sendMessage((new CustomMessage("RegionBBS.BAN_MSG_1", activeChar.getLang())).toString());
+					activeChar.sendMessage("You are banned from using chat.");
 					return;
 				}
 				

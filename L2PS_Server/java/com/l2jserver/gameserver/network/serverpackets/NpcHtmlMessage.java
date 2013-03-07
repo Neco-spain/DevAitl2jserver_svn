@@ -298,4 +298,9 @@ public final class NpcHtmlMessage extends L2GameServerPacket
 	{
 		return _html;
 	}
+	
+	public void replace(String pattern, long value)
+	{
+		replace(pattern, String.valueOf(value));
+	}
 }

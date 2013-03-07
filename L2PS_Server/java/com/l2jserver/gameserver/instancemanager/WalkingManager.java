@@ -333,7 +333,7 @@ public class WalkingManager extends DocumentParser
 			if ((walk._currentNode >= 0) && (walk._currentNode < walk.getRoute().getNodesCount()))
 			{
 				L2NpcWalkerNode node = walk.getRoute().getNodeList().get(walk._currentNode);
-				if ((node.getMoveX() == npc.getX()) && (node.getMoveY() == npc.getY()))
+				if (npc.isInsideRadius(node.getMoveX(), node.getMoveY(), node.getMoveZ(), 10, false, false))
 				{
 					walk._nodeArrived = true;
 					if (walk.getRoute().getRepeatType() != REPEAT_RANDOM)

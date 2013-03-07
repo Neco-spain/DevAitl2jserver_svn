@@ -16,6 +16,7 @@ package com.l2jserver.gameserver.eventengine.model;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
+
 import com.l2jserver.gameserver.eventengine.Configuration;
 
 public class ManagerNpcHtml
@@ -24,7 +25,6 @@ public class ManagerNpcHtml
 	
 	public ManagerNpcHtml(String content)
 	{
-		
 		FastList<String> buttons = new FastList<>();
 		
 		if (Configuration.getInstance().getBoolean(0, "voteEnabled"))
@@ -51,7 +51,9 @@ public class ManagerNpcHtml
 		{
 			c++;
 			if (c == 4)
+			{
 				sb.append("</tr><tr>");
+			}
 			
 			sb.append("<td width=90>" + button + "</td>");
 		}

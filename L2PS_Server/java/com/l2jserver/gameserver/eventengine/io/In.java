@@ -16,8 +16,8 @@ package com.l2jserver.gameserver.eventengine.io;
 
 import com.l2jserver.gameserver.eventengine.AbstractEvent.AbstractPhase;
 import com.l2jserver.gameserver.eventengine.Configuration;
-import com.l2jserver.gameserver.eventengine.ManagerNpc;
 import com.l2jserver.gameserver.eventengine.Interface;
+import com.l2jserver.gameserver.eventengine.ManagerNpc;
 import com.l2jserver.gameserver.eventengine.container.EventContainer;
 import com.l2jserver.gameserver.eventengine.container.PlayerContainer;
 import com.l2jserver.gameserver.eventengine.function.Buffer;
@@ -56,10 +56,7 @@ public class In
 			{
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 		
 		return false;
@@ -71,10 +68,7 @@ public class In
 		{
 			return areTeammates(PlayerContainer.getInstance().getPlayer(player), PlayerContainer.getInstance().getPlayer(target));
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public boolean canAttack(EventPlayer player, EventPlayer target)
@@ -88,10 +82,7 @@ public class In
 		{
 			return canAttack(PlayerContainer.getInstance().getPlayer(player), PlayerContainer.getInstance().getPlayer(target));
 		}
-		else
-		{
-			return true;
-		}
+		return true;
 	}
 	
 	public boolean canTargetPlayer(EventPlayer target, EventPlayer self)
@@ -102,15 +93,9 @@ public class In
 			{
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
-		else
-		{
-			return true;
-		}
+		return true;
 	}
 	
 	public boolean canTargetPlayer(Integer target, Integer self)
@@ -119,10 +104,7 @@ public class In
 		{
 			return canTargetPlayer(PlayerContainer.getInstance().getPlayer(target), PlayerContainer.getInstance().getPlayer(self));
 		}
-		else
-		{
-			return true;
-		}
+		return true;
 	}
 	
 	public boolean canUseSkill(Integer player, Integer skill)
@@ -145,10 +127,7 @@ public class In
 		{
 			return player.getEvent().getAbstractPhase() == AbstractPhase.RUNNING;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public boolean isParticipating(Integer player)
@@ -157,10 +136,7 @@ public class In
 		{
 			return isParticipating(PlayerContainer.getInstance().getPlayer(player));
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public boolean isRegistered(Integer player)
@@ -169,17 +145,18 @@ public class In
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public boolean isRunning(Integer player)
 	{
-		if (PlayerContainer.getInstance().getPlayer(player) != null && PlayerContainer.getInstance().getPlayer(player).getEvent() != null)
+		if ((PlayerContainer.getInstance().getPlayer(player) != null) && (PlayerContainer.getInstance().getPlayer(player).getEvent() != null))
+		{
 			if (PlayerContainer.getInstance().getPlayer(player).getEvent().getAbstractPhase() == AbstractPhase.RUNNING)
+			{
 				return true;
+			}
+		}
 		
 		return false;
 	}
@@ -268,10 +245,7 @@ public class In
 		{
 			return pi.getEvent().onTalkNpc(npc, pi);
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public boolean onUseItem(Integer player, Integer npc)
@@ -281,10 +255,7 @@ public class In
 		{
 			return pi.getEvent().onUseItem(pi, npc);
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public boolean onUseMagic(Integer player, Integer npc)
@@ -294,26 +265,25 @@ public class In
 		{
 			return pi.getEvent().onUseMagic(pi, npc);
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public boolean getBoolean(String propName, Integer player)
 	{
 		if (player == 0)
+		{
 			return Configuration.getInstance().getBoolean(0, propName);
-		else
-			return Configuration.getInstance().getBoolean(PlayerContainer.getInstance().getPlayer(player).getEvent().getId(), propName);
+		}
+		return Configuration.getInstance().getBoolean(PlayerContainer.getInstance().getPlayer(player).getEvent().getId(), propName);
 	}
 	
 	public int getInt(String propName, Integer player)
 	{
 		if (player == 0)
+		{
 			return Configuration.getInstance().getInt(0, propName);
-		else
-			return Configuration.getInstance().getInt(PlayerContainer.getInstance().getPlayer(player).getEvent().getId(), propName);
+		}
+		return Configuration.getInstance().getInt(PlayerContainer.getInstance().getPlayer(player).getEvent().getId(), propName);
 	}
 	
 	public void registerPlayer(Integer player, Integer eventId)
@@ -405,8 +375,7 @@ public class In
 			PlayerContainer.getInstance().getPlayer(player).sendMessage("You cannot logout while you are a participant in an event.");
 			return true;
 		}
-		else
-			return false;
+		return false;
 	}
 	
 	public void shutdown()
@@ -423,8 +392,12 @@ public class In
 		}
 		
 		if (isParticipating(player))
+		{
 			if (onTalkNpc(npc, player))
+			{
 				return true;
+			}
+		}
 		
 		return false;
 	}
@@ -432,11 +405,17 @@ public class In
 	public boolean doAttack(Integer self, Integer target)
 	{
 		if (isParticipating(self) && isParticipating(target))
+		{
 			if (areTeammates(self, target) && Configuration.getInstance().getBoolean(0, "friendlyFireEnabled"))
+			{
 				return true;
+			}
+		}
 		
 		if (!canAttack(self, target))
+		{
 			return true;
+		}
 		
 		return false;
 	}

@@ -981,7 +981,7 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_stackable" val="true" />
 		<set name="is_oly_restricted" val="true" />
-		<set name="handler" val="ItemSKills" />
+		<set name="handler" val="ItemSkills" />
 		<set name="item_skill" val="9177-1" />
 	</item>
 	<item id="17170" type="Armor" name="Soccer Ball Afro Hair - White">

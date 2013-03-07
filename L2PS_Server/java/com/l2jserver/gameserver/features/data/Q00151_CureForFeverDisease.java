@@ -14,13 +14,11 @@
  */
 package com.l2jserver.gameserver.features.data;
 
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
  * Author: RobikBobik L2PS Team
@@ -112,7 +110,7 @@ public class Q00151_CureForFeverDisease extends Quest
 							st.addExpAndSp(13106, 613);
 							st.exitQuest(false);
 							st.playSound("ItemSound.quest_finish");
-							player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message4", player.getLang())).toString()), 3000));
+							player.sendMessage("Last duty complete. Now go find the Newbie Guide.");
 						}
 						break;
 					

@@ -1667,10 +1667,11 @@ public abstract class L2Character extends L2Object
 						{
 							setIsCastingNow(false);
 						}
-						
-						sendPacket(ActionFailed.STATIC_PACKET);
-						getAI().setIntention(AI_INTENTION_ACTIVE);
-						
+						if (isPlayer())
+						{
+							sendPacket(ActionFailed.STATIC_PACKET);
+							getAI().setIntention(AI_INTENTION_ACTIVE);
+						}
 						return;
 					}
 				}
@@ -1687,10 +1688,11 @@ public abstract class L2Character extends L2Object
 						{
 							setIsCastingNow(false);
 						}
-						
-						sendPacket(ActionFailed.STATIC_PACKET);
-						getAI().setIntention(AI_INTENTION_ACTIVE);
-						
+						if (isPlayer())
+						{
+							sendPacket(ActionFailed.STATIC_PACKET);
+							getAI().setIntention(AI_INTENTION_ACTIVE);
+						}
 						return;
 					}
 				}
@@ -1705,10 +1707,11 @@ public abstract class L2Character extends L2Object
 					{
 						setIsCastingNow(false);
 					}
-					
-					sendPacket(ActionFailed.STATIC_PACKET);
-					getAI().setIntention(AI_INTENTION_ACTIVE);
-					
+					if (isPlayer())
+					{
+						sendPacket(ActionFailed.STATIC_PACKET);
+						getAI().setIntention(AI_INTENTION_ACTIVE);
+					}
 					return;
 				}
 			}
@@ -1730,7 +1733,6 @@ public abstract class L2Character extends L2Object
 						{
 							setIsCastingNow(false);
 						}
-						
 						return;
 					}
 				}
@@ -1745,7 +1747,6 @@ public abstract class L2Character extends L2Object
 					{
 						setIsCastingNow(false);
 					}
-					
 					return;
 				}
 				
@@ -1759,10 +1760,11 @@ public abstract class L2Character extends L2Object
 					{
 						setIsCastingNow(false);
 					}
-					
-					sendPacket(ActionFailed.STATIC_PACKET);
-					getAI().setIntention(AI_INTENTION_ACTIVE);
-					
+					if (isPlayer())
+					{
+						sendPacket(ActionFailed.STATIC_PACKET);
+						getAI().setIntention(AI_INTENTION_ACTIVE);
+					}
 					return;
 				}
 				
@@ -1948,11 +1950,15 @@ public abstract class L2Character extends L2Object
 			}
 		}
 		
-		// Avoid broken Casting Animation.
-		// Client can't handle less than 550ms Casting Animation in skills with more than 550ms base.
-		if (((skill.getHitTime() + skill.getCoolTime()) > 550) && (skillTime < 550))
+		// Client can't handle less than 550ms Casting Animation in Magic Skills with more than 550ms base.
+		if (skill.isMagic() && ((skill.getHitTime() + skill.getCoolTime()) > 550) && (skillTime < 550))
 		{
 			skillTime = 550;
+		}
+		// Client can't handle less than 500ms Casting Animation in Physical Skills with 500ms base or more.
+		else if (!skill.isStatic() && ((skill.getHitTime() + skill.getCoolTime()) >= 500) && (skillTime < 500))
+		{
+			skillTime = 500;
 		}
 		
 		// queue herbs and potions
@@ -2228,7 +2234,8 @@ public abstract class L2Character extends L2Object
 			return false;
 		}
 		
-		if (!skill.isStatic()) // Skill mute checks.
+		// Skill mute checks.
+		if (!skill.isStatic())
 		{
 			// Check if the skill is a magic spell and if the L2Character is not muted
 			if (skill.isMagic())
@@ -2244,12 +2251,6 @@ public abstract class L2Character extends L2Object
 			{
 				// Check if the skill is physical and if the L2Character is not physical_muted
 				if (isPhysicalMuted())
-				{
-					// Send a Server->Client packet ActionFailed to the L2PcInstance
-					sendPacket(ActionFailed.STATIC_PACKET);
-					return false;
-				}
-				else if (isPhysicalAttackMuted()) // Prevent use attack
 				{
 					// Send a Server->Client packet ActionFailed to the L2PcInstance
 					sendPacket(ActionFailed.STATIC_PACKET);

@@ -873,7 +873,7 @@ public class L2Party extends AbstractPlayerGroup
 					penalty = ((L2ServitorInstance) member.getSummon()).getExpPenalty();
 				}
 				// Pets that leech xp from the owner (like babypets) do not get rewarded directly
-				if (member instanceof L2PetInstance)
+				if (member.isPet())
 				{
 					if (((L2PetInstance) member).getPetLevelData().getOwnerExpTaken() > 0)
 					{
@@ -890,32 +890,29 @@ public class L2Party extends AbstractPlayerGroup
 					preCalculation = (sqLevel / sqLevelSum) * (1 - penalty);
 					
 					// Add the XP/SP points to the requested party member
-					if (!member.isDead())
+					long addexp = Math.round(member.calcStat(Stats.EXPSP_RATE, xpReward * preCalculation, null, null));
+					int addsp = (int) member.calcStat(Stats.EXPSP_RATE, spReward * preCalculation, null, null);
+					if (member.isPlayer())
 					{
-						long addexp = Math.round(member.calcStat(Stats.EXPSP_RATE, xpReward * preCalculation, null, null));
-						int addsp = (int) member.calcStat(Stats.EXPSP_RATE, spReward * preCalculation, null, null);
-						if (member instanceof L2PcInstance)
+						addexp = calculateExpSpPartyCutoff(member.getActingPlayer(), topLvl, addexp, addsp, useVitalityRate);
+						final int skillLvl = member.getActingPlayer().getSkillLevel(467);
+						if (skillLvl > 0)
 						{
-							if (((L2PcInstance) member).getSkillLevel(467) > 0)
+							final L2Skill skill = SkillTable.getInstance().getInfo(467, skillLvl);
+							if (skill.getExpNeeded() <= addexp)
 							{
-								L2Skill skill = SkillTable.getInstance().getInfo(467, ((L2PcInstance) member).getSkillLevel(467));
-								
-								if (skill.getExpNeeded() <= addexp)
-								{
-									((L2PcInstance) member).absorbSoul(skill, target);
-								}
-							}
-							((L2PcInstance) member).addExpAndSp(addexp, addsp, useVitalityRate);
-							if (addexp > 0)
-							{
-								((L2PcInstance) member).updateVitalityPoints(vitalityPoints, true, false);
-								PcCafePointsManager.getInstance().givePcCafePoint(((L2PcInstance) member), addexp);
+								member.getActingPlayer().absorbSoul(skill, target);
 							}
 						}
-						else
+						if (addexp > 0)
 						{
-							member.addExpAndSp(addexp, addsp);
+							member.getActingPlayer().updateVitalityPoints(vitalityPoints, true, false);
+							PcCafePointsManager.getInstance().givePcCafePoint(((L2PcInstance) member), addexp);
 						}
+					}
+					else
+					{
+						member.addExpAndSp(addexp, addsp);
 					}
 				}
 				else
@@ -924,6 +921,33 @@ public class L2Party extends AbstractPlayerGroup
 				}
 			}
 		}
+	}
+	
+	private final long calculateExpSpPartyCutoff(L2PcInstance player, int topLvl, long addExp, int addSp, boolean vit)
+	{
+		long xp = addExp;
+		int sp = addSp;
+		if (Config.PARTY_XP_CUTOFF_METHOD.equalsIgnoreCase("highfive"))
+		{
+			int i = 0;
+			final int lvlDiff = topLvl - player.getLevel();
+			for (int[] gap : Config.PARTY_XP_CUTOFF_GAPS)
+			{
+				if ((lvlDiff >= gap[0]) && (lvlDiff <= gap[1]))
+				{
+					xp = (addExp * Config.PARTY_XP_CUTOFF_GAP_PERCENTS[i]) / 100;
+					sp = (addSp * Config.PARTY_XP_CUTOFF_GAP_PERCENTS[i]) / 100;
+					player.addExpAndSp(xp, sp, vit);
+					break;
+				}
+				i++;
+			}
+		}
+		else
+		{
+			player.addExpAndSp(addExp, addSp, vit);
+		}
+		return xp;
 	}
 	
 	/**
@@ -1009,6 +1033,11 @@ public class L2Party extends AbstractPlayerGroup
 				}
 			}
 		}
+		// High Five cutoff method
+		else if (Config.PARTY_XP_CUTOFF_METHOD.equalsIgnoreCase("highfive"))
+		{
+			validMembers.addAll(members);
+		}
 		else if (Config.PARTY_XP_CUTOFF_METHOD.equalsIgnoreCase("none"))
 		{
 			validMembers.addAll(members);
@@ -1033,22 +1062,12 @@ public class L2Party extends AbstractPlayerGroup
 	
 	private double getExpBonus(int membersCount)
 	{
-		if (membersCount < 2)
-		{
-			// not is a valid party
-			return getBaseExpSpBonus(membersCount);
-		}
-		return getBaseExpSpBonus(membersCount) * Config.RATE_PARTY_XP;
+		return (membersCount < 2) ? (getBaseExpSpBonus(membersCount)) : (getBaseExpSpBonus(membersCount) * Config.RATE_PARTY_XP);
 	}
 	
 	private double getSpBonus(int membersCount)
 	{
-		if (membersCount < 2)
-		{
-			// not is a valid party
-			return getBaseExpSpBonus(membersCount);
-		}
-		return getBaseExpSpBonus(membersCount) * Config.RATE_PARTY_SP;
+		return (membersCount < 2) ? (getBaseExpSpBonus(membersCount)) : (getBaseExpSpBonus(membersCount) * Config.RATE_PARTY_SP);
 	}
 	
 	@Override

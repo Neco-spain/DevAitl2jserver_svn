@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--							-->
+<!-- Sample PrimeShop XML		-->
+<!--							-->
+<!-- Categories :				-->
+<!--	1 - enchant				-->
+<!--	2 - supplies			-->
+<!--	3 - decorating			-->
+<!--	4 - package				-->
+<!--	5 - others				-->
+<primelist enabled="true">
+	<!-- p_br_cash_fortuna_box_c -->
+	<item brId="1080001" itemId="22000" count="5" cat="5" price="135" event="false" best="false" />
+	<!-- p_br_cash_fortuna_box_b -->
+	<item brId="1080002" itemId="22001" count="2" cat="5" price="270" event="false" best="false" />
+	<!-- p_br_cash_fortuna_box_a -->
+	<item brId="1080003" itemId="22002" count="1" cat="5" price="405" event="false" best="false" />
+	<!-- p_br_cash_fortuna_cube_c -->
+	<item brId="1080004" itemId="22003" count="1" cat="5" price="81" event="false" best="false" />
+	<!-- p_br_cash_fortuna_cube_b -->
+	<item brId="1080005" itemId="22004" count="1" cat="5" price="216" event="false" best="false" />
+	<!-- p_br_cash_fortuna_cube_a -->
+	<item brId="1080006" itemId="22005" count="1" cat="5" price="324" event="false" best="false" />
+	<!-- p_br_cash_greater_healing_potion -->
+	<item brId="1080007" itemId="22025" count="1" cat="2" price="3" event="false" best="false" />
+	<!-- p_br_cash_healing_potion -->
+	<item brId="1080008" itemId="22026" count="1" cat="2" price="1" event="false" best="false" />
+	<!-- p_br_cash_elixir_of_combative_d -->
+	<item brId="1080009" itemId="22027" count="1" cat="2" price="1" event="false" best="false" />
+	<!-- p_br_cash_elixir_of_combative_c -->
+	<item brId="1080010" itemId="22028" count="1" cat="2" price="1" event="false" best="false" />
+	<!-- p_br_cash_elixir_of_combative_b -->
+	<item brId="1080011" itemId="22029" count="1" cat="2" price="1" event="false" best="false" />
+	<!-- p_br_cash_elixir_of_combative_a -->
+	<item brId="1080012" itemId="22030" count="1" cat="2" price="1" event="false" best="false" />
+	<!-- p_br_cash_elixir_of_combative_a -->
+	<item brId="1080013" itemId="22031" count="1" cat="2" price="1" event="false" best="false" />
+</primelist>

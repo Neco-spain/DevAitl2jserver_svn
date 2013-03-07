@@ -3,14 +3,14 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://L2J.EternityWorld.ru/>.
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.features.data;
 
@@ -89,7 +89,7 @@ public final class Q00133_ThatsBloodyHot extends Quest
 		
 		final int npcId = npc.getNpcId();
 		final int cond = st.getInt("cond");
-		QuestState qs131 = st.getPlayer().getQuestState("Q00131_BirdInACage");
+		QuestState qs131 = player.getQuestState("Q00131_BirdInACage");
 		
 		if (st.isCompleted())
 		{

@@ -306,8 +306,7 @@ public class PcStatus extends PlayableStatus
 			getActiveChar().doDie(attacker);
 			if (!Config.DISABLE_TUTORIAL)
 			{
-				// TODO: After reworked to java
-				QuestState qs = getActiveChar().getQuestState("255_Tutorial");
+				QuestState qs = getActiveChar().getQuestState("Q00255_Tutorial");
 				if (qs != null)
 				{
 					qs.getQuest().notifyEvent("CE30", null, getActiveChar());
@@ -323,8 +322,7 @@ public class PcStatus extends PlayableStatus
 		
 		if (!Config.DISABLE_TUTORIAL && (getCurrentHp() <= (getActiveChar().getStat().getMaxHp() * .3)))
 		{
-			// TODO: After reworked to java
-			QuestState qs = getActiveChar().getQuestState("255_Tutorial");
+			QuestState qs = getActiveChar().getQuestState("Q00255_Tutorial");
 			if (qs != null)
 			{
 				qs.getQuest().notifyEvent("CE45", null, getActiveChar());

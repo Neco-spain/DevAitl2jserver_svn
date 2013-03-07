@@ -18,10 +18,10 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 
 public final class Location
 {
-	private final int _x;
-	private final int _y;
-	private final int _z;
-	private int _heading;
+	public final int _x;
+	public final int _y;
+	public final int _z;
+	public int _heading;
 	private int _instanceId;
 	
 	public Location(int x, int y, int z)

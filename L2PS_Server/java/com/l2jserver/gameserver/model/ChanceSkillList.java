@@ -161,6 +161,10 @@ public class ChanceSkillList extends FastMap<IChanceSkillTrigger, ChanceConditio
 					{
 						return;
 					}
+					if (!skill.getWeaponDependancy(_owner, true) || !skill.checkCondition(_owner, target, false))
+					{
+						return;
+					}
 				}
 				
 				if (_owner.isSkillDisabled(skill))

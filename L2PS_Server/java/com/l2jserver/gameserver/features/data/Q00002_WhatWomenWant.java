@@ -15,13 +15,11 @@
 package com.l2jserver.gameserver.features.data;
 
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
  * Author: RobikBobik L2PS Team
@@ -93,7 +91,7 @@ public class Q00002_WhatWomenWant extends Quest
 			st.set("cond", "0");
 			st.exitQuest(false);
 			st.playSound("ItemSound.quest_finish");
-			player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message1", player.getLang())).toString()), 3000));
+			player.sendMessage("Delivery duty complete. Go find the Newbie Guide.");
 			return null;
 		}
 		return htmltext;

@@ -14,7 +14,6 @@
  */
 package com.l2jserver.gameserver.features.data;
 
-
 /**
  * Author: RobikBobik L2PS Team
  */
