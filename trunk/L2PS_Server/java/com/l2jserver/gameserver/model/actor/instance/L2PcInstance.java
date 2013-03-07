@@ -334,7 +334,7 @@ public final class L2PcInstance extends L2Playable
 	// Character Character SQL String Definitions:
 	private static final String INSERT_CHARACTER = "INSERT INTO characters (account_name,charId,char_name,level,maxHp,curHp,maxCp,curCp,maxMp,curMp,face,hairStyle,hairColor,sex,exp,sp,karma,fame,pvpkills,pkkills,clanid,race,classid,deletetime,cancraft,title,title_color,accesslevel,online,isin7sdungeon,clan_privs,wantspeace,base_class,newbie,nobless,power_grade,createDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static final String UPDATE_CHARACTER = "UPDATE characters SET level=?,maxHp=?,curHp=?,maxCp=?,curCp=?,maxMp=?,curMp=?,face=?,hairStyle=?,hairColor=?,sex=?,heading=?,x=?,y=?,z=?,exp=?,expBeforeDeath=?,sp=?,karma=?,fame=?,pvpkills=?,pkkills=?,clanid=?,race=?,classid=?,deletetime=?,title=?,title_color=?,accesslevel=?,online=?,isin7sdungeon=?,clan_privs=?,wantspeace=?,base_class=?,onlinetime=?,punish_level=?,punish_timer=?,newbie=?,nobless=?,power_grade=?,subpledge=?,lvl_joined_academy=?,apprentice=?,sponsor=?,varka_ketra_ally=?,clan_join_expiry_time=?,clan_create_expiry_time=?,char_name=?,death_penalty_level=?,bookmarkslot=?,vitality_points=?,pccafe_points=?,language=?,prime_points=? WHERE charId=?";
-	private static final String RESTORE_CHARACTER = "SELECT account_name, charId, char_name, level, maxHp, curHp, maxCp, curCp, maxMp, curMp, face, hairStyle, hairColor, sex, heading, x, y, z, exp, expBeforeDeath, sp, karma, fame, pvpkills, pkkills, clanid, race, classid, deletetime, cancraft, title, title_color, accesslevel, online, char_slot, lastAccess, clan_privs, wantspeace, base_class, onlinetime, isin7sdungeon, punish_level, punish_timer, newbie, nobless, power_grade, subpledge, lvl_joined_academy, apprentice, sponsor, varka_ketra_ally,clan_join_expiry_time,clan_create_expiry_time,death_penalty_level,bookmarkslot,vitality_points,pccafe_points,createDate,language,prime_points FROM characters WHERE charId=?";
+	private static final String RESTORE_CHARACTER = "SELECT account_name, charId, char_name, level, maxHp, curHp, maxCp, curCp, maxMp, curMp, face, hairStyle, hairColor, sex, heading, x, y, z, exp, expBeforeDeath, sp, karma, fame, pvpkills, pkkills, clanid, race, classid, deletetime, cancraft, title, title_color, accesslevel, online, char_slot, lastAccess, clan_privs, wantspeace, base_class, onlinetime, isin7sdungeon, punish_level, punish_timer, newbie, nobless, power_grade, subpledge, lvl_joined_academy, apprentice, sponsor, varka_ketra_ally,clan_join_expiry_time,clan_create_expiry_time,death_penalty_level,bookmarkslot,vitality_points,pccafe_points,createDate,language,prime_points,lastVoteHopzone,lastVoteTopzone,hasVotedHop,hasVotedTop,monthVotes,totalVotes,tries FROM characters WHERE charId=?";
 	
 	// Character Teleport Bookmark:
 	private static final String INSERT_TP_BOOKMARK = "INSERT INTO character_tpbookmark (charId,Id,x,y,z,icon,tag,name) values (?,?,?,?,?,?,?,?)";
@@ -391,7 +391,7 @@ public final class L2PcInstance extends L2Playable
 	private int _pcBangPoints = 0;
 	private String _voiceConfirmCmd = null;
 	private boolean _canGetExpAndSp = true;
-	
+	private boolean _isVoting = false;
 	public static FastList<PlayerDespawnListener> despawnListeners = new FastList<PlayerDespawnListener>().shared();
 	public static FastList<HennaListener> hennaListeners = new FastList<HennaListener>().shared();
 	public FastList<EquipmentListener> equipmentListeners = new FastList<EquipmentListener>().shared();
@@ -3181,12 +3181,15 @@ public final class L2PcInstance extends L2Playable
 			skills = SkillTreesData.getInstance().getAvailableSkills(this, getClassId(), includedByFs, includeAutoGet);
 		}
 		
-		sendMessage("You have learned " + skillCounter + " new skills.");
+		if (Config.AUTO_LEARN_SKILLS && (skillCounter > 0))
+		{
+			sendMessage("You have earned " + skillCounter + " new skills.");
+		}
 		return skillCounter;
 	}
 	
 	/**
-	 * Give all available AutoGet skills to the player.
+	 * Give all available auto-get skills to the player.
 	 */
 	public void giveAvailableAutoGetSkills()
 	{
@@ -3203,7 +3206,7 @@ public final class L2PcInstance extends L2Playable
 			}
 			else
 			{
-				_log.warning("Skipping null autoGet Skill for player: " + this);
+				_log.warning("Skipping null auto-get skill for player: " + toString());
 			}
 		}
 	}
@@ -11743,7 +11746,6 @@ public final class L2PcInstance extends L2Playable
 			updateEffectIcons();
 			sendPacket(new EtcStatusUpdate(this));
 			
-			// if player has quest 422: Repent Your Sins, remove it
 			QuestState st = getQuestState("Q00422_RepentYourSins");
 			if (st != null)
 			{
@@ -17240,5 +17242,15 @@ public final class L2PcInstance extends L2Playable
 	public void setprime_points(long primePoints)
 	{
 		prime_points = primePoints;
+	}
+	
+	public final boolean isVoting()
+	{
+		return _isVoting;
+	}
+	
+	public final void setIsVoting(boolean value)
+	{
+		_isVoting = value;
 	}
 }

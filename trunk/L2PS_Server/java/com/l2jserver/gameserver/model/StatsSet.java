@@ -24,9 +24,7 @@ import java.util.logging.Logger;
 import javolution.util.FastMap;
 
 /**
- * @author mkizub <BR>
- *         This class is used in order to have a set of couples (key,value).<BR>
- *         Methods deployed are accessors to the set (add/get value from its key) and addition of a whole set in the current one.
+ * @author mkizub
  */
 public final class StatsSet
 {
@@ -702,5 +700,34 @@ public final class StatsSet
 	public void set(String name, Enum<?> value)
 	{
 		_set.put(name, value);
+	}
+	
+	public void unset(String name)
+	{
+		_set.remove(name);
+	}
+	
+	public long getLong(String name, long deflt)
+	{
+		Object val = _set.get(name);
+		if (val == null)
+		{
+			return deflt;
+		}
+		else if (val instanceof Number)
+		{
+			return ((Number) val).longValue();
+		}
+		else
+		{
+			try
+			{
+				return Long.parseLong((String) val);
+			}
+			catch (Exception e)
+			{
+				throw new IllegalArgumentException("Integer value required, but found: " + val);
+			}
+		}
 	}
 }

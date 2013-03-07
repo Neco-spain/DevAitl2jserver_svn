@@ -44,62 +44,62 @@ public class CommunityBoard
 		
 		if (activeChar.isInOlympiadMode())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.inObserverMode())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isAlikeDead())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isInSiege())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isInsideZone(ZoneId.PVP))
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isInCombat())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isDead())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isCastingNow())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isAttackingNow())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isInJail())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isFlying())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		if (activeChar.isInDuel())
 		{
-			activeChar.sendMessage("You can use Community Board for now.");
+			activeChar.sendMessage("You cant use Community Board for now.");
 			return;
 		}
 		

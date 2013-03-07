@@ -34,12 +34,12 @@ public class L2CharTemplate
 	private final float _baseHpMax;
 	private final float _baseCpMax;
 	private final float _baseMpMax;
-	private final float _baseHpReg;
+	public final float _baseHpReg;
 	private final float _baseMpReg;
-	private final int _basePAtk;
-	private final int _baseMAtk;
-	private final int _basePDef;
-	private final int _baseMDef;
+	public final int _basePAtk;
+	public final int _baseMAtk;
+	public final int _basePDef;
+	public final int _baseMDef;
 	private final int _basePAtkSpd;
 	private final int _baseMAtkSpd;
 	private final float _baseMReuseRate;

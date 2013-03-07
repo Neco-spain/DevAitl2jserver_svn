@@ -1,3 +1,20 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : PS
+Source Server Version : 50530
+Source Host           : localhost:3306
+Source Database       : l2jgs
+
+Target Server Type    : MYSQL
+Target Server Version : 50530
+File Encoding         : 65001
+
+Date: 2013-02-23 10:49:17
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
 -- ----------------------------
 -- Table structure for `npcaidata`
 -- ----------------------------
@@ -2351,10 +2368,10 @@ INSERT INTO `npcaidata` VALUES ('18844', '7', '15', '0', '300', '0', '0', '1', '
 INSERT INTO `npcaidata` VALUES ('18845', '7', '15', '0', '300', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18846', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'kegor', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18847', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
-INSERT INTO `npcaidata` VALUES ('18848', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'freya_show_foes', '300', 'freya_show_friends', '2000', '0', 'fighter');
-INSERT INTO `npcaidata` VALUES ('18849', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'freya_show_foes', '300', 'freya_show_friends', '2000', '0', 'fighter');
-INSERT INTO `npcaidata` VALUES ('18850', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'freya_clan_foes', '300', 'freya_clan', '2000', '0', 'fighter');
-INSERT INTO `npcaidata` VALUES ('18851', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'freya_clan_foes', '300', 'freya_clan', '2000', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('18848', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '333', '0', 'freya_show_foes', '300', 'freya_show_friends', '2000', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('18849', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '333', '0', 'freya_show_foes', '300', 'freya_show_friends', '2000', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('18850', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '333', '0', 'freya_clan_foes', '300', 'freya_clan', '2000', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('18851', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '333', '0', 'freya_clan_foes', '300', 'freya_clan', '2000', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18852', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18853', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'freya_clan', '300', 'freya_clan_foes', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18854', '7', '15', '0', '1000', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'freya_clan', '500', 'freya_clan_foes', '500', '0', 'fighter');
@@ -2429,7 +2446,7 @@ INSERT INTO `npcaidata` VALUES ('18922', '7', '15', '0', '300', '1', '1', '1', '
 INSERT INTO `npcaidata` VALUES ('18923', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18924', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18925', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
-INSERT INTO `npcaidata` VALUES ('18926', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('18926', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'freya_show_foes', '300', 'freya_show_friends', '2000', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18927', '7', '15', '0', '300', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18928', '7', '15', '0', '300', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('18929', '7', '15', '0', '300', '1', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
@@ -4853,7 +4870,7 @@ INSERT INTO `npcaidata` VALUES ('22763', '7', '15', '0', '300', '1', '1', '1', '
 INSERT INTO `npcaidata` VALUES ('22764', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '400', '0', 'cocracon_elite_clan', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('22765', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '400', '0', 'cocracon_elite_clan', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('22766', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
-INSERT INTO `npcaidata` VALUES ('22767', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('22767', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '333', '0', 'freya_show_friends', '500', 'freya_show_foes', '500', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('22768', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '400', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('22769', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('22770', '7', '15', '0', '300', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '300', 'null', '0', '0', 'fighter');
@@ -8884,7 +8901,7 @@ INSERT INTO `npcaidata` VALUES ('32867', '7', '15', '0', '0', '1', '1', '1', '0'
 INSERT INTO `npcaidata` VALUES ('32868', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('32869', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('32870', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
-INSERT INTO `npcaidata` VALUES ('32871', '7', '15', '0', '0', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('32871', '7', '15', '0', '0', '0', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('32872', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('32873', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('32874', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'null', '0', 'null', '0', '0', 'fighter');
@@ -10537,3 +10554,4 @@ INSERT INTO `npcaidata` VALUES ('7020', '7', '15', '0', '0', '1', '1', '1', '0',
 INSERT INTO `npcaidata` VALUES ('7021', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', null, '0', null, '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('7022', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', null, '0', null, '0', '0', 'fighter');
 INSERT INTO `npcaidata` VALUES ('7023', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', null, '0', null, '0', '0', 'fighter');
+INSERT INTO `npcaidata` VALUES ('9998', '7', '15', '0', '0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', null, '0', null, '0', '0', 'fighter');

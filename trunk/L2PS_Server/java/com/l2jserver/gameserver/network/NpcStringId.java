@@ -21607,10 +21607,17 @@ public final class NpcStringId
 	 */
 	private static NpcStringId[] VALUES;
 	
+	/**
+	 * ID: 1800232<br>
+	 * Message: The Soul Coffin has Awakened Ekimus!
+	 */
+	public static final NpcStringId THE_SOUL_COFFIN_HAS_AWAKENED_EKIMUS;
+	
 	public static NpcStringId NONE;
 	
 	static
 	{
+		THE_SOUL_COFFIN_HAS_AWAKENED_EKIMUS = new NpcStringId(1800232);
 		NONE = new NpcStringId(65535);
 		HELLO_I_AM_S1_YOU_ARE_S2_RIGHT_HEHEHE = new NpcStringId(1);
 		S1_S2_S3_S4_S5_HEHEHE = new NpcStringId(2);

@@ -14,13 +14,11 @@
  */
 package com.l2jserver.gameserver.features.data;
 
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
  * Author: RobikBobik L2PS Team
@@ -182,7 +180,7 @@ public class Q00106_ForgottenTruth extends Quest
 						st.playTutorialVoice("tutorial_voice_027");
 						st.giveItems(SPIRITSHOT_FOR_BEGINNERS, 3000);
 						st.giveItems(2509, 500);
-						player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message3", player.getLang())).toString()), 3000));
+						player.sendMessage("You received the New Weapon. Go find the Newbie Guide.");
 					}
 					else
 					{

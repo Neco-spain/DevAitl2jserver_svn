@@ -199,10 +199,6 @@ public class PetStat extends SummonStat
 					break;
 			}
 		}
-		if (skill != null)
-		{
-			attack += skill.getPower();
-		}
 		return (int) calcStat(Stats.MAGIC_ATTACK, attack, target, skill);
 	}
 	

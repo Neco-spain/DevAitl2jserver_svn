@@ -257,8 +257,23 @@ public final class CharacterCreate extends L2GameClientPacket
 		
 		// TODO: Make it random.
 		final L2PcTemplate template = newChar.getTemplate();
-		newChar.setXYZInvisible(template.getSpawnX(), template.getSpawnY(), template.getSpawnZ());
-		newChar.setTitle("");
+		if (Config.SPAWN_CHAR)
+		{
+			newChar.setXYZInvisible(Config.SPAWN_X, Config.SPAWN_Y, Config.SPAWN_Z);
+		}
+		else
+		{
+			newChar.setXYZInvisible(template.getSpawnX(), template.getSpawnY(), template.getSpawnZ());
+		}
+		
+		if (Config.CHAR_TITLE)
+		{
+			newChar.setTitle(Config.ADD_CHAR_TITLE);
+		}
+		else
+		{
+			newChar.setTitle("");
+		}
 		
 		if (Config.ENABLE_VITALITY)
 		{
@@ -353,18 +368,13 @@ public final class CharacterCreate extends L2GameClientPacket
 		}
 	}
 	
-	/**
-	 * TODO: Unhardcode it using the new listeners.
-	 * @param player
-	 */
 	public void startTutorialQuest(L2PcInstance player)
 	{
-		// TODO: After reworked to java
-		final QuestState qs = player.getQuestState("255_Tutorial");
+		final QuestState qs = player.getQuestState("Q00255_Tutorial");
 		Quest q = null;
 		if (qs == null)
 		{
-			q = QuestManager.getInstance().getQuest("255_Tutorial");
+			q = QuestManager.getInstance().getQuest("Q00255_Tutorial");
 		}
 		if (q != null)
 		{

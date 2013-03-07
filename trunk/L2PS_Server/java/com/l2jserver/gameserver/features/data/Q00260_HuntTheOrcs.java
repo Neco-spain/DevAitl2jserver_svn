@@ -14,13 +14,11 @@
  */
 package com.l2jserver.gameserver.features.data;
 
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
  * Author: RobikBobik L2PS Team
@@ -133,13 +131,13 @@ public class Q00260_HuntTheOrcs extends Quest
 						{
 							st.playTutorialVoice("tutorial_voice_027");
 							st.giveItems(SPIRITSHOT_FOR_BEGINNERS, 3000);
-							player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message2", player.getLang())).toString()), 3000));
+							player.sendMessage("Acquisition of Spiritshot for beginners complete. Go find the Newbie Guide.");
 						}
 						else
 						{
 							st.playTutorialVoice("tutorial_voice_026");
 							st.giveItems(SOULSHOT_FOR_BEGINNERS, 6000);
-							player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message2a", player.getLang())).toString()), 3000));
+							player.sendMessage("Acquisition of Soulshot for beginners complete. Go find the Newbie Guide.");
 						}
 					}
 					htmltext = "30221-05.htm";

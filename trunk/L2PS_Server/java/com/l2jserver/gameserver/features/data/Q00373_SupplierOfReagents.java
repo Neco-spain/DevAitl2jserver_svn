@@ -3,12 +3,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -64,124 +64,91 @@ public class Q00373_SupplierOfReagents extends Quest
 	private static final int TRUE_GOLD = 6321;
 	private static final int WESLEY = 30166;
 	private static final int URN = 31149;
-	private static final int MOB20813 = 20813;
-	private static final int MOB20822 = 20822;
-	private static final int MOB21061 = 21061;
-	private static final int MOB20828 = 20828;
-	private static final int MOB21066 = 21066;
-	private static final int MOB21111 = 21111;
-	private static final int MOB21115 = 21115;
 	private static final int[][] DROPLIST_COND =
 	{
 		{
-			1,
-			0,
-			MOB20813,
-			0,
+			20813,
 			QUICKSILVER,
-			0,
-			60,
-			1
+			1,
+			10000000,
+			350000
 		},
 		{
-			1,
-			0,
-			MOB20813,
-			0,
+			20813,
 			ROTTEN_BONE,
-			0,
-			100,
-			1
+			1,
+			10000000,
+			550000
 		},
 		{
-			1,
-			0,
-			MOB20822,
-			0,
+			20822,
 			VOLCANIC_ASH,
-			0,
-			40,
-			1
+			1,
+			10000000,
+			350000
 		},
 		{
-			1,
-			0,
-			MOB20822,
-			0,
+			20822,
 			REAGENT_POUCH1,
-			0,
-			100,
-			1
+			1,
+			10000000,
+			560000
 		},
 		{
-			1,
-			0,
-			MOB21061,
-			0,
+			21061,
 			DEMONS_BLOOD,
-			0,
-			70,
-			1
+			1,
+			10000000,
+			630000
 		},
 		{
-			1,
-			0,
-			MOB21061,
-			0,
+			21061,
 			MOONSTONE_SHARD,
-			0,
-			90,
-			1
+			1,
+			10000000,
+			110000
 		},
 		{
-			1,
-			0,
-			MOB20828,
-			0,
+			20828,
 			REAGENT_POUCH2,
-			0,
-			70,
-			1
+			1,
+			10000000,
+			540000
 		},
 		{
-			1,
-			0,
-			MOB20828,
-			0,
+			20828,
 			QUICKSILVER,
-			0,
-			30,
-			1
+			1,
+			10000000,
+			320000
 		},
 		{
-			1,
-			0,
-			MOB21066,
-			0,
+			21066,
 			REAGENT_BOX,
-			0,
-			40,
-			1
+			1,
+			10000000,
+			440000
 		},
 		{
-			1,
-			0,
-			MOB21111,
-			0,
+			21111,
 			WYRMS_BLOOD,
-			0,
-			50,
-			1
+			1,
+			10000000,
+			350000
 		},
 		{
+			21111,
+			LAVA_STONE,
 			1,
-			0,
-			MOB21115,
-			0,
+			10000000,
+			250000
+		},
+		{
+			21115,
 			REAGENT_POUCH3,
-			0,
-			50,
-			1
+			1,
+			10000000,
+			470000
 		}
 	};
 	
@@ -692,9 +659,9 @@ public class Q00373_SupplierOfReagents extends Quest
 		addTalkId(WESLEY);
 		addTalkId(URN);
 		
-		for (int[] aDROPLIST_COND : DROPLIST_COND)
+		for (int[] npc : DROPLIST_COND)
 		{
-			addKillId(aDROPLIST_COND[2]);
+			addKillId(npc[0]);
 		}
 	}
 	
@@ -841,7 +808,7 @@ public class Q00373_SupplierOfReagents extends Quest
 					}
 					else
 					{
-						htmltext = "You don't have a mixing stone.";
+						htmltext = "31149-2d.htm";
 					}
 				}
 				else if (s_event[2].equals("Retrieve"))
@@ -1003,7 +970,7 @@ public class Q00373_SupplierOfReagents extends Quest
 						}
 						if (item == MIMIRS_ELIXIR)
 						{
-							QuestState mimirs = st.getPlayer().getQuestState("235_MimirsElixir");
+							QuestState mimirs = player.getQuestState("Q00235_MimirsElixir");
 							if (mimirs != null)
 							{
 								chance = 100;
@@ -1059,7 +1026,7 @@ public class Q00373_SupplierOfReagents extends Quest
 		{
 			if (cond == 0)
 			{
-				if (st.getPlayer().getLevel() < 57)
+				if (player.getLevel() < 57)
 				{
 					st.exitQuest(true);
 					htmltext = "30166-2.htm";
@@ -1083,7 +1050,7 @@ public class Q00373_SupplierOfReagents extends Quest
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
 	{
 		QuestState st = player.getQuestState(getName());
 		if (st == null)
@@ -1092,15 +1059,18 @@ public class Q00373_SupplierOfReagents extends Quest
 		}
 		
 		int npcId = npc.getNpcId();
+		int cond = st.getInt("cond");
 		
-		for (int[] i : DROPLIST_COND)
+		if (cond >= 1)
 		{
-			if (npcId == i[2])
+			for (int[] i : DROPLIST_COND)
 			{
-				st.dropQuestItems(i[4], i[7], i[6]);
+				if (npcId == i[0])
+				{
+					st.dropQuestItems(i[1], i[2], i[3], i[4], true);
+				}
 			}
 		}
-		
 		return null;
 	}
 	

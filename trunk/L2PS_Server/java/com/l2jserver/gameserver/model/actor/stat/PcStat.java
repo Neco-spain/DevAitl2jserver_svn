@@ -291,8 +291,7 @@ public class PcStat extends PlayableStat
 		{
 			if (!Config.DISABLE_TUTORIAL)
 			{
-				// TODO: After reworked to java
-				QuestState qs = getActiveChar().getQuestState("255_Tutorial");
+				QuestState qs = getActiveChar().getQuestState("Q00255_Tutorial");
 				if (qs != null)
 				{
 					qs.getQuest().notifyEvent("CE40", null, getActiveChar());
@@ -338,7 +337,7 @@ public class PcStat extends PlayableStat
 		getActiveChar().sendPacket(new UserInfo(getActiveChar()));
 		getActiveChar().sendPacket(new ExBrExtraUserInfo(getActiveChar()));
 		getActiveChar().sendPacket(new ExVoteSystemInfo(getActiveChar()));
-		getActiveChar().incAdventPoints(2000, false);
+		getActiveChar().incAdventPoints(Config.POINT_FOR_LV_HUNB, false);
 		
 		return levelIncreased;
 	}

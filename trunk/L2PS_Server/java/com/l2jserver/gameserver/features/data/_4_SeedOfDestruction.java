@@ -24,9 +24,9 @@ import javolution.util.FastMap;
 
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.SkillTable;
-import com.l2jserver.gameserver.instancemanager.GraciaSeedsManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
+import com.l2jserver.gameserver.instancemanager.SoDManager;
 import com.l2jserver.gameserver.model.L2CharPosition;
 import com.l2jserver.gameserver.model.L2CommandChannel;
 import com.l2jserver.gameserver.model.L2Object;
@@ -5173,7 +5173,7 @@ public class _4_SeedOfDestruction extends Quest
 				if (npc.getNpcId() == TIADA)
 				{
 					world.status++;
-					GraciaSeedsManager.getInstance().increaseSoDTiatKilled();
+					SoDManager.getInstance().increaseSoDTiatKilled();
 					Delete(npc);
 					for (L2Npc mob : InstanceManager.getInstance().getInstance(world.instanceId).getNpcs())
 					{
@@ -5220,7 +5220,7 @@ public class _4_SeedOfDestruction extends Quest
 		}
 		if (npcId == ALENOS)
 		{
-			if (GraciaSeedsManager.getInstance().getSoDState() == 1)
+			if (SoDManager.getInstance().getSoDState() == 1)
 			{
 				teleCoord tele = new teleCoord();
 				tele.x = -242759;
@@ -5228,7 +5228,7 @@ public class _4_SeedOfDestruction extends Quest
 				tele.z = -9986;
 				enterInstance(player, "SeedOfDestruction.xml", tele);
 			}
-			else if (GraciaSeedsManager.getInstance().getSoDState() == 2)
+			else if (SoDManager.getInstance().getSoDState() == 2)
 			{
 				teleCoord tele = new teleCoord();
 				tele.x = -245800;

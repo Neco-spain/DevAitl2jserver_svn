@@ -287,12 +287,10 @@ public final class L2ItemInstance extends L2Object
 		
 		if (!Config.DISABLE_TUTORIAL && ((itemId == PcInventory.ADENA_ID) || (itemId == 6353)))
 		{
-			// Note from UnAfraid:
-			// Unhardcode this?
 			L2PcInstance actor = player.getActingPlayer();
 			if (actor != null)
 			{
-				QuestState qs = actor.getQuestState("255_Tutorial");
+				QuestState qs = actor.getQuestState("Q00255_Tutorial");
 				if ((qs != null) && (qs.getQuest() != null))
 				{
 					qs.getQuest().notifyEvent("CE" + itemId, null, actor);

@@ -223,6 +223,7 @@ public class InstanceManager extends DocumentParser
 		public FastList<Integer> allowed = new FastList<>();
 		public volatile int status;
 		public boolean isLocked;
+		public int tag = -1;
 	}
 	
 	/**

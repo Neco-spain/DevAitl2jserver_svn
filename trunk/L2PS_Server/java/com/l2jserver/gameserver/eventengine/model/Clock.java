@@ -37,8 +37,8 @@ public abstract class Clock implements Runnable
 	
 	public String getTimeInString()
 	{
-		String mins = "" + counter / 60;
-		String secs = (counter % 60 < 10 ? "0" + counter % 60 : "" + counter % 60);
+		String mins = "" + (counter / 60);
+		String secs = ((counter % 60) < 10 ? "0" + (counter % 60) : "" + (counter % 60));
 		return "" + mins + ":" + secs + "";
 	}
 	

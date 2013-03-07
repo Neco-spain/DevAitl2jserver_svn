@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 
 import javolution.util.FastList;
+
+import com.l2jserver.L2DatabaseFactory;
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.datatables.ItemTable;
+import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.eventengine.Configuration;
 import com.l2jserver.gameserver.eventengine.ManagerNpc;
 import com.l2jserver.gameserver.eventengine.container.EventContainer;
 import com.l2jserver.gameserver.eventengine.container.PlayerContainer;
 import com.l2jserver.gameserver.eventengine.function.Vote;
 import com.l2jserver.gameserver.eventengine.model.EventPlayer;
-
-import com.l2jserver.L2DatabaseFactory;
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.datatables.ItemTable;
-import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.handler.AdminCommandHandler;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.handler.ISkillHandler;
@@ -43,16 +43,13 @@ import com.l2jserver.util.Rnd;
 
 public class Out
 {
-	private static class BombHandler implements ISkillHandler
+	protected static class BombHandler implements ISkillHandler
 	{
 		private final L2SkillType[] SKILL_IDS =
 		{
 			L2SkillType.BOMB
 		};
 		
-		/**
-		 * @see com.l2jserver.gameserver.handler.ISkillHandler#getSkillIds()
-		 */
 		@Override
 		public L2SkillType[] getSkillIds()
 		{
@@ -72,16 +69,13 @@ public class Out
 		}
 	}
 	
-	private static class CaptureHandler implements ISkillHandler
+	protected static class CaptureHandler implements ISkillHandler
 	{
 		private final L2SkillType[] SKILL_IDS =
 		{
 			L2SkillType.CAPTURE
 		};
 		
-		/**
-		 * @see com.l2jserver.gameserver.handler.ISkillHandler#getSkillIds()
-		 */
 		@Override
 		public L2SkillType[] getSkillIds()
 		{
@@ -107,7 +101,7 @@ public class Out
 		}
 	}
 	
-	private static class ReloadHandler implements IAdminCommandHandler
+	protected static class ReloadHandler implements IAdminCommandHandler
 	{
 		private final String[] ADMIN_COMMANDS =
 		{
@@ -132,7 +126,7 @@ public class Out
 		}
 	}
 	
-	private static class KickHandler implements IAdminCommandHandler
+	protected static class KickHandler implements IAdminCommandHandler
 	{
 		private final String[] ADMIN_COMMANDS =
 		{
@@ -152,14 +146,16 @@ public class Out
 			{
 				EventPlayer p = PlayerContainer.getInstance().getPlayerByName(command.substring(16));
 				if (p != null)
+				{
 					p.getEvent().onLogout(p);
+				}
 			}
 			
 			return true;
 		}
 	}
 	
-	private static class CreateEventHandler implements IAdminCommandHandler
+	protected static class CreateEventHandler implements IAdminCommandHandler
 	{
 		private final String[] ADMIN_COMMANDS =
 		{
@@ -184,7 +180,7 @@ public class Out
 		}
 	}
 	
-	private static class VoicedHandler implements IVoicedCommandHandler
+	protected static class VoicedHandler implements IVoicedCommandHandler
 	{
 		private static final String[] _voicedCommands =
 		{
@@ -192,26 +188,26 @@ public class Out
 			"popup"
 		};
 		
-		/**
-		 * @see com.l2jserver.gameserver.handler.IVoicedCommandHandler#getVoicedCommandList()
-		 */
 		@Override
 		public String[] getVoicedCommandList()
 		{
 			return _voicedCommands;
 		}
 		
-		/**
-		 * @see com.l2jserver.gameserver.handler.IVoicedCommandHandler#useVoicedCommand(java.lang.String, com.l2jserver.gameserver.model.actor.instance.L2PcInstance, java.lang.String)
-		 */
 		@Override
 		public boolean useVoicedCommand(String command, L2PcInstance activeChar, String params)
 		{
 			if (command.equalsIgnoreCase("event"))
+			{
 				ManagerNpc.getInstance().showMain(activeChar.getObjectId());
+			}
 			if (command.equalsIgnoreCase("popup"))
+			{
 				if (Configuration.getInstance().getBoolean(0, "voteEnabled"))
+				{
 					Vote.getInstance().switchPopup(activeChar.getObjectId());
+				}
+			}
 			return true;
 		}
 	}
@@ -284,10 +280,7 @@ public class Out
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public static boolean isRestrictedSkill(int skill)
@@ -321,10 +314,7 @@ public class Out
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 		
 	}
 	
@@ -333,7 +323,6 @@ public class Out
 		return Rnd.get(max);
 	}
 	
-	@SuppressWarnings("synthetic-access")
 	public static void registerHandlers()
 	{
 		SkillHandler.getInstance().registerHandler(new BombHandler());
@@ -379,7 +368,9 @@ public class Out
 	{
 		List<Integer> l = new LinkedList<>();
 		for (Integer p : L2World.getInstance().getAllPlayers().keys())
+		{
 			l.add(p);
+		}
 		return l;
 	}
 }

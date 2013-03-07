@@ -2,9 +2,9 @@ package com.l2jserver.gameserver.eventengine.model;
 
 public class PLoc
 {
-	private int _x;
-	private int _y;
-	private int _z;
+	private final int _x;
+	private final int _y;
+	private final int _z;
 	private int _heading;
 	
 	public PLoc(int x, int y, int z)

@@ -15,12 +15,12 @@
 package com.l2jserver.gameserver.eventengine.model;
 
 import javolution.text.TextBuilder;
+
 import com.l2jserver.gameserver.eventengine.AbstractEvent;
 
 public abstract class EventStatus
 {
 	protected AbstractEvent event;
-	
 	protected TextBuilder sb = new TextBuilder();
 	
 	public abstract String generateList();

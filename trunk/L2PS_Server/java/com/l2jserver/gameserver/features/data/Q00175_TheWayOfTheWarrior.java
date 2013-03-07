@@ -14,13 +14,11 @@
  */
 package com.l2jserver.gameserver.features.data;
 
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 
@@ -105,7 +103,7 @@ public class Q00175_TheWayOfTheWarrior extends Quest
 			{
 				player.setNewbie(newbie | NEWBIE_REWARD);
 				
-				player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message3", player.getLang())).toString()), 3000));
+				player.sendMessage("You received the New Weapon. Go find the Newbie Guide.");
 				st.giveItems(1060, 100);
 				for (int item = 4412; item <= 4417; item++)
 				{

@@ -38,8 +38,7 @@ public class RequestTutorialClientEvent extends L2GameClientPacket
 		{
 			return;
 		}
-		// TODO: After reworked to java
-		QuestState qs = player.getQuestState("255_Tutorial");
+		QuestState qs = player.getQuestState("Q00255_Tutorial");
 		if (qs != null)
 		{
 			qs.getQuest().notifyEvent("CE" + eventId + "", null, player);

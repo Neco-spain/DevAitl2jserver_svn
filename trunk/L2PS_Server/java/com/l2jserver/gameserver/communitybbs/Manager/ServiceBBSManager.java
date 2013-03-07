@@ -18,8 +18,6 @@ import java.util.StringTokenizer;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.cache.HtmCache;
-import com.l2jserver.gameserver.customs.CustomMessage;
-import com.l2jserver.gameserver.customs.CustomSQLs;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.stat.PcStat;
@@ -67,12 +65,12 @@ public class ServiceBBSManager extends BaseBBSManager
 				}
 				if (activeChar.getClassId().level() < 3)
 				{
-					activeChar.sendMessage((new CustomMessage("ServiceBBS.NOOBLES_MSG", activeChar.getLang())).toString());
+					activeChar.sendMessage("You must have third class.");
 					return;
 				}
 				if (activeChar.isNoble())
 				{
-					activeChar.sendMessage((new CustomMessage("ServiceBBS.NOOBLES_MSG_1", activeChar.getLang())).toString());
+					activeChar.sendMessage("You already have nobless.");
 					return;
 				}
 				activeChar.destroyItemByItemId("ShopBBS", Config.NoblItemId, Config.NoblItemCount, activeChar, true);
@@ -83,7 +81,7 @@ public class ServiceBBSManager extends BaseBBSManager
 			{
 				if (activeChar.getRace().ordinal() == 5)
 				{
-					activeChar.sendMessage((new CustomMessage("ServiceBBS.GENDER_MSG", activeChar.getLang())).toString());
+					activeChar.sendMessage("Kamael can't change gender.");
 					return;
 				}
 				if (activeChar.getInventory().getItemByItemId(Config.GenderItemId) == null)
@@ -139,7 +137,6 @@ public class ServiceBBSManager extends BaseBBSManager
 					activeChar.destroyItemByItemId("ShopBBS", Config.HeroItemId, Config.HeroItemCount, activeChar, true);
 					activeChar.getLevel();
 					activeChar.getStat().addLevel(Byte.parseByte(_val));
-					CustomSQLs.updateDatabase(activeChar, true);
 					activeChar.broadcastUserInfo();
 				}
 			}
@@ -191,7 +188,7 @@ public class ServiceBBSManager extends BaseBBSManager
 				}
 				activeChar.destroyItemByItemId("ShopBBS", Config.SPItemId, Config.SPItemCount, activeChar, true);
 				activeChar.setSp(activeChar.getSp() + 10000000);
-				activeChar.sendMessage((new CustomMessage("ServiceBBS.ADDSP_MSG", activeChar.getLang())).toString());
+				activeChar.sendMessage("You received 10kk SP.");
 				activeChar.broadcastPacket(new SocialAction(activeChar.getObjectId(), 16));
 				activeChar.broadcastUserInfo();
 			}

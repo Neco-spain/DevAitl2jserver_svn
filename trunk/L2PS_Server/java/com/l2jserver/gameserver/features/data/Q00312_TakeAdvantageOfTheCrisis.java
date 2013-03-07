@@ -1,359 +1,139 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.features.data;
 
-import com.l2jserver.Config;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.util.Rnd;
 
 /**
- * Author: RobikBobik L2PS Team
+ * Take Advantage of the Crisis! (312)
+ * @author malyelfik
  */
 public class Q00312_TakeAdvantageOfTheCrisis extends Quest
 {
-	private static final int Filaur = 30535;
-	private static final int MineralFragment = 14875;
-	private static final int[] GraveRobberList =
+	private static final int FILAUR = 30535;
+	private static final Map<Integer, Integer> MOBS = new HashMap<>();
+	static
 	{
-		22678,
-		22679,
-		22680,
-		22681,
-		22682
-	};
-	private static final int[] Others =
-	{
-		22683,
-		22684,
-		22685,
-		22686,
-		22687,
-		22688,
-		22689,
-		22690
-	};
+		MOBS.put(22678, 291); // Grave Robber Summoner (Lunatic)
+		MOBS.put(22679, 596); // Grave Robber Magician (Lunatic)
+		MOBS.put(22680, 610); // Grave Robber Worker (Lunatic)
+		MOBS.put(22681, 626); // Grave Robber Warrior (Lunatic)
+		MOBS.put(22682, 692); // Grave Robber Warrior of Light (Lunatic)
+		MOBS.put(22683, 650); // Servitor of Darkness
+		MOBS.put(22684, 310); // Servitor of Darkness
+		MOBS.put(22685, 626); // Servitor of Darkness
+		MOBS.put(22686, 626); // Servitor of Darkness
+		MOBS.put(22687, 308); // Phantoms of the Mine
+		MOBS.put(22688, 416); // Evil Spirits of the Mine
+		MOBS.put(22689, 212); // Mine Bug
+		MOBS.put(22690, 748); // Earthworm's Descendant
+	}
+	// Item
+	private static final int MINERAL_FRAGMENT = 14875;
+	// Misc
+	private static final int MIN_LEVEL = 80;
 	
-	public Q00312_TakeAdvantageOfTheCrisis(int id, String name, String descr)
+	private Q00312_TakeAdvantageOfTheCrisis(int questId, String name, String descr)
 	{
-		super(id, name, descr);
-		
-		addStartNpc(Filaur);
-		addTalkId(Filaur);
-		
-		for (int i : GraveRobberList)
-		{
-			addKillId(i);
-		}
-		for (int i : Others)
-		{
-			addKillId(i);
-		}
-		
-		questItemIds = new int[]
-		{
-			MineralFragment
-		};
+		super(questId, name, descr);
+		addStartNpc(FILAUR);
+		addTalkId(FILAUR);
+		addKillId(MOBS.keySet());
+		registerQuestItems(MINERAL_FRAGMENT);
 	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
-		String htmltext = event;
-		
-		QuestState st = player.getQuestState(getName());
+		final QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
-			return htmltext;
+			return null;
 		}
 		
-		if (event.equalsIgnoreCase("30535-25.htm"))
+		String htmltext = event;
+		switch (event)
 		{
-			st.exitQuest(true);
-			st.playSound("ItemSound.quest_finish");
-		}
-		else if (event.equalsIgnoreCase("30535-6.htm"))
-		{
-			st.set("cond", "1");
-			st.setState(State.STARTED);
-			st.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("30535-14.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 366)
-			{
-				st.takeItems(MineralFragment, 366);
-				st.giveItems(9487, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-15.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 299)
-			{
-				st.takeItems(MineralFragment, 299);
-				st.giveItems(9488, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-16.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 183)
-			{
-				st.takeItems(MineralFragment, 183);
-				st.giveItems(9489, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-17.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 122)
-			{
-				st.takeItems(MineralFragment, 122);
-				st.giveItems(9490, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-18.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 122)
-			{
-				st.takeItems(MineralFragment, 122);
-				st.giveItems(9491, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-19.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 129)
-			{
-				st.takeItems(MineralFragment, 129);
-				st.giveItems(9497, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-20.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 667)
-			{
-				st.takeItems(MineralFragment, 667);
-				st.giveItems(9625, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-21.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 1000)
-			{
-				st.takeItems(MineralFragment, 1000);
-				st.giveItems(9626, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-22.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 24)
-			{
-				st.takeItems(MineralFragment, 24);
-				st.giveItems(9628, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-23.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 24)
-			{
-				st.takeItems(MineralFragment, 24);
-				st.giveItems(9629, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30535-24.htm"))
-		{
-			if (st.getQuestItemsCount(MineralFragment) >= 36)
-			{
-				st.takeItems(MineralFragment, 36);
-				st.giveItems(9630, 1);
-				st.playSound("ItemSound.quest_middle");
-				htmltext = "30535-14.htm";
-			}
-			else
-			{
-				htmltext = "30535-14no.htm";
-			}
+			case "30535-02.html":
+			case "30535-03.html":
+			case "30535-04.html":
+			case "30535-05.htm":
+			case "30535-09.html":
+			case "30535-10.html":
+				break;
+			case "30535-06.htm":
+				st.startQuest();
+				break;
+			case "30535-11.html":
+				st.exitQuest(true, true);
+				break;
+			default:
+				htmltext = null;
+				break;
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance member = getRandomPartyMember(player, 1);
+		if ((member != null) && (getRandom(1000) < MOBS.get(npc.getNpcId())))
+		{
+			final QuestState st = member.getQuestState(getName());
+			st.giveItems(MINERAL_FRAGMENT, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(getName());
+		final QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
 			return htmltext;
 		}
 		
-		int cond = st.getInt("cond");
-		int npcId = npc.getNpcId();
-		byte id = st.getState();
-		
-		if (npcId == Filaur)
+		switch (st.getState())
 		{
-			if (id == State.CREATED)
-			{
-				if (cond == 0)
-				{
-					if (player.getLevel() >= 80)
-					{
-						htmltext = "30535-0.htm";
-					}
-					else
-					{
-						st.exitQuest(true);
-						htmltext = "30535-0a.htm";
-					}
-				}
-			}
-			else if (id == State.CREATED)
-			{
-				if ((cond == 1) && (st.getQuestItemsCount(MineralFragment) == 0))
-				{
-					htmltext = "30535-6.htm";
-				}
-				else if ((cond == 1) && (st.getQuestItemsCount(MineralFragment) > 0))
-				{
-					htmltext = "30535-7.htm";
-				}
-			}
+			case State.CREATED:
+				htmltext = (player.getLevel() >= MIN_LEVEL) ? "30535-01.htm" : "30535-00.htm";
+				break;
+			case State.STARTED:
+				htmltext = (st.hasQuestItems(MINERAL_FRAGMENT)) ? "30535-08.html" : "30535-07.html";
+				break;
 		}
 		return htmltext;
 	}
 	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		L2PcInstance partyMember = getRandomPartyMemberState(player, State.STARTED);
-		if (partyMember == null)
-		{
-			return null;
-		}
-		QuestState st = partyMember.getQuestState(getName());
-		if ((st == null) || (st.getInt("cond") != 1))
-		{
-			return null;
-		}
-		
-		if (isIntInArray(npc.getNpcId(), GraveRobberList))
-		{
-			int count = 1;
-			int chance = (int) (30 * Config.RATE_QUEST_DROP);
-			while (chance > 100)
-			{
-				chance -= 100;
-				if (chance < 30)
-				{
-					chance = 30;
-				}
-				count++;
-			}
-			if (Rnd.getChance(chance))
-			{
-				st.giveItems(MineralFragment, count);
-				st.playSound("ItemSound.quest_itemget");
-			}
-		}
-		else if (isIntInArray(npc.getNpcId(), Others))
-		{
-			int count = 1;
-			int chance = (int) (20 * Config.RATE_QUEST_DROP);
-			while (chance > 100)
-			{
-				chance -= 100;
-				if (chance < 20)
-				{
-					chance = 20;
-				}
-				count++;
-			}
-			
-			if (Rnd.getChance(chance))
-			{
-				st.giveItems(MineralFragment, count);
-				st.playSound("ItemSound.quest_itemget");
-			}
-		}
-		return null;
-	}
-	
 	public static void main(String[] args)
 	{
-		new Q00312_TakeAdvantageOfTheCrisis(312, Q00312_TakeAdvantageOfTheCrisis.class.getSimpleName(), "Take Advantage Of The Crisis");
+		new Q00312_TakeAdvantageOfTheCrisis(312, Q00312_TakeAdvantageOfTheCrisis.class.getSimpleName(), "Take Advantage of the Crisis!");
 	}
 }

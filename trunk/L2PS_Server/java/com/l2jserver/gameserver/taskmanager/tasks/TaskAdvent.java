@@ -27,14 +27,12 @@ import com.l2jserver.gameserver.taskmanager.TaskTypes;
 /**
  * Author: RobikBobik(L2Brick)
  */
-
 public class TaskAdvent extends Task
 {
 	private static final Logger _log = Logger.getLogger(TaskAdvent.class.getName());
 	private static final String NAME = "huntingbonus";
 	
 	/**
-	 * 
 	 * @see com.l2jserver.gameserver.taskmanager.Task#getName()
 	 */
 	@Override
@@ -44,7 +42,6 @@ public class TaskAdvent extends Task
 	}
 	
 	/**
-	 * 
 	 * @see com.l2jserver.gameserver.taskmanager.Task#onTimeElapsed(com.l2jserver.gameserver.taskmanager.TaskManager.ExecutedTask)
 	 */
 	@Override
@@ -54,7 +51,7 @@ public class TaskAdvent extends Task
 		L2PcInstance[] onlinePlayers = L2World.getInstance().getAllPlayersArray();
 		for (L2PcInstance player : onlinePlayers)
 		{
-			if (player != null && player.isOnline())
+			if ((player != null) && player.isOnline())
 			{
 				player.pauseAdventTask();
 				player.startAdventTask();
@@ -64,7 +61,6 @@ public class TaskAdvent extends Task
 	}
 	
 	/**
-	 * 
 	 * @see com.l2jserver.gameserver.taskmanager.Task#initializate()
 	 */
 	@Override

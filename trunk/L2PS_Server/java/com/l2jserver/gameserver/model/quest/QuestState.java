@@ -1397,4 +1397,77 @@ public final class QuestState
 			}
 		}
 	}
+	
+	public boolean dropItemsAlways(int itemId, int count, long neededCount)
+	{
+		return dropItems(itemId, count, neededCount, 1000000, (byte) 1);
+	}
+	
+	public boolean dropItems(int itemId, int count, long neededCount, int dropChance)
+	{
+		return dropItems(itemId, count, neededCount, dropChance, (byte) 0);
+	}
+	
+	public boolean dropItems(int itemId, int count, long neededCount, int dropChance, byte type)
+	{
+		long currentCount = getQuestItemsCount(itemId);
+		
+		if ((neededCount > 0) && (currentCount >= neededCount))
+		{
+			return true;
+		}
+		
+		int amount = 0;
+		switch (type)
+		{
+			case 0:
+				dropChance = (int) (dropChance * Config.RATE_QUEST_DROP);
+				amount = count * (dropChance / 1000000);
+				if (Rnd.get(1000000) < (dropChance % 1000000))
+				{
+					amount += count;
+				}
+				break;
+			case 1:
+				if (Rnd.get(1000000) < dropChance)
+				{
+					amount = (int) (count * Config.RATE_QUEST_DROP);
+				}
+				break;
+			case 2:
+				if (Rnd.get(1000000) < (dropChance * Config.RATE_QUEST_DROP))
+				{
+					amount = count;
+				}
+				break;
+			case 3:
+				if (Rnd.get(1000000) < dropChance)
+				{
+					amount = count;
+				}
+				break;
+		}
+		boolean reached = false;
+		if (amount > 0)
+		{
+			if (neededCount > 0)
+			{
+				reached = (currentCount + amount) >= neededCount;
+				amount = (int) (reached ? neededCount - currentCount : amount);
+			}
+			
+			if (!_player.getInventory().validateCapacityByItemId(itemId))
+			{
+				return false;
+			}
+			giveItems(itemId, amount, 0);
+			playSound(reached ? "ItemSound.quest_middle" : "ItemSound.quest_itemget");
+		}
+		return (neededCount > 0) && (reached);
+	}
+	
+	public void giveItems(int itemId, double count)
+	{
+		giveItems(itemId, (long) count, 0);
+	}
 }

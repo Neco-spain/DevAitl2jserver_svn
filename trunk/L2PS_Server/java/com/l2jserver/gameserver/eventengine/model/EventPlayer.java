@@ -55,11 +55,6 @@ import com.l2jserver.gameserver.util.Broadcast;
 
 public class EventPlayer implements Comparable<EventPlayer>
 {
-	
-	// private static Logger _log =
-	// Logger.getLogger(PlayerEventInfo.class.getName());
-	
-	// Main variables
 	private final L2PcInstance _owner;
 	private final int _playersId;
 	private boolean _isInEvent;
@@ -71,8 +66,6 @@ public class EventPlayer implements Comparable<EventPlayer>
 	private int _mainTeam;
 	private int _score;
 	private AbstractEvent event;
-	
-	// Original data, which will be restored when the event ends
 	private int _origNameColor;
 	private PLoc _origLoc;
 	private String _origTitle;
@@ -190,6 +183,7 @@ public class EventPlayer implements Comparable<EventPlayer>
 		return _owner.getClassIndex();
 	}
 	
+	@SuppressWarnings("deprecation")
 	public String getClassName()
 	{
 		return _owner.getTemplate().getClassName();
@@ -306,10 +300,7 @@ public class EventPlayer implements Comparable<EventPlayer>
 		{
 			return _owner.getName();
 		}
-		else
-		{
-			return "";
-		}
+		return "";
 	}
 	
 	public int getPvpKills()

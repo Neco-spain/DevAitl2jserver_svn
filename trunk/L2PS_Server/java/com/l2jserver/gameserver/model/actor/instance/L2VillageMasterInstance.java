@@ -631,14 +631,12 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		{
 			return true;
 		}
-		// TODO: Quests
-		QuestState qs = player.getQuestState("234_FatesWhisper");
+		QuestState qs = player.getQuestState("Q00234_FatesWhisper");
 		if ((qs == null) || !qs.isCompleted())
 		{
 			return false;
 		}
-		// TODO: Quests
-		qs = player.getQuestState("235_MimirsElixir");
+		qs = player.getQuestState("Q00235_MimirsElixir");
 		if ((qs == null) || !qs.isCompleted())
 		{
 			return false;

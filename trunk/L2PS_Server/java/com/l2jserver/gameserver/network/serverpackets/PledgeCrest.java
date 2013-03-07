@@ -14,17 +14,18 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
-import com.l2jserver.gameserver.cache.CrestCache;
 
 public final class PledgeCrest extends L2GameServerPacket
 {
 	private final int _crestId;
+	private final int _crestSize;
 	private final byte[] _data;
 	
-	public PledgeCrest(int crestId)
+	public PledgeCrest(int crestId, byte[] data)
 	{
 		_crestId = crestId;
-		_data = CrestCache.getInstance().getPledgeCrest(_crestId);
+		_data = data;
+		_crestSize = _data.length;
 	}
 	
 	@Override
@@ -32,14 +33,7 @@ public final class PledgeCrest extends L2GameServerPacket
 	{
 		writeC(0x6a);
 		writeD(_crestId);
-		if (_data != null)
-		{
-			writeD(_data.length);
-			writeB(_data);
-		}
-		else
-		{
-			writeD(0);
-		}
+		writeD(_crestSize);
+		writeB(_data);
 	}
 }

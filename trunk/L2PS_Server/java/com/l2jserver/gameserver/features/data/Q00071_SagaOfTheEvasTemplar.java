@@ -20,7 +20,7 @@ package com.l2jserver.gameserver.features.data;
  */
 public class Q00071_SagaOfTheEvasTemplar extends Sagas3rdClass
 {
-	public static String qn1 = "Q00071_SagaOfEvasTemplar";
+	public static String qn1 = "Q00071_SagaOfTheEvasTemplar";
 	public static int qnu = 71;
 	public static String qna = "Saga of Eva's Templar";
 	

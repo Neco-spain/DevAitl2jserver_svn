@@ -77,13 +77,14 @@ public final class Config
 	public static final String BAIUM_CONFIG = "./config/Bosses/Baium.properties";
 	public static final String BELETH_CONFIG = "./config/Bosses/Beleth.properties";
 	public static final String CORE_CONFIG = "./config/Bosses/Core.properties";
-	// public static final String EKIMUS_CONFIG = "./config/Bosses/Ekimus.properties";
+	public static final String EKIMUS_CONFIG = "./config/Bosses/Ekimus.properties";
+	public static final String TIAT_CONFIG = "./config/Bosses/Tiat.properties";
+	public static final String FRINTEZZA_CONFIG = "./config/Bosses/Frintezza.properties";
 	public static final String FREYA_EASY_CONFIG = "./config/Bosses/FreyaEasy.properties";
 	public static final String FREYA_HARDCORE_CONFIG = "./config/Bosses/FreyaHardCore.properties";
 	public static final String ORFEN_CONFIG = "./config/Bosses/Orfen.properties";
 	public static final String QUEEN_ANT_CONFIG = "./config/Bosses/QueenAnt.properties";
 	public static final String SAILREN_CONFIG = "./config/Bosses/Sailren.properties";
-	public static final String SEED_OF_DESTRUCTION_CONFIG = "./config/Bosses/SeedOfDestruction.properties";
 	public static final String ZAKEN_CONFIG = "./config/Bosses/Zaken.properties";
 	// Events/
 	public static final String CH_SIEGE_FILE = "./config/Events/ConquerableHallSiege.properties";
@@ -128,6 +129,7 @@ public final class Config
 	public static final String SECURITY_CONFIG_FILE = "./config/Server/Security.properties";
 	public static final String CONFIGURATION_FILE = "./config/Server/GameServer.properties";
 	public static final String VOTE_EVENT = "./config/Server/VoteEvent.properties";
+	public static final String VOTE_EVENT_NPC = "./config/Server/VoteEventNpc.properties";
 	// Default/
 	public static final String LOGIN_CONFIGURATION_FILE = "./config/LoginServer.properties";
 	public static final String IP_CONFIG_FILE = "./config/ipconfig.xml";
@@ -135,50 +137,71 @@ public final class Config
 	public static final String TELNET_FILE = "./config/Telnet.properties";
 	public static final String EMAIL_CONFIG_FILE = "./config/Email.properties";
 	
+	public static boolean SPAWN_CHAR;
+	public static int SPAWN_X;
+	public static int SPAWN_Y;
+	public static int SPAWN_Z;
+	public static int EROSION_ATTACK_MIN_PLAYERS;
+	public static int EROSION_ATTACK_MAX_PLAYERS;
+	public static int EROSION_DEFENCE_MIN_PLAYERS;
+	public static int EROSION_DEFENCE_MAX_PLAYERS;
+	public static int HEART_ATTACK_MIN_PLAYERS;
+	public static int HEART_ATTACK_MAX_PLAYERS;
+	public static int HEART_DEFENCE_MIN_PLAYERS;
+	public static int HEART_DEFENCE_MAX_PLAYERS;
+	public static int SOI_EKIMUS_KILL_COUNT;
+	public static int MIN_TIAT_PLAYERS;
+	public static int MAX_TIAT_PLAYERS;
+	public static int SOD_TIAT_KILL_COUNT;
+	public static long SOD_STAGE_2_LENGTH;
+	public static String VOTE_LINK_HOPZONE;
+	public static String VOTE_LINK_TOPZONE;
+	public static int VOTE_REWARD_ID1;
+	public static int VOTE_REWARD_ID2;
+	public static int VOTE_REWARD_ID3;
+	public static int VOTE_REWARD_ID4;
+	public static int VOTE_REWARD_AMOUNT1;
+	public static int VOTE_REWARD_AMOUNT2;
+	public static int VOTE_REWARD_AMOUNT3;
+	public static int VOTE_REWARD_AMOUNT4;
+	public static int SECS_TO_VOTE;
+	public static int EXTRA_REW_VOTE_AM;
+	public static int POINT_FOR_LV_HUNB;
+	public static int MIN_PLAYER_TO_FE;
+	public static int MAX_PLAYER_TO_FE;
+	public static int MIN_LEVEL_TO_FE;
+	public static boolean MOBS_STATS_BONUS;
 	public static boolean ALLOW_PVP_REWARD;
 	public static int GIVE_ITEM_FOR_PVP_KILL;
 	public static long GIVE_ITEM__COUNT_FOR_PVP_KILL;
-	
 	public static boolean ENABLE_MANA_POTIONS_IN_PVP;
-	
 	public static boolean CHAR_TITLE;
 	public static String ADD_CHAR_TITLE;
-	
 	public static boolean ANNOUNCE_HERO_LOGIN;
-	
 	public static boolean ANNOUNCE_CASTLE_LORDS;
-	
 	public static boolean ENTER_HELLBOUND_WITHOUT_QUEST;
-	
 	public static int MIN_PLAYERS_TO_HARD;
 	public static int MAX_PLAYERS_TO_HARD;
 	public static int MIN_PLAYERS_TO_EASY;
 	public static int MAX_PLAYERS_TO_EASY;
 	public static int MIN_PLAYER_LEVEL_TO_HARD;
 	public static int MIN_PLAYER_LEVEL_TO_EASY;
-	
 	public static boolean ENABLE_EVENT_ENGINE;
-	
 	public static boolean ENABLE_TELEPORT_TO_CL;
-	
 	public static int VOTE_ITEM_ID;
 	public static int VOTE_ITEM_A;
 	public static int VOTE_BUFF_ID;
 	public static int VOTE_BUFF_LVL;
 	public static boolean VOTE_BUFF_ENABLED;
 	public static String VOTE_ITEM_NAME;
-	
 	public static boolean FENCE_MOVIE_BUILDER;
-	
 	public static boolean ENABLE_CUSTOM_PERIOD;
 	public static int[] ALT_OLY_END_DATE;
 	public static int[] ALT_OLY_END_HOUR = new int[3];
-	
 	public static boolean PVP_SYSTEM_QUAKE;
 	public static boolean PK_SYSTEM_QUAKE;
 	public static boolean ALLOW_PVP_SKILLS;
 	public static Map<Integer, Integer> PVP_SKILLS_LIST = new FastMap<>();
-	
 	public static boolean ALLOW_HOPZONE_VOTE_REWARD;
 	public static String HOPZONE_SERVER_LINK;
 	public static String HOPZONE_FIRST_PAGE_LINK;
@@ -512,6 +535,8 @@ public final class Config
 	public static String PARTY_XP_CUTOFF_METHOD;
 	public static double PARTY_XP_CUTOFF_PERCENT;
 	public static int PARTY_XP_CUTOFF_LEVEL;
+	public static int[][] PARTY_XP_CUTOFF_GAPS;
+	public static int[] PARTY_XP_CUTOFF_GAP_PERCENTS;
 	public static boolean DISABLE_TUTORIAL;
 	public static boolean EXPERTISE_PENALTY;
 	public static boolean STORE_RECIPE_SHOPLIST;
@@ -1170,7 +1195,6 @@ public final class Config
 	
 	public static IdFactoryType IDFACTORY_TYPE;
 	public static boolean BAD_ID_CHECKING;
-	
 	public static double ENCHANT_CHANCE;
 	public static int MAX_ENCHANT_LEVEL;
 	public static double ENCHANT_CHANCE_ELEMENT_STONE;
@@ -1224,8 +1248,6 @@ public final class Config
 	public static int BELETH_MIN_PLAYERS;
 	public static int INTERVAL_OF_BELETH_SPAWN;
 	public static int RANDOM_OF_BELETH_SPAWN;
-	public static int SOD_TIAT_KILL_COUNT;
-	public static long SOD_STAGE_2_LENGTH;
 	public static ArrayList<String> FILTER_LIST;
 	public static boolean SECOND_AUTH_ENABLED;
 	public static int SECOND_AUTH_MAX_ATTEMPTS;
@@ -1809,6 +1831,10 @@ public final class Config
 			ALT_PARTY_RANGE2 = Integer.parseInt(Character.getProperty("AltPartyRange2", "1400"));
 			ALT_LEAVE_PARTY_LEADER = Boolean.parseBoolean(Character.getProperty("AltLeavePartyLeader", "False"));
 			INITIAL_EQUIPMENT_EVENT = Boolean.parseBoolean(Character.getProperty("InitialEquipmentEvent", "False"));
+			SPAWN_CHAR = Boolean.parseBoolean(Character.getProperty("CustomSpawn", "false"));
+			SPAWN_X = Integer.parseInt(Character.getProperty("SpawnX", ""));
+			SPAWN_Y = Integer.parseInt(Character.getProperty("SpawnY", ""));
+			SPAWN_Z = Integer.parseInt(Character.getProperty("SpawnZ", ""));
 			STARTING_ADENA = Long.parseLong(Character.getProperty("StartingAdena", "0"));
 			STARTING_LEVEL = Byte.parseByte(Character.getProperty("StartingLevel", "1"));
 			STARTING_SP = Integer.parseInt(Character.getProperty("StartingSP", "0"));
@@ -1857,9 +1883,25 @@ public final class Config
 			DELETE_DAYS = Integer.parseInt(Character.getProperty("DeleteCharAfterDays", "7"));
 			ALT_GAME_EXPONENT_XP = Float.parseFloat(Character.getProperty("AltGameExponentXp", "0."));
 			ALT_GAME_EXPONENT_SP = Float.parseFloat(Character.getProperty("AltGameExponentSp", "0."));
-			PARTY_XP_CUTOFF_METHOD = Character.getProperty("PartyXpCutoffMethod", "level");
+			PARTY_XP_CUTOFF_METHOD = Character.getProperty("PartyXpCutoffMethod", "highfive");
 			PARTY_XP_CUTOFF_PERCENT = Double.parseDouble(Character.getProperty("PartyXpCutoffPercent", "3."));
 			PARTY_XP_CUTOFF_LEVEL = Integer.parseInt(Character.getProperty("PartyXpCutoffLevel", "20"));
+			final String[] gaps = Character.getProperty("PartyXpCutoffGaps", "0,9;10,14;15,99").split(";");
+			PARTY_XP_CUTOFF_GAPS = new int[gaps.length][2];
+			for (int i = 0; i < gaps.length; i++)
+			{
+				PARTY_XP_CUTOFF_GAPS[i] = new int[]
+				{
+					Integer.parseInt(gaps[i].split(",")[0]),
+					Integer.parseInt(gaps[i].split(",")[1])
+				};
+			}
+			final String[] percents = Character.getProperty("PartyXpCutoffGapPercent", "100;30;0").split(";");
+			PARTY_XP_CUTOFF_GAP_PERCENTS = new int[percents.length];
+			for (int i = 0; i < percents.length; i++)
+			{
+				PARTY_XP_CUTOFF_GAP_PERCENTS[i] = Integer.parseInt(percents[i]);
+			}
 			DISABLE_TUTORIAL = Boolean.parseBoolean(Character.getProperty("DisableTutorial", "False"));
 			EXPERTISE_PENALTY = Boolean.parseBoolean(Character.getProperty("ExpertisePenalty", "True"));
 			STORE_RECIPE_SHOPLIST = Boolean.parseBoolean(Character.getProperty("StoreRecipeShopList", "False"));
@@ -2018,6 +2060,31 @@ public final class Config
 			{
 				_log.warning("Config: " + e.getMessage());
 				throw new Error("Failed to Load " + VOTE_EVENT + " File.");
+			}
+			
+			// Load VOTE_EVENT_NPC L2Properties file (if exists)
+			final File vote3 = new File(VOTE_EVENT_NPC);
+			try (InputStream is = new FileInputStream(vote3))
+			{
+				L2Properties vote3_load = new L2Properties();
+				vote3_load.load(is);
+				VOTE_LINK_HOPZONE = vote3_load.getProperty("HopzoneUrl", "null");
+				VOTE_LINK_TOPZONE = vote3_load.getProperty("TopzoneUrl", "null");
+				VOTE_REWARD_ID1 = Integer.parseInt(vote3_load.getProperty("VoteRewardId1", "300"));
+				VOTE_REWARD_ID2 = Integer.parseInt(vote3_load.getProperty("VoteRewardId2", "300"));
+				VOTE_REWARD_ID3 = Integer.parseInt(vote3_load.getProperty("VoteRewardId3", "300"));
+				VOTE_REWARD_ID4 = Integer.parseInt(vote3_load.getProperty("VoteRewardId4", "300"));
+				VOTE_REWARD_AMOUNT1 = Integer.parseInt(vote3_load.getProperty("VoteRewardAmount1", "300"));
+				VOTE_REWARD_AMOUNT2 = Integer.parseInt(vote3_load.getProperty("VoteRewardAmount2", "300"));
+				VOTE_REWARD_AMOUNT3 = Integer.parseInt(vote3_load.getProperty("VoteRewardAmount3", "300"));
+				VOTE_REWARD_AMOUNT4 = Integer.parseInt(vote3_load.getProperty("VoteRewardAmount4", "300"));
+				SECS_TO_VOTE = Integer.parseInt(vote3_load.getProperty("SecondsToVote", "20"));
+				EXTRA_REW_VOTE_AM = Integer.parseInt(vote3_load.getProperty("ExtraRewVoteAm", "20"));
+			}
+			catch (Exception e)
+			{
+				_log.warning("Config: " + e.getMessage());
+				throw new Error("Failed to Load " + VOTE_EVENT_NPC + " File.");
 			}
 			
 			// Load offline L2Properties file (if exists)
@@ -2579,6 +2646,21 @@ public final class Config
 				_log.warning("Config: " + e.getMessage());
 				throw new Error("Failed to Load " + BELETH_CONFIG + " File.");
 			}
+			// Load FRINTEZZA_CONFIG L2Properties file (if exists)
+			final File frintezza = new File(FRINTEZZA_CONFIG);
+			try (InputStream is = new FileInputStream(frintezza))
+			{
+				L2Properties frintezza_load = new L2Properties();
+				frintezza_load.load(is);
+				MIN_PLAYER_TO_FE = Integer.parseInt(frintezza_load.getProperty("MinPlayers", "36"));
+				MAX_PLAYER_TO_FE = Integer.parseInt(frintezza_load.getProperty("MaxPlayers", "45"));
+				MIN_LEVEL_TO_FE = Integer.parseInt(frintezza_load.getProperty("MinLevel", "80"));
+			}
+			catch (Exception e)
+			{
+				_log.warning("Config: " + e.getMessage());
+				throw new Error("Failed to Load " + FRINTEZZA_CONFIG + " File.");
+			}
 			// Load SAILREN_CONFIG L2Properties file (if exists)
 			final File sailren = new File(SAILREN_CONFIG);
 			try (InputStream is = new FileInputStream(sailren))
@@ -2620,19 +2702,42 @@ public final class Config
 				_log.warning("Config: " + e.getMessage());
 				throw new Error("Failed to Load " + ZAKEN_CONFIG + " File.");
 			}
-			// Load SEED_OF_DESTRUCTION_CONFIG L2Properties file (if exists)
-			final File sod = new File(SEED_OF_DESTRUCTION_CONFIG);
+			// Load TIAT_CONFIG L2Properties file (if exists)
+			final File sod = new File(TIAT_CONFIG);
 			try (InputStream is = new FileInputStream(sod))
 			{
 				L2Properties sod_load = new L2Properties();
 				sod_load.load(is);
 				SOD_TIAT_KILL_COUNT = Integer.parseInt(sod_load.getProperty("TiatKillCountForNextState", "10"));
 				SOD_STAGE_2_LENGTH = Long.parseLong(sod_load.getProperty("Stage2Length", "720")) * 60000;
+				MIN_TIAT_PLAYERS = Integer.parseInt(sod_load.getProperty("MinTiatPlayers", "36"));
+				MAX_TIAT_PLAYERS = Integer.parseInt(sod_load.getProperty("MaxTiatPlayers", "45"));
 			}
 			catch (Exception e)
 			{
 				_log.warning("Config: " + e.getMessage());
-				throw new Error("Failed to Load " + SEED_OF_DESTRUCTION_CONFIG + " File.");
+				throw new Error("Failed to Load " + TIAT_CONFIG + " File.");
+			}
+			// Load EKIMUS_CONFIG L2Properties file (if exists)
+			final File soi = new File(EKIMUS_CONFIG);
+			try (InputStream is = new FileInputStream(soi))
+			{
+				L2Properties soi_load = new L2Properties();
+				soi_load.load(is);
+				SOI_EKIMUS_KILL_COUNT = Integer.parseInt(soi_load.getProperty("EkimusKillCount", "5"));
+				EROSION_ATTACK_MIN_PLAYERS = Integer.parseInt(soi_load.getProperty("MinEroAttPlayers", "18"));
+				EROSION_ATTACK_MAX_PLAYERS = Integer.parseInt(soi_load.getProperty("MaxEroAttPlayers", "27"));
+				EROSION_DEFENCE_MIN_PLAYERS = Integer.parseInt(soi_load.getProperty("MinEroDefPlayers", "18"));
+				EROSION_DEFENCE_MAX_PLAYERS = Integer.parseInt(soi_load.getProperty("MaxEroDefPlayers", "27"));
+				HEART_ATTACK_MIN_PLAYERS = Integer.parseInt(soi_load.getProperty("MinHeaAttPlayers", "18"));
+				HEART_ATTACK_MAX_PLAYERS = Integer.parseInt(soi_load.getProperty("MaxHeaAttPlayers", "27"));
+				HEART_DEFENCE_MIN_PLAYERS = Integer.parseInt(soi_load.getProperty("MinHeaDefPlayers", "18"));
+				HEART_DEFENCE_MAX_PLAYERS = Integer.parseInt(soi_load.getProperty("MaxHeaDefPlayers", "27"));
+			}
+			catch (Exception e)
+			{
+				_log.warning("Config: " + e.getMessage());
+				throw new Error("Failed to Load " + EKIMUS_CONFIG + " File.");
 			}
 			
 			// Load Telnet L2Properties file (if exists)
@@ -3013,6 +3118,7 @@ public final class Config
 				_log.log(Level.SEVERE, "Error while loading NPC settings!", e);
 			}
 			
+			MOBS_STATS_BONUS = Boolean.parseBoolean(NPC.getProperty("AllowEasyModMobs", "False"));
 			ANNOUNCE_MAMMON_SPAWN = Boolean.parseBoolean(NPC.getProperty("AnnounceMammonSpawn", "False"));
 			ALT_MOB_AGRO_IN_PEACEZONE = Boolean.parseBoolean(NPC.getProperty("AltMobAgroInPeaceZone", "True"));
 			ALT_ATTACKABLE_NPCS = Boolean.parseBoolean(NPC.getProperty("AltAttackableNpcs", "True"));
@@ -3109,7 +3215,7 @@ public final class Config
 			{
 				_log.log(Level.SEVERE, "Error while loading Rates settings!", e);
 			}
-			
+			POINT_FOR_LV_HUNB = Integer.parseInt(RatesSettings.getProperty("PointPerLvH", "2000"));
 			RATE_XP = Float.parseFloat(RatesSettings.getProperty("RateXp", "1."));
 			RATE_SP = Float.parseFloat(RatesSettings.getProperty("RateSp", "1."));
 			RATE_PARTY_XP = Float.parseFloat(RatesSettings.getProperty("RatePartyXp", "1."));
@@ -4610,7 +4716,6 @@ public final class Config
 			default:
 				try
 				{
-					// TODO: stupid GB configs...
 					if (!pName.startsWith("Interval_") && !pName.startsWith("Random_"))
 					{
 						pName = pName.toUpperCase();

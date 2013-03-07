@@ -770,8 +770,7 @@ public class EnterWorld extends L2GameClientPacket
 	
 	private void loadTutorial(L2PcInstance player)
 	{
-		// TODO: After reworked to java
-		QuestState qs = player.getQuestState("255_Tutorial");
+		QuestState qs = player.getQuestState("Q00255_Tutorial");
 		
 		if (qs != null)
 		{

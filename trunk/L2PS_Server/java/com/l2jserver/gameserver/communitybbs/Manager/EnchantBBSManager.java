@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import javolution.text.TextBuilder;
 
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.L2EtcItem;
@@ -434,7 +433,7 @@ public class EnchantBBSManager extends BaseBBSManager
 			}
 			else
 			{
-				activeChar.sendMessage((new CustomMessage("EnchantBBS.ERROR_MSG", activeChar.getLang())).toString());
+				activeChar.sendMessage("Incorrect items count!");
 				return;
 			}
 			
@@ -469,7 +468,7 @@ public class EnchantBBSManager extends BaseBBSManager
 			}
 			else
 			{
-				activeChar.sendMessage((new CustomMessage("EnchantBBS.ERROR_MSG", activeChar.getLang())).toString());
+				activeChar.sendMessage("Incorrect items count!");
 				return;
 			}
 		}
