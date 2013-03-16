@@ -1,174 +1,162 @@
+/*
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00003_WillTheSealBeBroken;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.base.Race;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 
 /**
- * Author: RobikBobik L2PS Team
+ * Will the Seal be Broken? (3)
+ * @author malyelfik
  */
 public class Q00003_WillTheSealBeBroken extends Quest
 {
-	private final static int TALLOTH = 30141;
-	private final static int[] MONSTERS =
-	{
-		20031,
-		20041,
-		20046,
-		20048,
-		20052,
-		20057
-	};
-	private final static int ONYX_BEAST_EYE = 1081;
-	private final static int TAINT_STONE = 1082;
-	private final static int SUCCUBUS_BLOOD = 1083;
-	private final static int SCROLL_ENCHANT_ARMOR_D = 956;
+	// NPC
+	private static final int TALLOTH = 30141;
+	// Monsters
+	private static final int OMEN_BEAST = 20031;
+	private static final int TAINTED_ZOMBIE = 20041;
+	private static final int STINK_ZOMBIE = 20046;
+	private static final int LESSER_SUCCUBUS = 20048;
+	private static final int LESSER_SUCCUBUS_TUREN = 20052;
+	private static final int LESSER_SUCCUBUS_TILFO = 20057;
+	// Items
+	private static final int OMEN_BEAST_EYE = 1081;
+	private static final int TAINT_STONE = 1082;
+	private static final int SUCCUBUS_BLOOD = 1083;
+	private static final int ENCHANT = 956;
+	// Misc
+	private static final int MIN_LEVEL = 16;
 	
-	public Q00003_WillTheSealBeBroken(int questId, String name, String descr)
+	private Q00003_WillTheSealBeBroken(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
 		addStartNpc(TALLOTH);
 		addTalkId(TALLOTH);
-		for (int mobId : MONSTERS)
-		{
-			addKillId(mobId);
-		}
-		questItemIds = new int[]
-		{
-			ONYX_BEAST_EYE,
-			TAINT_STONE,
-			SUCCUBUS_BLOOD
-		};
+		addKillId(OMEN_BEAST, TAINTED_ZOMBIE, STINK_ZOMBIE, LESSER_SUCCUBUS, LESSER_SUCCUBUS_TILFO, LESSER_SUCCUBUS_TUREN);
+		registerQuestItems(OMEN_BEAST_EYE, TAINT_STONE, SUCCUBUS_BLOOD);
 	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		String htmltext = event;
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return htmltext;
-		}
-		if (event.equalsIgnoreCase("30141-03.htm"))
-		{
-			st.set("cond", "1");
-			st.setState(State.STARTED);
-			st.playSound("ItemSound.quest_accept");
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
-		if (npc.getNpcId() == TALLOTH)
-		{
-			return "";
-		}
-		QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			st = newQuestState(player);
-		}
-		String htmltext = getNoQuestMsg(player);
-		final int cond = st.getInt("cond");
-		switch (st.getState())
-		{
-			case State.COMPLETED:
-				htmltext = getAlreadyCompletedMsg(player);
-				break;
-			case State.CREATED:
-				if (st.getPlayer().getRace().ordinal() != 2)
-				{
-					htmltext = "30141-00.htm";
-					st.exitQuest(true);
-				}
-				else if (st.getPlayer().getLevel() >= 16)
-				{
-					htmltext = "30141-02.htm";
-				}
-				else
-				{
-					htmltext = "30141-01.htm";
-					st.exitQuest(true);
-				}
-				break;
-			case State.STARTED:
-				switch (cond)
-				{
-					case 2:
-						if ((st.getQuestItemsCount(ONYX_BEAST_EYE) > 0) && (st.getQuestItemsCount(TAINT_STONE) > 0) && (st.getQuestItemsCount(SUCCUBUS_BLOOD) > 0))
-						{
-							htmltext = "30141-06.htm";
-							st.takeItems(ONYX_BEAST_EYE, 1);
-							st.takeItems(TAINT_STONE, 1);
-							st.takeItems(SUCCUBUS_BLOOD, 1);
-							st.giveItems(SCROLL_ENCHANT_ARMOR_D, 1);
-							st.playSound("ItemSound.quest_finish");
-							st.unset("cond");
-							st.setState(State.COMPLETED);
-							st.exitQuest(false);
-						}
-						else
-						{
-							htmltext = "30141-04.htm";
-						}
-						break;
-				}
-				break;
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
 	{
 		final QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
 			return null;
 		}
-		final int npcId = npc.getNpcId();
-		if ((st.getState() == State.STARTED) && (st.getInt("cond") == 1))
+		
+		String htmltext = event;
+		switch (event)
 		{
-			if (npcId == MONSTERS[0])
-			{
-				if (st.getQuestItemsCount(ONYX_BEAST_EYE) == 0)
+			case "30141-03.htm":
+				st.startQuest();
+				break;
+			case "30141-05.html":
+				break;
+			default:
+				htmltext = null;
+				break;
+		}
+		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance member = getRandomPartyMember(player, 1);
+		if (member == null)
+		{
+			return super.onKill(npc, player, isSummon);
+		}
+		final QuestState st = member.getQuestState(getName());
+		switch (npc.getNpcId())
+		{
+			case OMEN_BEAST:
+				giveItem(st, OMEN_BEAST_EYE, getRegisteredItemIds());
+				break;
+			case STINK_ZOMBIE:
+			case TAINTED_ZOMBIE:
+				giveItem(st, TAINT_STONE, getRegisteredItemIds());
+				break;
+			case LESSER_SUCCUBUS:
+			case LESSER_SUCCUBUS_TILFO:
+			case LESSER_SUCCUBUS_TUREN:
+				giveItem(st, SUCCUBUS_BLOOD, getRegisteredItemIds());
+				break;
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
+	public String onTalk(L2Npc npc, L2PcInstance player)
+	{
+		String htmltext = getNoQuestMsg(player);
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		switch (st.getState())
+		{
+			case State.CREATED:
+				htmltext = (player.getRace() != Race.DarkElf) ? "30141-00.htm" : (player.getLevel() >= MIN_LEVEL) ? "30141-02.htm" : "30141-01.html";
+				break;
+			case State.STARTED:
+				if (st.isCond(1))
 				{
-					st.giveItems(ONYX_BEAST_EYE, 1);
-					st.playSound("Itemsound.quest_itemget");
+					htmltext = "30141-04.html";
 				}
-			}
-			else if ((npcId == MONSTERS[1]) || (npcId == MONSTERS[2]))
-			{
-				if (st.getQuestItemsCount(TAINT_STONE) == 0)
+				else
 				{
-					st.giveItems(TAINT_STONE, 1);
-					st.playSound("Itemsound.quest_itemget");
+					st.giveItems(ENCHANT, 1);
+					st.exitQuest(false, true);
+					htmltext = "30141-06.html";
 				}
-			}
-			else if ((npcId == MONSTERS[3]) || (npcId == MONSTERS[4]) || (npcId == MONSTERS[5]))
+				break;
+			case State.COMPLETED:
+				htmltext = getAlreadyCompletedMsg(player);
+				break;
+		}
+		return htmltext;
+	}
+	
+	private static void giveItem(QuestState st, int item, int... items)
+	{
+		if (!st.hasQuestItems(item))
+		{
+			st.giveItems(item, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			if (st.hasQuestItems(items))
 			{
-				if (st.getQuestItemsCount(SUCCUBUS_BLOOD) == 0)
-				{
-					st.giveItems(SUCCUBUS_BLOOD, 1);
-					st.playSound("Itemsound.quest_itemget");
-				}
-			}
-			if ((st.getQuestItemsCount(ONYX_BEAST_EYE) == 1) && (st.getQuestItemsCount(TAINT_STONE) == 1) && (st.getQuestItemsCount(SUCCUBUS_BLOOD) == 1))
-			{
-				st.set("cond", "2");
-				st.playSound("ItemSound.quest_middle");
+				st.setCond(2, true);
 			}
 		}
-		return null;
 	}
 	
 	public static void main(String[] args)
 	{
-		new Q00003_WillTheSealBeBroken(3, Q00003_WillTheSealBeBroken.class.getSimpleName(), "");
+		new Q00003_WillTheSealBeBroken(3, Q00003_WillTheSealBeBroken.class.getSimpleName(), "Will the Seal be Broken?");
 	}
 }

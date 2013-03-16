@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
@@ -382,10 +386,26 @@ public final class L2TamedBeastInstance extends L2FeedableBeastInstance
 			for (L2Skill skill : getTemplate().getSkills().values())
 			{
 				// if the skill is a buff, check if the owner has it already [ owner.getEffect(L2Skill skill) ]
-				if ((Rnd.get(5) < chance) && ((skill.getSkillType() == L2SkillType.HEAL) || (skill.getSkillType() == L2SkillType.HOT) || (skill.getSkillType() == L2SkillType.BALANCE_LIFE) || (skill.getSkillType() == L2SkillType.HEAL_PERCENT) || (skill.getSkillType() == L2SkillType.HEAL_STATIC) || (skill.getSkillType() == L2SkillType.COMBATPOINTHEAL) || (skill.getSkillType() == L2SkillType.CPHOT) || (skill.getSkillType() == L2SkillType.MANAHEAL) || (skill.getSkillType() == L2SkillType.MANA_BY_LEVEL) || (skill.getSkillType() == L2SkillType.MANAHEAL_PERCENT) || (skill.getSkillType() == L2SkillType.MANARECHARGE) || (skill.getSkillType() == L2SkillType.MPHOT)))
+				if (Rnd.get(5) < chance)
 				{
-					sitCastAndFollow(skill, _owner);
-					return;
+					switch (skill.getSkillType())
+					{
+						case COMBATPOINTHEAL:
+						case CPHOT:
+						case HEAL:
+						case HEAL_PERCENT:
+						case HEAL_STATIC:
+						case HOT:
+						case MANA_BY_LEVEL:
+						case MANAHEAL:
+						case MANAHEAL_PERCENT:
+						case MANARECHARGE:
+						case MPHOT:
+						{
+							sitCastAndFollow(skill, _owner);
+							return;
+						}
+					}
 				}
 			}
 		}

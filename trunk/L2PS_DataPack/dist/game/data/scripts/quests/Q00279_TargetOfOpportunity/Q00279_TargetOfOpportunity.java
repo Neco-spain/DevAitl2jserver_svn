@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00279_TargetOfOpportunity;
 
@@ -29,7 +33,7 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public final class Q00279_TargetOfOpportunity extends Quest
 {
-	// NPC's
+	// NPCs
 	private static final int JERIAN = 32302;
 	private static final int[] MONSTERS =
 	{
@@ -55,7 +59,6 @@ public final class Q00279_TargetOfOpportunity extends Quest
 	public Q00279_TargetOfOpportunity(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		
 		addStartNpc(JERIAN);
 		addTalkId(JERIAN);
 		addKillId(MONSTERS);
@@ -87,28 +90,7 @@ public final class Q00279_TargetOfOpportunity extends Quest
 	}
 	
 	@Override
-	public final String onTalk(L2Npc npc, L2PcInstance player)
-	{
-		String htmltext = getNoQuestMsg(player);
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		if (st.getState() == State.CREATED)
-		{
-			htmltext = (player.getLevel() >= 82) ? "32302-01.htm" : "32302-02.html";
-		}
-		else if ((st.getState() == State.STARTED) && (st.getInt("progress") == 1))
-		{
-			htmltext = (st.hasQuestItems(SEAL_COMPONENTS[0]) && st.hasQuestItems(SEAL_COMPONENTS[1]) && st.hasQuestItems(SEAL_COMPONENTS[2]) && st.hasQuestItems(SEAL_COMPONENTS[3])) ? "32302-07.html" : "32302-06.html";
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public final String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
+	public final String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
 	{
 		L2PcInstance pl = getRandomPartyMember(player, "progress", "1");
 		final int idx = Arrays.binarySearch(MONSTERS, npc.getNpcId());
@@ -129,11 +111,32 @@ public final class Q00279_TargetOfOpportunity extends Quest
 				}
 				else
 				{
-					st.playSound("ItemSound.quest_itemget");
+					st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
 				}
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public final String onTalk(L2Npc npc, L2PcInstance player)
+	{
+		String htmltext = getNoQuestMsg(player);
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		if (st.getState() == State.CREATED)
+		{
+			htmltext = (player.getLevel() >= 82) ? "32302-01.htm" : "32302-02.html";
+		}
+		else if ((st.getState() == State.STARTED) && (st.getInt("progress") == 1))
+		{
+			htmltext = (st.hasQuestItems(SEAL_COMPONENTS[0]) && st.hasQuestItems(SEAL_COMPONENTS[1]) && st.hasQuestItems(SEAL_COMPONENTS[2]) && st.hasQuestItems(SEAL_COMPONENTS[3])) ? "32302-07.html" : "32302-06.html";
+		}
+		return htmltext;
 	}
 	
 	private static final boolean haveAllExceptThis(QuestState st, int idx)

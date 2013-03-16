@@ -1,26 +1,31 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.util;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
@@ -33,8 +38,6 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.gameserver.network.serverpackets.ShowBoard;
-import com.l2jserver.util.Rnd;
-import com.l2jserver.util.TimeConstant;
 import com.l2jserver.util.file.filter.ExtFilter;
 
 /**
@@ -42,6 +45,8 @@ import com.l2jserver.util.file.filter.ExtFilter;
  */
 public final class Util
 {
+	private static final NumberFormat ADENA_FORMATTER = NumberFormat.getIntegerInstance(Locale.ENGLISH);
+	
 	public static void handleIllegalPlayerAction(L2PcInstance actor, String message, int punishment)
 	{
 		ThreadPoolManager.getInstance().scheduleGeneral(new IllegalPlayerAction(actor, message, punishment), 5000);
@@ -257,15 +262,13 @@ public final class Util
 		
 		double dx = obj1.getX() - obj2.getX();
 		double dy = obj1.getY() - obj2.getY();
+		double d = (dx * dx) + (dy * dy);
 		
 		if (includeZAxis)
 		{
 			double dz = obj1.getZ() - obj2.getZ();
-			double d = (dx * dx) + (dy * dy) + (dz * dz);
-			
-			return d <= ((range * range) + (2 * range * rad) + (rad * rad));
+			d += (dz * dz);
 		}
-		double d = (dx * dx) + (dy * dy);
 		return d <= ((range * range) + (2 * range * rad) + (rad * rad));
 	}
 	
@@ -394,25 +397,10 @@ public final class Util
 	 */
 	public static String formatAdena(long amount)
 	{
-		String s = "";
-		long rem = amount % 1000;
-		s = Long.toString(rem);
-		amount = (amount - rem) / 1000;
-		while (amount > 0)
+		synchronized (ADENA_FORMATTER)
 		{
-			if (rem < 99)
-			{
-				s = '0' + s;
-			}
-			if (rem < 9)
-			{
-				s = '0' + s;
-			}
-			rem = amount % 1000;
-			s = Long.toString(rem) + "," + s;
-			amount = (amount - rem) / 1000;
+			return ADENA_FORMATTER.format(amount);
 		}
-		return s;
 	}
 	
 	/**
@@ -596,12 +584,12 @@ public final class Util
 	}
 	
 	/**
-	 * Return the number of players in a defined radius.<br>
-	 * @param range : the radius.
-	 * @param npc : the object to make the test on.
-	 * @param playable : true counts summons and pets.
-	 * @param invisible : true counts invisible characters.
-	 * @return the number of targets found.
+	 * Return the number of playable characters in a defined radius around the specified object.
+	 * @param range : the radius in which to look for players
+	 * @param npc : the object whose knownlist to check
+	 * @param playable : if {@code true}, count summons and pets aswell
+	 * @param invisible : if {@code true}, count invisible characters aswell
+	 * @return the number of targets found
 	 */
 	public static int getPlayersCountInRadius(int range, L2Object npc, boolean playable, boolean invisible)
 	{
@@ -611,12 +599,9 @@ public final class Util
 		{
 			if ((obj != null) && ((obj.isPlayable() && playable) || obj.isPet()))
 			{
-				if (obj.isPlayer() && !invisible)
+				if (obj.isPlayer() && !invisible && obj.getActingPlayer().getAppearance().getInvisible())
 				{
-					if (obj.getActingPlayer().getAppearance().getInvisible())
-					{
-						continue;
-					}
+					continue;
 				}
 				
 				final L2Character cha = (L2Character) obj;
@@ -632,133 +617,6 @@ public final class Util
 			}
 		}
 		return count;
-	}
-	
-	/**
-	 * @param defStr string to parse. Format is "<number><supported tag>", supported tags are "s" for seconds, "m" for minutes, "h" for hours, "d" for days, "w" for weeks, m - for conventional "month" (30 days). Valid value for example: "25s"
-	 * @return number of milliseconds in given period, or -1 if format of period is not valid
-	 */
-	public static long toMillis(String defStr)
-	{
-		long ret = -1;
-		String toNum = defStr.substring(0, defStr.length() - 1); // Whole string, except last symbol
-		String period = defStr.substring(defStr.length() - 1, defStr.length()); // assume, that last symbol is code of time period
-		
-		TimeConstant tc = getTimeConstant(period);
-		if (tc != TimeConstant.NONE)
-		{
-			try
-			{
-				int num = Integer.parseInt(toNum);
-				ret = tc.getTimeInMillis() * num;
-			}
-			catch (NumberFormatException nfe)
-			{
-				// Do nothing
-			}
-		}
-		
-		return ret;
-	}
-	
-	/**
-	 * @param defStr supported tag to parse.Supported tags are "s" for seconds, "m" for minutes, "h" for hours, "d" for days, "w" for weeks, M - for conventional "month" (30 days).
-	 * @return TimeConstant object, corresponding to given tag, or TimeConstant.NONE for invalid tags.
-	 */
-	public static TimeConstant getTimeConstant(String defStr)
-	{
-		for (TimeConstant tc : TimeConstant.values())
-		{
-			if (tc.getShortName().equals(defStr))
-			{
-				return tc;
-			}
-		}
-		return TimeConstant.NONE;
-	}
-	
-	/**
-	 * @param firstDate first date to check
-	 * @param secondDate second date to check
-	 * @return {@code true} if both given dates is same day
-	 */
-	public static boolean isSameDay(Date firstDate, Date secondDate)
-	{
-		Calendar first = Calendar.getInstance();
-		Calendar second = Calendar.getInstance();
-		first.setTime(firstDate);
-		second.setTime(secondDate);
-		
-		return ((first.get(Calendar.ERA) == second.get(Calendar.ERA)) && (first.get(Calendar.YEAR) == second.get(Calendar.YEAR)) && (first.get(Calendar.DAY_OF_YEAR) == second.get(Calendar.DAY_OF_YEAR)));
-	}
-	
-	/**
-	 * @param date date to check
-	 * @return {@code true} if given date is tomorrow
-	 */
-	public static boolean isToday(Date date)
-	{
-		Calendar now = Calendar.getInstance();
-		Calendar test = Calendar.getInstance();
-		test.setTime(date);
-		
-		return isSameDay(now.getTime(), test.getTime());
-	}
-	
-	/**
-	 * @param date date to check
-	 * @return {@code true} if given date is today
-	 */
-	public static boolean isTomorrow(Date date)
-	{
-		Calendar now = Calendar.getInstance();
-		now.add(Calendar.DAY_OF_YEAR, 1);
-		Calendar test = Calendar.getInstance();
-		test.setTime(date);
-		
-		return isSameDay(now.getTime(), test.getTime());
-	}
-	
-	/**
-	 * @param object source object
-	 * @param radiusMin miminal range from source point (not closer than)
-	 * @param radiusMax maximal range from source point (not further than)
-	 * @return array of coordinates of point in given range from given object
-	 */
-	public static int[] getPointInRange(L2Object object, int radiusMin, int radiusMax)
-	{
-		return getPointInRange(object.getX(), object.getY(), object.getZ(), radiusMin, radiusMax);
-	}
-	
-	/**
-	 * @param x X coordnitate of source point
-	 * @param y Y coordnitate of source point
-	 * @param z Z coordnitate of source point
-	 * @param radiusMin miminal range from source point (not closer than)
-	 * @param radiusMax maximal range from source point (not further than)
-	 * @return array of coordinates of point in given range from source point
-	 */
-	public static int[] getPointInRange(int x, int y, int z, int radiusMin, int radiusMax)
-	{
-		if ((radiusMax == 0) || (radiusMax < radiusMin))
-		{
-			return new int[]
-			{
-				x,
-				y,
-				z
-			};
-		}
-		
-		int radius = Rnd.get(radiusMin, radiusMax);
-		double angle = Rnd.nextDouble() * 2 * Math.PI;
-		
-		return new int[]
-		{
-			(int) (x + (radius * Math.cos(angle))),
-			(int) (y + (radius * Math.sin(angle))),
-			z
-		};
 	}
 	
 	public static String formatTime(int time)

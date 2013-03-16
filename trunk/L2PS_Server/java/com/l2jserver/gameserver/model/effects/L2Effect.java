@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.effects;
 
@@ -24,10 +28,9 @@ import com.l2jserver.gameserver.GameTimeController;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.model.ChanceCondition;
-import com.l2jserver.gameserver.model.IChanceSkillTrigger;
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.actor.instance.L2ServitorInstance;
+import com.l2jserver.gameserver.model.actor.L2Summon;
+import com.l2jserver.gameserver.model.interfaces.IChanceSkillTrigger;
 import com.l2jserver.gameserver.model.skills.L2Skill;
 import com.l2jserver.gameserver.model.skills.L2SkillType;
 import com.l2jserver.gameserver.model.skills.funcs.Func;
@@ -142,7 +145,6 @@ public abstract class L2Effect implements IChanceSkillTrigger
 	{
 		_state = EffectState.CREATED;
 		_skill = env.getSkill();
-		// _item = env._item == null ? null : env._item.getItem();
 		_template = template;
 		_effected = env.getTarget();
 		_effector = env.getCharacter();
@@ -153,10 +155,10 @@ public abstract class L2Effect implements IChanceSkillTrigger
 		
 		// Support for retail herbs duration when _effected has a Summon
 		int temp = template.abnormalTime;
-		
 		if (((_skill.getId() > 2277) && (_skill.getId() < 2286)) || ((_skill.getId() >= 2512) && (_skill.getId() <= 2514)))
 		{
-			if ((_effected instanceof L2ServitorInstance) || ((_effected instanceof L2PcInstance) && (((L2PcInstance) _effected).getSummon() instanceof L2ServitorInstance)))
+			final L2Summon summon = _effected.getSummon();
+			if ((summon != null) && summon.isServitor())
 			{
 				temp /= 2;
 			}
@@ -436,7 +438,7 @@ public abstract class L2Effect implements IChanceSkillTrigger
 		{
 			getEffected().startSpecialEffect(_specialEffect);
 		}
-		if ((_eventEffect != AbnormalEffect.NULL) && (getEffected() instanceof L2PcInstance))
+		if ((_eventEffect != AbnormalEffect.NULL) && getEffected().isPlayer())
 		{
 			getEffected().getActingPlayer().startEventEffect(_eventEffect);
 		}
@@ -456,7 +458,7 @@ public abstract class L2Effect implements IChanceSkillTrigger
 		{
 			getEffected().stopSpecialEffect(_specialEffect);
 		}
-		if ((_eventEffect != AbnormalEffect.NULL) && (getEffected() instanceof L2PcInstance))
+		if ((_eventEffect != AbnormalEffect.NULL) && getEffected().isPlayer())
 		{
 			getEffected().getActingPlayer().stopEventEffect(_eventEffect);
 		}
@@ -475,7 +477,7 @@ public abstract class L2Effect implements IChanceSkillTrigger
 			{
 				_state = EffectState.ACTING;
 				
-				if (_skill.isPvpSkill() && _icon && (getEffected() instanceof L2PcInstance))
+				if (_skill.isPvpSkill() && _icon && getEffected().isPlayer())
 				{
 					SystemMessage smsg = SystemMessage.getSystemMessage(SystemMessageId.YOU_FEEL_S1_EFFECT);
 					smsg.addSkillName(_skill);
@@ -514,7 +516,7 @@ public abstract class L2Effect implements IChanceSkillTrigger
 			case FINISHING:
 			{
 				// If the time left is equal to zero, send the message
-				if ((_count == 0) && _icon && (getEffected() instanceof L2PcInstance))
+				if ((_count == 0) && _icon && getEffected().isPlayer())
 				{
 					SystemMessage smsg3 = SystemMessage.getSystemMessage(SystemMessageId.S1_HAS_WORN_OFF);
 					smsg3.addSkillName(_skill);
@@ -677,11 +679,8 @@ public abstract class L2Effect implements IChanceSkillTrigger
 	
 	public boolean canBeStolen()
 	{
-		if (!effectCanBeStolen() || (getEffectType() == L2EffectType.TRANSFORMATION) || getSkill().isPassive() || getSkill().isToggle() || getSkill().isDebuff() || getSkill().isHeroSkill() || getSkill().isGMSkill() || getSkill().isStatic() || !getSkill().canBeDispeled())
-		{
-			return false;
-		}
-		return true;
+		// TODO: Unhardcode skillId
+		return (!effectCanBeStolen() || (getEffectType() == L2EffectType.TRANSFORMATION) || getSkill().isPassive() || getSkill().isToggle() || getSkill().isDebuff() || getSkill().isHeroSkill() || getSkill().isGMSkill() || (getSkill().isStatic() && ((getSkill().getId() != 2274) && (getSkill().getId() != 2341))) || !getSkill().canBeDispeled()) ? false : true;
 	}
 	
 	/**
@@ -698,7 +697,7 @@ public abstract class L2Effect implements IChanceSkillTrigger
 	 */
 	public int getEffectFlags()
 	{
-		return 0;
+		return EffectFlag.NONE.getMask();
 	}
 	
 	@Override
@@ -757,10 +756,5 @@ public abstract class L2Effect implements IChanceSkillTrigger
 	public ChanceCondition getTriggeredChanceCondition()
 	{
 		return null;
-	}
-	
-	public int getId()
-	{
-		return getSkill().getId();
 	}
 }

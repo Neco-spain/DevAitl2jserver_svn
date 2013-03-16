@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00146_TheZeroHour;
 
@@ -28,11 +32,21 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00146_TheZeroHour extends Quest
 {
-	// Npc
-	private static final int Kahman = 31554;
-	private static final int QueenShyeed = 25671;
+	// NPCs
+	private static final int KAHMAN = 31554;
+	private static final int QUEEN_SHYEED = 25671;
 	// Item
-	private static final int Fang = 14859;
+	private static final int KAHMANS_SUPPLY_BOX = 14849;
+	private static final int FANG = 14859;
+	
+	public Q00146_TheZeroHour(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(KAHMAN);
+		addTalkId(KAHMAN);
+		addKillId(QUEEN_SHYEED);
+		registerQuestItems(FANG);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -45,11 +59,25 @@ public class Q00146_TheZeroHour extends Quest
 		
 		if (event.equalsIgnoreCase("31554-03.htm"))
 		{
-			st.set("cond", "1");
-			st.setState(State.STARTED);
-			st.playSound("ItemSound.quest_accept");
+			st.startQuest();
 		}
 		return event;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(killer, 1);
+		if (partyMember != null)
+		{
+			final QuestState st = partyMember.getQuestState(getName());
+			if (!st.hasQuestItems(FANG))
+			{
+				st.giveItems(FANG, 1);
+				st.setCond(2, true);
+			}
+		}
+		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -83,17 +111,15 @@ public class Q00146_TheZeroHour extends Quest
 				}
 				break;
 			case State.STARTED:
-				if (st.getInt("cond") == 1)
+				if (st.isCond(1))
 				{
 					htmltext = "31554-06.html";
 				}
 				else
 				{
-					st.giveItems(14849, 1);
+					st.giveItems(KAHMANS_SUPPLY_BOX, 1);
 					st.addExpAndSp(154616, 12500);
-					st.takeItems(Fang, 1);
-					st.playSound("ItemSound.quest_finish");
-					st.exitQuest(false);
+					st.exitQuest(false, true);
 					htmltext = "31554-05.html";
 				}
 				break;
@@ -102,37 +128,6 @@ public class Q00146_TheZeroHour extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		QuestState st = partyMember.getQuestState(getName());
-		if (!st.hasQuestItems(Fang))
-		{
-			st.giveItems(Fang, 1);
-			st.set("cond", "2");
-			st.playSound("ItemSound.quest_middle");
-		}
-		return null;
-	}
-	
-	public Q00146_TheZeroHour(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(Kahman);
-		addTalkId(Kahman);
-		addKillId(QueenShyeed);
-		
-		questItemIds = new int[]
-		{
-			Fang
-		};
 	}
 	
 	public static void main(String[] args)

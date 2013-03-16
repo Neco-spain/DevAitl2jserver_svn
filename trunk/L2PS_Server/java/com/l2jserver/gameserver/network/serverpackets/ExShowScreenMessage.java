@@ -15,13 +15,14 @@
 package com.l2jserver.gameserver.network.serverpackets;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.SystemMessageId;
 
 /**
- * @author Kerberos
+ * @author Kerberos, RobikBobik
  */
 public class ExShowScreenMessage extends L2GameServerPacket
 {
@@ -55,7 +56,7 @@ public class ExShowScreenMessage extends L2GameServerPacket
 		_npcString = -1;
 	}
 	
-	public ExShowScreenMessage(NpcStringId npcString, int position, int time) // For npcstring
+	public ExShowScreenMessage(NpcStringId npcString, int position, int time)
 	{
 		_type = 2;
 		_sysMessageId = -1;
@@ -71,7 +72,7 @@ public class ExShowScreenMessage extends L2GameServerPacket
 		_npcString = npcString.getId();
 	}
 	
-	public ExShowScreenMessage(SystemMessageId systemMsg, int position, int time) // For SystemMessage
+	public ExShowScreenMessage(SystemMessageId systemMsg, int position, int time)
 	{
 		_type = 2;
 		_sysMessageId = systemMsg.getId();
@@ -119,10 +120,40 @@ public class ExShowScreenMessage extends L2GameServerPacket
 		_npcString = npcString.getId();
 	}
 	
-	/**
-	 * String parameter for argument S1,S2,.. in npcstring-e.dat
-	 * @param text
-	 */
+	public ExShowScreenMessage(NpcStringId npcString, int position, int time, String... params)
+	{
+		_type = 2;
+		_sysMessageId = -1;
+		_unk1 = 0x00;
+		_unk2 = 0x00;
+		_unk3 = 0x00;
+		_fade = false;
+		_position = position;
+		_text = null;
+		_time = time;
+		_size = 0x00;
+		_effect = false;
+		_npcString = npcString.getId();
+		_parameters = Arrays.asList(params);
+	}
+	
+	public ExShowScreenMessage(SystemMessageId systemMsg, int position, int time, String... params)
+	{
+		_type = 2;
+		_sysMessageId = systemMsg.getId();
+		_unk1 = 0x00;
+		_unk2 = 0x00;
+		_unk3 = 0x00;
+		_fade = false;
+		_position = position;
+		_text = null;
+		_time = time;
+		_size = 0x00;
+		_effect = false;
+		_npcString = -1;
+		_parameters = Arrays.asList(params);
+	}
+	
 	public void addStringParameter(String text)
 	{
 		if (_parameters == null)

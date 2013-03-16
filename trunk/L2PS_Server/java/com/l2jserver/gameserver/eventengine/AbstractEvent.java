@@ -577,10 +577,7 @@ public abstract class AbstractEvent
 		{
 			return t.get(rnd.nextInt(t.size())).getId();
 		}
-		else
-		{
-			return t.getFirst().getId();
-		}
+		return t.getFirst().getId();
 		
 	}
 	
@@ -684,10 +681,7 @@ public abstract class AbstractEvent
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public void msgToAll(String text)
@@ -894,12 +888,9 @@ public abstract class AbstractEvent
 			players.add(pi);
 			return true;
 		}
-		else
-		{
-			pi.sendMessage("You failed on registering to the event!");
-			PlayerContainer.getInstance().deleteInfo(pi.getPlayersId());
-			return false;
-		}
+		pi.sendMessage("You failed on registering to the event!");
+		PlayerContainer.getInstance().deleteInfo(pi.getPlayersId());
+		return false;
 	}
 	
 	public void removePlayer(EventPlayer player)
@@ -987,13 +978,10 @@ public abstract class AbstractEvent
 			pi.sendMessage("You can't unregister now!");
 			return false;
 		}
-		else
-		{
-			pi.sendMessage("You succesfully unregistered from the event!");
-			PlayerContainer.getInstance().deleteInfo(pi.getPlayersId());
-			players.remove(pi);
-			return true;
-		}
+		pi.sendMessage("You succesfully unregistered from the event!");
+		PlayerContainer.getInstance().deleteInfo(pi.getPlayersId());
+		players.remove(pi);
+		return true;
 	}
 	
 	public boolean unregisterPlayer(Integer player)

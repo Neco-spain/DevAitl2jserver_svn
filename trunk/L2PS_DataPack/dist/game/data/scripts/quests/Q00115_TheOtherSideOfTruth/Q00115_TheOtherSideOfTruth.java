@@ -1,3 +1,17 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00115_TheOtherSideOfTruth;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -63,28 +77,28 @@ public class Q00115_TheOtherSideOfTruth extends Quest
 			st.set("cond", "1");
 			st.playSound("ItemSound.quest_accept");
 		}
-		if (event.equalsIgnoreCase("32020-06.html") || event.equalsIgnoreCase("32020-08a.html"))
+		if (event.equalsIgnoreCase("32020-06.htm") || event.equalsIgnoreCase("32020-08a.htm"))
 		{
 			st.playSound("ItemSound.quest_finish");
 			st.exitQuest(true);
 		}
-		else if (event.equalsIgnoreCase("32020-05.html"))
+		else if (event.equalsIgnoreCase("32020-05.htm"))
 		{
 			st.set("cond", "3");
 			st.takeItems(MISAS_LETTER, 1);
 			st.playSound("ItemSound.quest_middle");
 		}
-		else if (event.equalsIgnoreCase("32020-08.html") || event.equalsIgnoreCase("32020-07a.html"))
+		else if (event.equalsIgnoreCase("32020-08.htm") || event.equalsIgnoreCase("32020-07a.htm"))
 		{
 			st.set("cond", "4");
 			st.playSound("ItemSound.quest_middle");
 		}
-		else if (event.equalsIgnoreCase("32020-12.html"))
+		else if (event.equalsIgnoreCase("32020-12.htm"))
 		{
 			st.set("cond", "5");
 			st.playSound("ItemSound.quest_middle");
 		}
-		else if (event.equalsIgnoreCase("32018-04.html"))
+		else if (event.equalsIgnoreCase("32018-04.htm"))
 		{
 			st.set("cond", "7");
 			st.takeItems(RAFFORTYS_LETTER, 1);
@@ -98,21 +112,21 @@ public class Q00115_TheOtherSideOfTruth extends Quest
 			{
 				st.giveItems(PIECE_OF_TABLET, 1);
 			}
-			htmltext = "Sculpture-04.html";
+			htmltext = "Sculpture-04.htm";
 		}
-		else if (event.equalsIgnoreCase("32022-02.html"))
+		else if (event.equalsIgnoreCase("32022-02.htm"))
 		{
 			st.set("cond", "9");
 			st.giveItems(REPORT_PIECE, 1);
 			st.playSound("ItemSound.quest_middle");
 		}
-		else if (event.equalsIgnoreCase("32020-16.html"))
+		else if (event.equalsIgnoreCase("32020-16.htm"))
 		{
 			st.set("cond", "10");
 			st.takeItems(REPORT_PIECE, 1);
 			st.playSound("ItemSound.quest_middle");
 		}
-		else if (event.equalsIgnoreCase("32020-18.html"))
+		else if (event.equalsIgnoreCase("32020-18.htm"))
 		{
 			if (st.hasQuestItems(PIECE_OF_TABLET))
 			{
@@ -125,10 +139,10 @@ public class Q00115_TheOtherSideOfTruth extends Quest
 			{
 				st.set("cond", "11");
 				st.playSound("ItemSound.quest_middle");
-				htmltext = "32020-19.html";
+				htmltext = "32020-19.htm";
 			}
 		}
-		else if (event.equalsIgnoreCase("32020-19.html"))
+		else if (event.equalsIgnoreCase("32020-19.htm"))
 		{
 			st.set("cond", "11");
 			st.playSound("ItemSound.quest_middle");
@@ -142,7 +156,7 @@ public class Q00115_TheOtherSideOfTruth extends Quest
 			}
 			st.set("talk", "1");
 			st.set(event, "1");
-			htmltext = "Sculpture-05.html";
+			htmltext = "Sculpture-05.htm";
 		}
 		return htmltext;
 	}
@@ -177,50 +191,50 @@ public class Q00115_TheOtherSideOfTruth extends Quest
 				case State.STARTED:
 					if (st.getInt("cond") == 1)
 					{
-						htmltext = "32020-03.html";
+						htmltext = "32020-03.htm";
 					}
 					else if (st.getInt("cond") == 2)
 					{
-						htmltext = "32020-04.html";
+						htmltext = "32020-04.htm";
 					}
 					else if (st.getInt("cond") == 3)
 					{
-						htmltext = "32020-05.html";
+						htmltext = "32020-05.htm";
 					}
 					else if (st.getInt("cond") == 4)
 					{
-						htmltext = "32020-11.html";
+						htmltext = "32020-11.htm";
 					}
 					else if (st.getInt("cond") == 5)
 					{
-						htmltext = "32020-13.html";
+						htmltext = "32020-13.htm";
 						st.giveItems(RAFFORTYS_LETTER, 1);
 						st.playSound("ItemSound.quest_middle");
 						st.set("cond", "6");
 					}
 					else if (st.getInt("cond") == 6)
 					{
-						htmltext = "32020-14.html";
+						htmltext = "32020-14.htm";
 					}
 					else if ((st.getInt("cond") == 7) || (st.getInt("cond") == 8))
 					{
-						htmltext = "32020-14a.html";
+						htmltext = "32020-14a.htm";
 					}
 					else if (st.getInt("cond") == 9)
 					{
-						htmltext = "32020-15.html";
+						htmltext = "32020-15.htm";
 					}
 					else if (st.getInt("cond") == 10)
 					{
-						htmltext = "32020-17.html";
+						htmltext = "32020-17.htm";
 					}
 					else if (st.getInt("cond") == 11)
 					{
-						htmltext = "32020-20.html";
+						htmltext = "32020-20.htm";
 					}
 					else if (st.getInt("cond") == 12)
 					{
-						htmltext = "32020-18.html";
+						htmltext = "32020-18.htm";
 						st.giveItems(ADENA, 115673);
 						st.addExpAndSp(493595, 40442);
 						st.playSound("ItemSound.quest_finish");
@@ -236,29 +250,29 @@ public class Q00115_TheOtherSideOfTruth extends Quest
 		{
 			if (st.getInt("cond") == 1)
 			{
-				htmltext = "32018-01.html";
+				htmltext = "32018-01.htm";
 				st.set("cond", "2");
 				st.giveItems(MISAS_LETTER, 1);
 				st.playSound("ItemSound.quest_middle");
 			}
 			else if (st.getInt("cond") == 2)
 			{
-				htmltext = "32018-02.html";
+				htmltext = "32018-02.htm";
 			}
 			else if (st.getInt("cond") == 6)
 			{
-				htmltext = "32018-03.html";
+				htmltext = "32018-03.htm";
 			}
 			else if (st.getInt("cond") == 7)
 			{
-				htmltext = "32018-05.html";
+				htmltext = "32018-05.htm";
 			}
 		}
 		else if ((npcId == KIERRE) && (st.getState() == State.STARTED))
 		{
 			if (st.getInt("cond") == 8)
 			{
-				htmltext = "32022-02.html";
+				htmltext = "32022-02.htm";
 				st.set("cond", "9");
 				st.giveItems(REPORT_PIECE, 1);
 				st.playSound("ItemSound.quest_middle");
@@ -277,32 +291,32 @@ public class Q00115_TheOtherSideOfTruth extends Quest
 				if ((npcId == ICE_SCULPTURE1) || (npcId == ICE_SCULPTURE2))
 				{
 					int talk_flag = st.getInt("talk");
-					return npcId_flag == 1 ? "Sculpture-02.html" : talk_flag == 1 ? "Sculpture-06.html" : "Sculpture-03-" + _npcId + ".html";
+					return npcId_flag == 1 ? "Sculpture-02.htm" : talk_flag == 1 ? "Sculpture-06.htm" : "Sculpture-03-" + _npcId + ".htm";
 				}
 				else if (npcId_flag == 1)
 				{
-					htmltext = "Sculpture-02.html";
+					htmltext = "Sculpture-02.htm";
 				}
 				else
 				{
 					st.set(_npcId, "1");
-					htmltext = "Sculpture-01.html";
+					htmltext = "Sculpture-01.htm";
 				}
 			}
 			else if (st.getInt("cond") == 8)
 			{
-				htmltext = "Sculpture-04.html";
+				htmltext = "Sculpture-04.htm";
 			}
 			else if (st.getInt("cond") == 11)
 			{
-				htmltext = "Sculpture-07.html";
+				htmltext = "Sculpture-07.htm";
 				st.set("cond", "12");
 				st.giveItems(PIECE_OF_TABLET, 1);
 				st.playSound("ItemSound.quest_middle");
 			}
 			else if (st.getInt("cond") == 12)
 			{
-				htmltext = "Sculpture-08.html";
+				htmltext = "Sculpture-08.htm";
 			}
 		}
 		return htmltext;

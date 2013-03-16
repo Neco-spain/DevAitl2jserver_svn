@@ -19,11 +19,11 @@ import javolution.util.FastMap;
 
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2Effect;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
@@ -77,7 +77,7 @@ public class Q10292_SevenSignGirlofDoubt extends Quest
 		boolean spawned = false;
 	}
 	
-	private class teleCoord
+	protected class teleCoord
 	{
 		int instanceId;
 		int x;
@@ -156,25 +156,22 @@ public class Q10292_SevenSignGirlofDoubt extends Quest
 				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ALREADY_ENTERED_ANOTHER_INSTANCE_CANT_ENTER));
 				return 0;
 			}
-			teleto.instanceId = world.instanceId;
+			teleto.instanceId = world.getInstanceId();
 			teleportplayer(player, teleto);
 			return instanceId;
 		}
-		else
-		{
-			instanceId = InstanceManager.getInstance().createDynamicInstance(template);
-			world = new HoDWorld();
-			world.instanceId = instanceId;
-			world.templateId = INSTANCEID;
-			world.status = 0;
-			((HoDWorld) world).storeTime[0] = System.currentTimeMillis();
-			InstanceManager.getInstance().addWorld(world);
-			teleto.instanceId = instanceId;
-			teleportplayer(player, teleto);
-			world.allowed.add(player.getObjectId());
-			
-			return instanceId;
-		}
+		instanceId = InstanceManager.getInstance().createDynamicInstance(template);
+		world = new HoDWorld();
+		world.setInstanceId(instanceId);
+		world.setTemplateId(INSTANCEID);
+		world.setStatus(0);
+		((HoDWorld) world).storeTime[0] = System.currentTimeMillis();
+		InstanceManager.getInstance().addWorld(world);
+		teleto.instanceId = instanceId;
+		teleportplayer(player, teleto);
+		world.addAllowed(player.getObjectId());
+		
+		return instanceId;
 	}
 	
 	@Override
@@ -270,10 +267,7 @@ public class Q10292_SevenSignGirlofDoubt extends Quest
 					startQuestTimer("evil_despawn", 60000, evil, player);
 					return null;
 				}
-				else
-				{
-					htmltext = "32593-02.htm";
-				}
+				htmltext = "32593-02.htm";
 			}
 		}
 		else if (npc.getNpcId() == Jeina)
@@ -281,7 +275,7 @@ public class Q10292_SevenSignGirlofDoubt extends Quest
 			if (event.equalsIgnoreCase("32617-02.htm"))
 			{
 				InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player);
-				world.allowed.remove(world.allowed.indexOf(player.getObjectId()));
+				world.removeAllowed(world.getAllowed().indexOf(player.getObjectId()));
 				teleCoord tele = new teleCoord();
 				tele.instanceId = 0;
 				tele.x = 147072;
@@ -313,7 +307,7 @@ public class Q10292_SevenSignGirlofDoubt extends Quest
 			{
 				htmltext = "32593-03.htm";
 			}
-			else if ((player.getQuestState("Q00198_SevenSignEmbryo") == null) || (player.getQuestState("Q00198_SevenSignEmbryo").getState() != State.COMPLETED))
+			else if ((player.getQuestState("Q00198_SevenSignsEmbryo") == null) || (player.getQuestState("Q00198_SevenSignsEmbryo").getState() != State.COMPLETED))
 			{
 				htmltext = "32593-03.htm";
 			}

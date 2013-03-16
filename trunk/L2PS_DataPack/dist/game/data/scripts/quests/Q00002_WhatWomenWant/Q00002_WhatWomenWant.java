@@ -1,86 +1,94 @@
+/*
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00002_WhatWomenWant;
 
-import com.l2jserver.Config;
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.base.Race;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
+import com.l2jserver.gameserver.network.NpcStringId;
 
 /**
- * Author: RobikBobik L2PS Team
+ * What Women Want (2)
+ * @author malyelfik
  */
 public class Q00002_WhatWomenWant extends Quest
 {
-	private final static int QUEST_NPC[] =
-	{
-		30223,
-		30146,
-		30150,
-		30157
-	};
-	private final static int QUEST_ITEM[] =
-	{
-		1092,
-		1093,
-		1094,
-		689,
-		693
-	};
-	private final static int QUEST_REWARD[] =
-	{
-		57,
-		113
-	};
+	// NPCs
+	private static final int ARUJIEN = 30223;
+	private static final int MIRABEL = 30146;
+	private static final int HERBIEL = 30150;
+	private static final int GREENIS = 30157;
+	// Items
+	private static final int ARUJIENS_LETTER1 = 1092;
+	private static final int ARUJIENS_LETTER2 = 1093;
+	private static final int ARUJIENS_LETTER3 = 1094;
+	private static final int POETRY_BOOK = 689;
+	private static final int GREENIS_LETTER = 693;
+	private static final int EARRING = 113;
+	// Misc
+	private static final int MIN_LEVEL = 2;
 	
-	public Q00002_WhatWomenWant(int questId, String name, String descr)
+	private Q00002_WhatWomenWant(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		addStartNpc(QUEST_NPC[0]);
-		for (int npcId : QUEST_NPC)
-		{
-			addTalkId(npcId);
-		}
-		questItemIds = QUEST_ITEM;
+		addStartNpc(ARUJIEN);
+		addTalkId(ARUJIEN, MIRABEL, HERBIEL, GREENIS);
+		registerQuestItems(ARUJIENS_LETTER1, ARUJIENS_LETTER2, ARUJIENS_LETTER3, POETRY_BOOK, GREENIS_LETTER);
 	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
-		String htmltext = event;
-		
-		QuestState st = player.getQuestState(getName());
+		final QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
-			return htmltext;
+			return null;
 		}
 		
-		if (event.equalsIgnoreCase("30223-04.htm"))
+		String htmltext = event;
+		switch (event)
 		{
-			st.giveItems(QUEST_ITEM[0], 1);
-			st.set("cond", "1");
-			st.setState(State.STARTED);
-			st.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("30223-08.htm"))
-		{
-			st.takeItems(QUEST_ITEM[2], -1);
-			st.giveItems(QUEST_ITEM[3], 1);
-			st.set("cond", "4");
-			st.playSound("ItemSound.quest_middle");
-		}
-		else if (event.equalsIgnoreCase("30223-10.htm"))
-		{
-			st.takeItems(QUEST_ITEM[2], -1);
-			st.giveItems(QUEST_REWARD[0], 2300 * Math.round(Config.RATE_QUEST_REWARD_ADENA));
-			st.addExpAndSp(4254, 335);
-			st.set("cond", "0");
-			st.exitQuest(false);
-			st.playSound("ItemSound.quest_finish");
-			player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message1", player.getLang())).toString()), 3000));
-			return null;
+			case "30223-04.htm":
+				st.startQuest();
+				st.giveItems(ARUJIENS_LETTER1, 1);
+				break;
+			case "30223-08.html":
+				st.takeItems(ARUJIENS_LETTER3, -1);
+				st.giveItems(POETRY_BOOK, 1);
+				st.setCond(4, true);
+				break;
+			case "30223-09.html":
+				st.giveAdena(450, true);
+				st.exitQuest(false, true);
+				// Newbie Guide
+				showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+				st.addExpAndSp(4254, 335);
+				st.giveAdena(1850, true);
+				break;
+			case "30223-03.html":
+				break;
+			default:
+				htmltext = null;
+				break;
 		}
 		return htmltext;
 	}
@@ -88,142 +96,101 @@ public class Q00002_WhatWomenWant extends Quest
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
-		QuestState st = player.getQuestState(getName());
+		String htmltext = getNoQuestMsg(player);
+		final QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
-			st = newQuestState(player);
+			return htmltext;
 		}
-		String htmltext = getNoQuestMsg(player);
-		final int npcId = npc.getNpcId();
-		final int cond = st.getInt("cond");
 		
-		switch (st.getState())
+		switch (npc.getNpcId())
 		{
-			case State.COMPLETED:
-				htmltext = getAlreadyCompletedMsg(player);
-				break;
-			case State.CREATED:
-				if (npcId == QUEST_NPC[0])
+			case ARUJIEN:
+				switch (st.getState())
 				{
-					if (((player.getRace().ordinal() == 1) || (player.getRace().ordinal() == 0)) && (player.getLevel() >= 2))
+					case State.CREATED:
+						htmltext = ((player.getRace() != Race.Elf) && (player.getRace() != Race.Human)) ? "30223-00.htm" : (player.getLevel() >= MIN_LEVEL) ? "30223-02.htm" : "30223-01.html";
+						break;
+					case State.STARTED:
+						switch (st.getCond())
+						{
+							case 1:
+								htmltext = "30223-05.html";
+								break;
+							case 2:
+								htmltext = "30223-06.html";
+								break;
+							case 3:
+								htmltext = "30223-07.html";
+								break;
+							case 4:
+								htmltext = "30223-10.html";
+								break;
+							case 5:
+								st.giveItems(EARRING, 1);
+								st.exitQuest(false, true);
+								htmltext = "30223-11.html";
+								// Newbie Guide
+								showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+								st.addExpAndSp(4254, 335);
+								st.giveAdena(1850, true);
+								break;
+						}
+						break;
+					case State.COMPLETED:
+						htmltext = getAlreadyCompletedMsg(player);
+						break;
+				}
+				break;
+			case MIRABEL:
+				if (st.isStarted())
+				{
+					if (st.isCond(1))
 					{
-						htmltext = "30223-02.htm";
+						st.setCond(2, true);
+						st.takeItems(ARUJIENS_LETTER1, -1);
+						st.giveItems(ARUJIENS_LETTER2, 1);
+						htmltext = "30146-01.html";
 					}
 					else
 					{
-						htmltext = "30223-01.htm";
-						st.exitQuest(true);
+						htmltext = "30146-02.html";
 					}
 				}
 				break;
-			case State.STARTED:
-				if (npcId == QUEST_NPC[0])
+			case HERBIEL:
+				if (st.isStarted() && (st.getCond() > 1))
 				{
-					switch (cond)
+					if (st.isCond(2))
 					{
-						case 1:
-							if (st.getQuestItemsCount(QUEST_ITEM[0]) > 0)
-							{
-								htmltext = "30223-05.htm";
-							}
-							break;
-						case 2:
-							if (st.getQuestItemsCount(QUEST_ITEM[1]) > 0)
-							{
-								htmltext = "30223-06.htm";
-							}
-							break;
-						case 3:
-							if (st.getQuestItemsCount(QUEST_ITEM[2]) > 0)
-							{
-								htmltext = "30223-07.htm";
-							}
-							break;
-						case 4:
-							if (st.getQuestItemsCount(QUEST_ITEM[3]) > 0)
-							{
-								htmltext = "30223-11.htm";
-							}
-							break;
-						case 5:
-							if (st.getQuestItemsCount(QUEST_ITEM[4]) > 0)
-							{
-								htmltext = "30223-10.htm";
-								st.takeItems(QUEST_ITEM[4], -1);
-								st.giveItems(QUEST_REWARD[0], 1850 * Math.round(Config.RATE_QUEST_REWARD_ADENA));
-								st.giveItems(QUEST_REWARD[1], (long) Config.RATE_QUEST_REWARD);
-								st.addExpAndSp(4254 * Math.round(Config.RATE_QUEST_REWARD_XP), 335 * Math.round(Config.RATE_QUEST_REWARD_SP));
-								st.set("cond", "0");
-								st.exitQuest(false);
-								st.playSound("ItemSound.quest_finish");
-							}
-							break;
+						st.setCond(3, true);
+						st.takeItems(ARUJIENS_LETTER2, -1);
+						st.giveItems(ARUJIENS_LETTER3, 1);
+						htmltext = "30150-01.html";
+					}
+					else
+					{
+						htmltext = "30150-02.html";
 					}
 				}
-				else if (npcId == QUEST_NPC[1])
+				break;
+			case GREENIS:
+				if (st.isStarted())
 				{
-					switch (cond)
+					if (st.isCond(4))
 					{
-						case 1:
-							if (st.getQuestItemsCount(QUEST_ITEM[0]) > 0)
-							{
-								htmltext = "30146-01.htm";
-								st.takeItems(QUEST_ITEM[0], -1);
-								st.giveItems(QUEST_ITEM[1], 1);
-								st.set("cond", "2");
-								st.playSound("ItemSound.quest_middle");
-							}
-							break;
-						case 2:
-							if (st.getQuestItemsCount(QUEST_ITEM[1]) > 0)
-							{
-								htmltext = "30146-02.htm";
-							}
-							break;
+						st.setCond(5, true);
+						st.takeItems(POETRY_BOOK, -1);
+						st.giveItems(GREENIS_LETTER, 1);
+						htmltext = "30157-02.html";
 					}
-				}
-				else if (npcId == QUEST_NPC[2])
-				{
-					switch (cond)
+					else if (st.isCond(5))
 					{
-						case 2:
-							if (st.getQuestItemsCount(QUEST_ITEM[1]) > 0)
-							{
-								htmltext = "30150-01.htm";
-								st.takeItems(QUEST_ITEM[1], -1);
-								st.giveItems(QUEST_ITEM[2], 1);
-								st.set("cond", "3");
-								st.playSound("ItemSound.quest_middle");
-							}
-							break;
-						case 3:
-							if (st.getQuestItemsCount(QUEST_ITEM[2]) > 0)
-							{
-								htmltext = "30150-02.htm";
-							}
-							break;
+						htmltext = "30157-03.html";
 					}
-				}
-				else if (npcId == QUEST_NPC[3])
-				{
-					switch (cond)
+					else
 					{
-						case 4:
-							if (st.getQuestItemsCount(QUEST_ITEM[3]) > 0)
-							{
-								htmltext = "30157-01.htm";
-								st.takeItems(QUEST_ITEM[3], -1);
-								st.giveItems(QUEST_ITEM[4], 1);
-								st.set("cond", "5");
-								st.playSound("ItemSound.quest_middle");
-							}
-							break;
-						case 5:
-							if (st.getQuestItemsCount(QUEST_ITEM[4]) > 0)
-							{
-								htmltext = "30157-02.htm";
-							}
-							break;
+						htmltext = "30157-01.html";
 					}
 				}
 				break;
@@ -233,6 +200,6 @@ public class Q00002_WhatWomenWant extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00002_WhatWomenWant(2, Q00002_WhatWomenWant.class.getSimpleName(), "");
+		new Q00002_WhatWomenWant(2, Q00002_WhatWomenWant.class.getSimpleName(), "What Women Want");
 	}
 }

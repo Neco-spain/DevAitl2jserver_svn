@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q10268_ToTheSeedOfInfinity;
 
@@ -30,9 +34,33 @@ public class Q10268_ToTheSeedOfInfinity extends Quest
 	// NPCs
 	private static final int KEUCEREUS = 32548;
 	private static final int TEPIOS = 32603;
-	
-	// Items
+	// Item
 	private static final int INTRODUCTION = 13811;
+	
+	public Q10268_ToTheSeedOfInfinity(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(KEUCEREUS);
+		addTalkId(KEUCEREUS, TEPIOS);
+		registerQuestItems(INTRODUCTION);
+	}
+	
+	@Override
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return getNoQuestMsg(player);
+		}
+		
+		if (event.equals("32548-05.html"))
+		{
+			st.startQuest();
+			st.giveItems(INTRODUCTION, 1);
+		}
+		return event;
+	}
 	
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
@@ -78,34 +106,6 @@ public class Q10268_ToTheSeedOfInfinity extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return getNoQuestMsg(player);
-		}
-		
-		if (event.equals("32548-05.html"))
-		{
-			st.startQuest();
-			st.giveItems(INTRODUCTION, 1);
-		}
-		return event;
-	}
-	
-	public Q10268_ToTheSeedOfInfinity(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(KEUCEREUS);
-		addTalkId(KEUCEREUS, TEPIOS);
-		questItemIds = new int[]
-		{
-			INTRODUCTION
-		};
 	}
 	
 	public static void main(String[] args)

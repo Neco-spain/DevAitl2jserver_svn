@@ -21,13 +21,13 @@ import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.util.Util;
 
+/**
+ * Author: RobikBobik L2PS Team
+ */
 public class Q00254_LegendaryTales extends Quest
 {
-	// NPC
 	private static final int GILMORE = 30754;
-	// Items
 	private static final int LARGE_DRAGON_SKULL = 17249;
-	// Mobs
 	private static final int EMERALD_HORN = 25718;
 	private static final int DUST_RIDER = 25719;
 	private static final int BLEEDING_FLY = 25720;
@@ -35,20 +35,63 @@ public class Q00254_LegendaryTales extends Quest
 	private static final int SHADOW_SUMMONER = 25722;
 	private static final int SPIKE_SLASHER = 25723;
 	private static final int MUSCLE_BOMBER = 25724;
-
-	private static final int[] BOSS = {25718, 25719, 25720, 25721, 25722, 25723, 25724};
-
-	private static final int[] REWARDS = {0, 13457, 13458, 13459, 13460, 13461, 13462, 13463, 13464, 13465, 13466, 13467};
-
+	
+	private static final int[] BOSS =
+	{
+		EMERALD_HORN,
+		DUST_RIDER,
+		BLEEDING_FLY,
+		BLACKDAGGER_WING,
+		SHADOW_SUMMONER,
+		SPIKE_SLASHER,
+		MUSCLE_BOMBER
+	};
+	
+	private static final int[] REWARDS =
+	{
+		0,
+		13457,
+		13458,
+		13459,
+		13460,
+		13461,
+		13462,
+		13463,
+		13464,
+		13465,
+		13466,
+		13467
+	};
+	
+	public Q00254_LegendaryTales(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		
+		addStartNpc(GILMORE);
+		addTalkId(GILMORE);
+		
+		for (int mob : BOSS)
+		{
+			addKillId(mob);
+		}
+		
+		questItemIds = new int[]
+		{
+			LARGE_DRAGON_SKULL
+		};
+	}
+	
 	@Override
-	public String onAdvEvent (String event, L2Npc npc, L2PcInstance player)
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
 		QuestState st = player.getQuestState(getName());
-
+		
 		if (st == null)
+		{
 			return htmltext;
-
+		}
+		
 		if (npc.getNpcId() == GILMORE)
 		{
 			if (event.equalsIgnoreCase("accept"))
@@ -56,59 +99,85 @@ public class Q00254_LegendaryTales extends Quest
 				st.setState(State.STARTED);
 				st.set("cond", "1");
 				st.playSound("ItemSound.quest_accept");
-				htmltext = "30754-7.htm";
+				htmltext = "30754-07.htm";
 			}
-			
 			else if (event.equalsIgnoreCase("emerald"))
 			{
 				if (st.getInt("emerald") != 1)
-					htmltext = "30754-16.html";
+				{
+					htmltext = "30754-16.htm";
+				}
 				else
-					htmltext = "30754-22.html";
+				{
+					htmltext = "30754-22.htm";
+				}
 			}
 			else if (event.equalsIgnoreCase("dust"))
 			{
 				if (st.getInt("dust") != 1)
-					htmltext = "30754-17.html";
+				{
+					htmltext = "30754-17.htm";
+				}
 				else
-					htmltext = "30754-23.html";
+				{
+					htmltext = "30754-23.htm";
+				}
 			}
 			else if (event.equalsIgnoreCase("bleeding"))
 			{
 				if (st.getInt("bleeding") != 1)
-					htmltext = "30754-18.html";
+				{
+					htmltext = "30754-18.htm";
+				}
 				else
-					htmltext = "30754-24.html";
+				{
+					htmltext = "30754-24.htm";
+				}
 			}
 			else if (event.equalsIgnoreCase("daggerwyrm"))
 			{
 				if (st.getInt("blackdagger") != 1)
-					htmltext = "30754-19.html";
+				{
+					htmltext = "30754-19.htm";
+				}
 				else
-					htmltext = "30754-25.html";
+				{
+					htmltext = "30754-25.htm";
+				}
 			}
 			else if (event.equalsIgnoreCase("shadowsummoner"))
 			{
 				if (st.getInt("shadow") != 1)
-					htmltext = "30754-16.html";
+				{
+					htmltext = "30754-16.htm";
+				}
 				else
-					htmltext = "30754-26.html";
+				{
+					htmltext = "30754-26.htm";
+				}
 			}
 			else if (event.equalsIgnoreCase("spikeslasher"))
 			{
 				if (st.getInt("spike") != 1)
-					htmltext = "30754-17.html";
+				{
+					htmltext = "30754-17.htm";
+				}
 				else
-					htmltext = "30754-27.html";
+				{
+					htmltext = "30754-27.htm";
+				}
 			}
 			else if (event.equalsIgnoreCase("muclebomber"))
 			{
 				if (st.getInt("muscle") != 1)
-					htmltext = "30754-18.html";
+				{
+					htmltext = "30754-18.htm";
+				}
 				else
-					htmltext = "30754-28.html";
+				{
+					htmltext = "30754-28.htm";
+				}
 			}
-			
 			else if (Util.isDigit(event))
 			{
 				final int reward_id = Integer.parseInt(event);
@@ -118,9 +187,9 @@ public class Q00254_LegendaryTales extends Quest
 					{
 						int REWARD = REWARDS[reward_id];
 						
-						st.takeItems(LARGE_DRAGON_SKULL, -1);
+						st.takeItems(LARGE_DRAGON_SKULL, 7);
 						st.giveItems(REWARD, 1);
-						htmltext = "30754-13.html";
+						htmltext = "30754-13.htm";
 						st.playSound("ItemSound.quest_finish");
 						st.unset("emerald");
 						st.unset("dust");
@@ -132,7 +201,9 @@ public class Q00254_LegendaryTales extends Quest
 						st.exitQuest(false);
 					}
 					else
+					{
 						htmltext = "30754-12.htm";
+					}
 				}
 			}
 		}
@@ -145,99 +216,107 @@ public class Q00254_LegendaryTales extends Quest
 		String htmltext = getNoQuestMsg(player);
 		QuestState st = player.getQuestState(getName());
 		if (st == null)
+		{
 			return htmltext;
-
+		}
+		
 		if (npc.getNpcId() == GILMORE)
 		{
 			switch (st.getState())
 			{
 				case State.CREATED:
-				{
 					if (player.getLevel() < 80)
-						htmltext = "30754-3.html";
+					{
+						htmltext = "30754-03.htm";
+					}
 					else
-						htmltext = "30754-1.htm";
+					{
+						htmltext = "30754-01.htm";
+					}
 					break;
-				}
 				case State.STARTED:
-				{
-					if (st.getInt("cond") == 1 && (st.getInt("emerald") != 1 || st.getInt("dust") != 1 || st.getInt("bleeding") != 1 || st.getInt("blackdagger") != 1 || st.getInt("shadow") != 1 || st.getInt("spike") != 1 || st.getInt("muscle") != 1))
-						htmltext = "30754-9.htm";
-					else if (st.getInt("cond") == 2 && st.getInt("emerald") == 1 && st.getInt("dust") == 1 && st.getInt("bleeding") == 1 && st.getInt("blackdagger") == 1 && st.getInt("shadow") == 1 && st.getInt("spike") == 1 && st.getInt("muscle") == 1)
-						htmltext = "30754-10.html";
+					if ((st.getInt("cond") == 1) && ((st.getInt("emerald") != 1) || (st.getInt("dust") != 1) || (st.getInt("bleeding") != 1) || (st.getInt("blackdagger") != 1) || (st.getInt("shadow") != 1) || (st.getInt("spike") != 1) || (st.getInt("muscle") != 1)))
+					{
+						htmltext = "30754-09.htm";
+					}
+					else if ((st.getInt("cond") == 2) && (st.getInt("emerald") == 1) && (st.getInt("dust") == 1) && (st.getInt("bleeding") == 1) && (st.getInt("blackdagger") == 1) && (st.getInt("shadow") == 1) && (st.getInt("spike") == 1) && (st.getInt("muscle") == 1))
+					{
+						htmltext = "30754-10.htm";
+					}
 					break;
-				}
 				case State.COMPLETED:
-				{
-					htmltext = "30754-2.html";
+					htmltext = "30754-02.htm";
 					break;
-				}
 			}
 		}
 		return htmltext;
 	}
-
+	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
 	{
 		QuestState st = player.getQuestState(getName());
 		
-		if (Util.contains(BOSS, npc.getNpcId()) && st != null)
+		if (Util.contains(BOSS, npc.getNpcId()) && (st != null))
 		{
 			if (player.isInParty())
 			{
-				for(L2PcInstance memb : player.getParty().getMembers())
+				for (L2PcInstance memb : player.getParty().getMembers())
+				{
 					rewardPlayer(npc, memb);
+				}
 			}
 			else
+			{
 				rewardPlayer(npc, player);
+			}
 		}
-		return super.onKill(npc, player, isPet);
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	private void rewardPlayer(L2Npc npc, L2PcInstance player)
 	{
 		QuestState st = player.getQuestState(getName());
 		int rb = npc.getNpcId();
-		if (st != null && st.getState() == State.STARTED && player.isInsideRadius(npc, 2000, false, false))
+		if ((st != null) && (st.getState() == State.STARTED) && player.isInsideRadius(npc, 2000, false, false))
 		{
-			if (rb == EMERALD_HORN && st.getInt("emerald") != 1)
+			if ((rb == EMERALD_HORN) && (st.getInt("emerald") != 1))
 			{
 				st.giveItems(LARGE_DRAGON_SKULL, 1);
 				st.set("emerald", "1");
 			}
-			else if (rb == DUST_RIDER && st.getInt("dust") != 1)
+			else if ((rb == DUST_RIDER) && (st.getInt("dust") != 1))
 			{
 				st.giveItems(LARGE_DRAGON_SKULL, 1);
 				st.set("dust", "1");
 			}
-			else if (rb == BLEEDING_FLY && st.getInt("bleeding") != 1)
+			else if ((rb == BLEEDING_FLY) && (st.getInt("bleeding") != 1))
 			{
 				st.giveItems(LARGE_DRAGON_SKULL, 1);
 				st.set("bleeding", "1");
 			}
-			else if (rb == BLACKDAGGER_WING && st.getInt("blackdagger") != 1)
+			else if ((rb == BLACKDAGGER_WING) && (st.getInt("blackdagger") != 1))
 			{
 				st.giveItems(LARGE_DRAGON_SKULL, 1);
 				st.set("blackdagger", "1");
 			}
-			else if (rb == SHADOW_SUMMONER && st.getInt("shadow") != 1)
+			else if ((rb == SHADOW_SUMMONER) && (st.getInt("shadow") != 1))
 			{
 				st.giveItems(LARGE_DRAGON_SKULL, 1);
 				st.set("shadow", "1");
 			}
-			else if (rb == SPIKE_SLASHER && st.getInt("spike") != 1)
+			else if ((rb == SPIKE_SLASHER) && (st.getInt("spike") != 1))
 			{
 				st.giveItems(LARGE_DRAGON_SKULL, 1);
 				st.set("spike", "1");
 			}
-			else if (rb == MUSCLE_BOMBER && st.getInt("muscle") != 1)
+			else if ((rb == MUSCLE_BOMBER) && (st.getInt("muscle") != 1))
 			{
 				st.giveItems(LARGE_DRAGON_SKULL, 1);
 				st.set("muscle", "1");
 			}
 			
-			if (st.getInt("emerald") == 1 && st.getInt("dust") == 1 && st.getInt("bleeding") == 1 && st.getInt("blackdagger") == 1 && st.getInt("shadow") == 1 && st.getInt("spike") == 1 && st.getInt("muscle") == 1)
+			if ((st.getInt("emerald") == 1) && (st.getInt("dust") == 1) && (st.getInt("bleeding") == 1) && (st.getInt("blackdagger") == 1) && (st.getInt("shadow") == 1) && (st.getInt("spike") == 1) && (st.getInt("muscle") == 1))
 			{
 				st.set("cond", "2");
 				st.playSound("ItemSound.quest_middle");
@@ -245,19 +324,6 @@ public class Q00254_LegendaryTales extends Quest
 		}
 	}
 	
-	public Q00254_LegendaryTales(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		questItemIds = new int[] { LARGE_DRAGON_SKULL };
-		
-		addStartNpc(GILMORE);
-		addTalkId(GILMORE);
-
-		for(int mob : BOSS)
-			addKillId(mob);
-	}
-
 	public static void main(String[] args)
 	{
 		new Q00254_LegendaryTales(254, Q00254_LegendaryTales.class.getSimpleName(), "Legendary Tales");

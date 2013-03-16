@@ -238,10 +238,7 @@ public class Interface
 				player
 			})));
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public static boolean isRegistered(Integer player)

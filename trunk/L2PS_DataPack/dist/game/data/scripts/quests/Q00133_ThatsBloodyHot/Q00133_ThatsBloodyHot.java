@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00133_ThatsBloodyHot;
 
@@ -32,7 +36,7 @@ public class Q00133_ThatsBloodyHot extends Quest
 	// NPCs
 	private static final int KANIS = 32264;
 	private static final int GALATE = 32292;
-	// Items
+	// Item
 	private static final int REFINED_CRYSTAL_SAMPLE = 9785;
 	// Misc
 	private static final int MIN_LEVEL = 78;
@@ -43,77 +47,6 @@ public class Q00133_ThatsBloodyHot extends Quest
 		addStartNpc(KANIS);
 		addTalkId(KANIS, GALATE);
 		registerQuestItems(REFINED_CRYSTAL_SAMPLE);
-	}
-	
-	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
-		QuestState st = player.getQuestState(getName());
-		String htmltext = getNoQuestMsg(player);
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		switch (st.getState())
-		{
-			case State.COMPLETED:
-			{
-				htmltext = getAlreadyCompletedMsg(player);
-				break;
-			}
-			case State.CREATED:
-			{
-				if (npc.getNpcId() == KANIS)
-				{
-					final QuestState qs = player.getQuestState(Q00131_BirdInACage.class.getSimpleName());
-					if ((qs != null) && qs.isCompleted())
-					{
-						htmltext = (player.getLevel() >= MIN_LEVEL) ? "32264-01.htm" : "32264-02.html";
-					}
-					else
-					{
-						htmltext = "32264-03.html";
-					}
-				}
-				break;
-			}
-			case State.STARTED:
-			{
-				if (npc.getNpcId() == KANIS)
-				{
-					if (st.isCond(1))
-					{
-						htmltext = "32264-05.html";
-					}
-					else if (st.isCond(2))
-					{
-						htmltext = "32264-09.html";
-					}
-					else if (st.getCond() >= 3)
-					{
-						htmltext = "32264-13.html";
-					}
-				}
-				else if (npc.getNpcId() == GALATE)
-				{
-					if (st.getCond() < 3)
-					{
-						htmltext = "32292-01.html";
-					}
-					else if (st.isCond(3))
-					{
-						htmltext = "32292-02.html";
-					}
-					else if (st.isCond(4))
-					{
-						htmltext = "32292-04.html";
-					}
-				}
-				break;
-			}
-		}
-		return htmltext;
 	}
 	
 	@Override
@@ -204,6 +137,77 @@ public class Q00133_ThatsBloodyHot extends Quest
 						st.addExpAndSp(325881, 32524);
 						st.exitQuest(false, true);
 						htmltext = "32292-07.html";
+					}
+				}
+				break;
+			}
+		}
+		return htmltext;
+	}
+	
+	@Override
+	public String onTalk(L2Npc npc, L2PcInstance player)
+	{
+		QuestState st = player.getQuestState(getName());
+		String htmltext = getNoQuestMsg(player);
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		switch (st.getState())
+		{
+			case State.COMPLETED:
+			{
+				htmltext = getAlreadyCompletedMsg(player);
+				break;
+			}
+			case State.CREATED:
+			{
+				if (npc.getNpcId() == KANIS)
+				{
+					final QuestState qs = player.getQuestState(Q00131_BirdInACage.class.getSimpleName());
+					if ((qs != null) && qs.isCompleted())
+					{
+						htmltext = (player.getLevel() >= MIN_LEVEL) ? "32264-01.htm" : "32264-02.html";
+					}
+					else
+					{
+						htmltext = "32264-03.html";
+					}
+				}
+				break;
+			}
+			case State.STARTED:
+			{
+				if (npc.getNpcId() == KANIS)
+				{
+					if (st.isCond(1))
+					{
+						htmltext = "32264-05.html";
+					}
+					else if (st.isCond(2))
+					{
+						htmltext = "32264-09.html";
+					}
+					else if (st.getCond() >= 3)
+					{
+						htmltext = "32264-13.html";
+					}
+				}
+				else if (npc.getNpcId() == GALATE)
+				{
+					if (st.getCond() < 3)
+					{
+						htmltext = "32292-01.html";
+					}
+					else if (st.isCond(3))
+					{
+						htmltext = "32292-02.html";
+					}
+					else if (st.isCond(4))
+					{
+						htmltext = "32292-04.html";
 					}
 				}
 				break;

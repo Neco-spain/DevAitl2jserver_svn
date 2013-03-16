@@ -5,6 +5,7 @@
 	<emptyDestroyTime val="3000" />
 	<spawnPoint spawnX="147725" spawnY="-56517" spawnZ="-2780" />
 	<spawnlist>
+	<group name="general">
 		<spawn npcId="18635" x="122077" y="-46098" z="-2914" heading="5028"
 			respawn="0" />
 		<spawn npcId="18635" x="122019" y="-45634" z="-2908" heading="64841"
@@ -149,5 +150,6 @@
 			respawn="0" />
 		<spawn npcId="32509" x="113745" y="-47565" z="-2593" heading="55710"
 			respawn="0" />
+		</group>
 	</spawnlist>
 </instance>

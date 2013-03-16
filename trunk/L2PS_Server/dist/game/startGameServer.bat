@@ -5,7 +5,7 @@ title L2PS Game Server
 echo Starting L2PS Game Server.
 echo.
 
-java -Djava.util.logging.manager=com.l2jserver.util.L2LogManager -Xms1024m -Xmx1024m -cp ./../libs/*;L2PS_Main.jar com.l2jserver.gameserver.GameServer
+java -Djava.util.logging.manager=com.l2jserver.util.L2LogManager -Xms2048m -Xmx2048m -cp ./../libs/*;L2PS_Main.jar com.l2jserver.gameserver.GameServer
 
 REM NOTE: If you have a powerful machine, you could modify/add some extra parameters for performance, like:
 REM -Xms1536m

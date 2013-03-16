@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.datatables;
 
@@ -40,7 +44,9 @@ import com.l2jserver.gameserver.model.base.Race;
 import com.l2jserver.gameserver.model.base.SocialClass;
 import com.l2jserver.gameserver.model.base.SubClass;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
+import com.l2jserver.gameserver.model.holders.PlayerSkillHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
+import com.l2jserver.gameserver.model.interfaces.ISkillsHolder;
 import com.l2jserver.gameserver.model.skills.L2Skill;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -485,6 +491,20 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public List<L2SkillLearn> getAvailableSkills(L2PcInstance player, ClassId classId, boolean includeByFs, boolean includeAutoGet)
 	{
+		return getAvailableSkills(player, classId, includeByFs, includeAutoGet, player);
+	}
+	
+	/**
+	 * Gets the available skills.
+	 * @param player the learning skill player.
+	 * @param classId the learning skill class ID.
+	 * @param includeByFs if {@code true} skills from Forgotten Scroll will be included.
+	 * @param includeAutoGet if {@code true} Auto-Get skills will be included.
+	 * @param holder
+	 * @return all available skills for a given {@code player}, {@code classId}, {@code includeByFs} and {@code includeAutoGet}.
+	 */
+	private List<L2SkillLearn> getAvailableSkills(L2PcInstance player, ClassId classId, boolean includeByFs, boolean includeAutoGet, ISkillsHolder holder)
+	{
 		final List<L2SkillLearn> result = new ArrayList<>();
 		final Map<Integer, L2SkillLearn> skills = getCompleteClassSkillTree(classId);
 		if (skills.isEmpty())
@@ -498,7 +518,7 @@ public final class SkillTreesData extends DocumentParser
 		{
 			if (((includeAutoGet && skill.isAutoGet()) || skill.isLearnedByNpc() || (includeByFs && skill.isLearnedByFS())) && (player.getLevel() >= skill.getGetLevel()))
 			{
-				final L2Skill oldSkill = player.getSkills().get(skill.getSkillId());
+				final L2Skill oldSkill = holder.getKnownSkill(skill.getSkillId());
 				if (oldSkill != null)
 				{
 					if (oldSkill.getLevel() == (skill.getSkillLevel() - 1))
@@ -513,6 +533,32 @@ public final class SkillTreesData extends DocumentParser
 			}
 		}
 		return result;
+	}
+	
+	public Collection<L2Skill> getAllAvailableSkills(L2PcInstance player, ClassId classId, boolean includeByFs, boolean includeAutoGet)
+	{
+		// Get available skills
+		int unLearnable = 0;
+		PlayerSkillHolder holder = new PlayerSkillHolder(player.getSkills());
+		List<L2SkillLearn> learnable = getAvailableSkills(player, classId, includeByFs, includeAutoGet, holder);
+		while (learnable.size() > unLearnable)
+		{
+			for (L2SkillLearn s : learnable)
+			{
+				L2Skill sk = SkillTable.getInstance().getInfo(s.getSkillId(), s.getSkillLevel());
+				if ((sk == null) || ((sk.getId() == L2Skill.SKILL_DIVINE_INSPIRATION) && !Config.AUTO_LEARN_DIVINE_INSPIRATION && !player.isGM()))
+				{
+					unLearnable++;
+					continue;
+				}
+				
+				holder.addSkill(sk);
+			}
+			
+			// Get new available skills, some skills depend of previous skills to be available.
+			learnable = getAvailableSkills(player, classId, includeByFs, includeAutoGet, holder);
+		}
+		return holder.getSkills().values();
 	}
 	
 	/**

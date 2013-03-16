@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00287_FiguringItOut;
 
@@ -32,7 +36,7 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00287_FiguringItOut extends Quest
 {
-	// NPC
+	// NPCs
 	private static final int LAKI = 32742;
 	private static final Map<Integer, Integer> MONSTERS = new HashMap<>();
 	
@@ -49,7 +53,6 @@ public class Q00287_FiguringItOut extends Quest
 	
 	// Items
 	private static final int VIAL_OF_TANTA_BLOOD = 15499;
-	
 	// Rewards
 	private static final ItemHolder[] MOIRAI =
 	{
@@ -83,6 +86,15 @@ public class Q00287_FiguringItOut extends Quest
 	// Misc
 	private static final int MIN_LEVEL = 82;
 	
+	public Q00287_FiguringItOut(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(LAKI);
+		addTalkId(LAKI);
+		addKillId(MONSTERS.keySet());
+		registerQuestItems(VIAL_OF_TANTA_BLOOD);
+	}
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
@@ -103,7 +115,7 @@ public class Q00287_FiguringItOut extends Quest
 				if (st.getQuestItemsCount(VIAL_OF_TANTA_BLOOD) >= 500)
 				{
 					final ItemHolder holder = ICARUS[getRandom(ICARUS.length)];
-					st.giveItems(holder.getId(), holder.getCount());
+					st.giveItems(holder);
 					st.takeItems(VIAL_OF_TANTA_BLOOD, 500);
 					st.playSound(QuestSound.ITEMSOUND_QUEST_FINISH);
 					htmltext = "32742-06.html";
@@ -117,7 +129,7 @@ public class Q00287_FiguringItOut extends Quest
 				if (st.getQuestItemsCount(VIAL_OF_TANTA_BLOOD) >= 100)
 				{
 					final ItemHolder holder = MOIRAI[getRandom(MOIRAI.length)];
-					st.giveItems(holder.getId(), holder.getCount());
+					st.giveItems(holder);
 					st.takeItems(VIAL_OF_TANTA_BLOOD, 100);
 					st.playSound(QuestSound.ITEMSOUND_QUEST_FINISH);
 					htmltext = "32742-08.html";
@@ -148,6 +160,24 @@ public class Q00287_FiguringItOut extends Quest
 	}
 	
 	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
+		if (partyMember == null)
+		{
+			return super.onKill(npc, player, isSummon);
+		}
+		final QuestState st = partyMember.getQuestState(getName());
+		
+		if (getRandom(1000) < MONSTERS.get(npc.getNpcId()))
+		{
+			st.giveItems(VIAL_OF_TANTA_BLOOD, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
@@ -169,34 +199,6 @@ public class Q00287_FiguringItOut extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		if (partyMember == null)
-		{
-			return super.onKill(npc, player, isPet);
-		}
-		final QuestState st = partyMember.getQuestState(getName());
-		
-		if (getRandom(1000) < MONSTERS.get(npc.getNpcId()))
-		{
-			st.giveItems(VIAL_OF_TANTA_BLOOD, 1);
-			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00287_FiguringItOut(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(LAKI);
-		addTalkId(LAKI);
-		addKillId(MONSTERS.keySet());
-		
-		registerQuestItems(VIAL_OF_TANTA_BLOOD);
 	}
 	
 	public static void main(String[] args)

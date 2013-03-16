@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00130_PathToHellbound;
 
@@ -30,7 +34,7 @@ public class Q00130_PathToHellbound extends Quest
 	// NPCs
 	private static final int CASIAN = 30612;
 	private static final int GALATE = 32292;
-	// Items
+	// Item
 	private static final int CASIANS_BLUE_CRYSTAL = 12823;
 	// Misc
 	private static final int MIN_LEVEL = 78;
@@ -41,6 +45,77 @@ public class Q00130_PathToHellbound extends Quest
 		addStartNpc(CASIAN);
 		addTalkId(CASIAN, GALATE);
 		registerQuestItems(CASIANS_BLUE_CRYSTAL);
+	}
+	
+	@Override
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		
+		String htmltext = null;
+		switch (event)
+		{
+			case "30612-04.htm":
+			{
+				htmltext = event;
+				break;
+			}
+			case "32292-02.html":
+			{
+				if (st.isCond(1))
+				{
+					htmltext = event;
+				}
+				break;
+			}
+			case "32292-06.html":
+			{
+				if (st.isCond(3))
+				{
+					htmltext = event;
+				}
+				break;
+			}
+			case "30612-05.html":
+			{
+				st.startQuest();
+				htmltext = event;
+				break;
+			}
+			case "30612-08.html":
+			{
+				if (st.isCond(2))
+				{
+					st.giveItems(CASIANS_BLUE_CRYSTAL, 1);
+					st.setCond(3, true);
+					htmltext = event;
+				}
+				break;
+			}
+			case "32292-03.html":
+			{
+				if (st.isCond(1))
+				{
+					st.setCond(2, true);
+					htmltext = event;
+				}
+				break;
+			}
+			case "32292-07.html":
+			{
+				if (st.isCond(3) && st.hasQuestItems(CASIANS_BLUE_CRYSTAL))
+				{
+					st.exitQuest(false, true);
+					htmltext = event;
+				}
+				break;
+			}
+		}
+		return htmltext;
 	}
 	
 	@Override
@@ -118,77 +193,6 @@ public class Q00130_PathToHellbound extends Quest
 							break;
 						}
 					}
-				}
-				break;
-			}
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return null;
-		}
-		
-		String htmltext = null;
-		switch (event)
-		{
-			case "30612-04.htm":
-			{
-				htmltext = event;
-				break;
-			}
-			case "32292-02.html":
-			{
-				if (st.isCond(1))
-				{
-					htmltext = event;
-				}
-				break;
-			}
-			case "32292-06.html":
-			{
-				if (st.isCond(3))
-				{
-					htmltext = event;
-				}
-				break;
-			}
-			case "30612-05.html":
-			{
-				st.startQuest();
-				htmltext = event;
-				break;
-			}
-			case "30612-08.html":
-			{
-				if (st.isCond(2))
-				{
-					st.giveItems(CASIANS_BLUE_CRYSTAL, 1);
-					st.setCond(3, true);
-					htmltext = event;
-				}
-				break;
-			}
-			case "32292-03.html":
-			{
-				if (st.isCond(1))
-				{
-					st.setCond(2, true);
-					htmltext = event;
-				}
-				break;
-			}
-			case "32292-07.html":
-			{
-				if (st.isCond(3) && st.hasQuestItems(CASIANS_BLUE_CRYSTAL))
-				{
-					st.exitQuest(false, true);
-					htmltext = event;
 				}
 				break;
 			}

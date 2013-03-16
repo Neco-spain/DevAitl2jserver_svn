@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
@@ -46,10 +50,6 @@ import com.l2jserver.gameserver.network.serverpackets.ExUseSharedGroupItem;
 import com.l2jserver.gameserver.network.serverpackets.ItemList;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
-/**
- * This class ...
- * @version $Revision: 1.18.2.7.2.9 $ $Date: 2005/03/27 15:29:30 $
- */
 public final class UseItem extends L2GameClientPacket
 {
 	private static final String _C__19_USEITEM = "[C] 19 UseItem";
@@ -59,12 +59,12 @@ public final class UseItem extends L2GameClientPacket
 	private int _itemId;
 	
 	/** Weapon Equip Task */
-	public static class WeaponEquipTask implements Runnable
+	private static class WeaponEquipTask implements Runnable
 	{
 		L2ItemInstance item;
 		L2PcInstance activeChar;
 		
-		public WeaponEquipTask(L2ItemInstance it, L2PcInstance character)
+		protected WeaponEquipTask(L2ItemInstance it, L2PcInstance character)
 		{
 			item = it;
 			activeChar = character;
@@ -150,7 +150,7 @@ public final class UseItem extends L2GameClientPacket
 		}
 		
 		// Char cannot use item when dead
-		if (activeChar.isDead())
+		if (activeChar.isDead() || !activeChar.getInventory().canManipulateWithItemId(item.getItemId()))
 		{
 			final SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			sm.addItemName(item);
@@ -164,12 +164,6 @@ public final class UseItem extends L2GameClientPacket
 		}
 		
 		_itemId = item.getItemId();
-		if (!activeChar.getInventory().canManipulateWithItemId(_itemId))
-		{
-			activeChar.sendMessage("Cannot use this item.");
-			return;
-		}
-		
 		if (activeChar.isFishing() && ((_itemId < 6535) || (_itemId > 6540)))
 		{
 			// You cannot do anything else while fishing
@@ -179,10 +173,10 @@ public final class UseItem extends L2GameClientPacket
 		
 		if (!Config.ALT_GAME_KARMA_PLAYER_CAN_TELEPORT && (activeChar.getKarma() > 0))
 		{
-			SkillHolder[] sHolders = item.getItem().getSkills();
-			if (sHolders != null)
+			SkillHolder[] skills = item.getItem().getSkills();
+			if (skills != null)
 			{
-				for (SkillHolder sHolder : sHolders)
+				for (SkillHolder sHolder : skills)
 				{
 					L2Skill skill = sHolder.getSkill();
 					if ((skill != null) && ((skill.getSkillType() == L2SkillType.TELEPORT) || (skill.getSkillType() == L2SkillType.RECALL)))

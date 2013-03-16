@@ -1,12 +1,24 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00105_SkirmishWithOrcs;
 
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.util.Rnd;
 
@@ -15,10 +27,7 @@ import com.l2jserver.util.Rnd;
  */
 public class Q00105_SkirmishWithOrcs extends Quest
 {
-	// NPC
 	private static final int KENDELL = 30218;
-	
-	// QuestItem
 	private static final int KENDNELLS_ORDER1 = 1836;
 	private static final int KENDNELLS_ORDER2 = 1837;
 	private static final int KENDNELLS_ORDER3 = 1838;
@@ -31,8 +40,6 @@ public class Q00105_SkirmishWithOrcs extends Quest
 	private static final int KABOO_CHIEF_TORC2 = 1845;
 	private static final int RED_SUNSET_SWORD = 981;
 	private static final int RED_SUNSET_STAFF = 754;
-	
-	// MOBS
 	private static final int KabooChiefUoph = 27059;
 	private static final int KabooChiefKracha = 27060;
 	private static final int KabooChiefBatoh = 27061;
@@ -41,8 +48,6 @@ public class Q00105_SkirmishWithOrcs extends Quest
 	private static final int KabooChiefRoko = 27065;
 	private static final int KabooChiefKamut = 27067;
 	private static final int KabooChiefMurtika = 27068;
-	
-	// REWARDS
 	private final static int SPIRITSHOT_NO_GRADE_FOR_BEGINNERS = 5790;
 	private final static int SOULSHOT_NO_GRADE_FOR_BEGINNERS = 5789;
 	private final static int LESSER_HEALING_POT = 1060;
@@ -248,7 +253,7 @@ public class Q00105_SkirmishWithOrcs extends Quest
 			}
 			st.giveItems(57, 17599);
 			st.addExpAndSp(41478, 3555);
-			player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message3", player.getLang())).toString()), 3000));
+			player.sendMessage("You received the New Weapon. Go find the Newbie Guide.");
 			st.unset("cond");
 			st.exitQuest(false);
 			st.playSound("ItemSound.quest_finish");

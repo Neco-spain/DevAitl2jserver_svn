@@ -21,13 +21,13 @@ import javolution.util.FastList;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
 import com.l2jserver.gameserver.model.L2CharPosition;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
@@ -57,16 +57,12 @@ public class FreyaKegonSolo extends Quest
 		}
 	}
 	
-	private static final String qn = "FreyaKegonSolo";
 	private static final int INSTANCEID = 138;
-	
 	private static final int KROON = 32653;
 	private static final int TAROON = 32654;
 	private static final int KEGOR_IN_CAVE = 18846;
 	private static final int MONSTER = 22766;
-	
 	private static final int ANTIDOTE = 15514;
-	
 	private static final int BUFF = 6286;
 	
 	private static final int[][] MOB_SPAWNS =
@@ -110,7 +106,7 @@ public class FreyaKegonSolo extends Quest
 		-3763
 	};
 	
-	private class teleCoord
+	protected class teleCoord
 	{
 		int instanceId;
 		int x;
@@ -181,37 +177,33 @@ public class FreyaKegonSolo extends Quest
 				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ALREADY_ENTERED_ANOTHER_INSTANCE_CANT_ENTER));
 				return 0;
 			}
-			teleto.instanceId = world.instanceId;
+			teleto.instanceId = world.getInstanceId();
 			teleportplayer(player, teleto);
 			return instanceId;
 		}
-		else
+		if (!checkConditions(player))
 		{
-			if (!checkConditions(player))
-			{
-				return 0;
-			}
-			
-			instanceId = InstanceManager.getInstance().createDynamicInstance(template);
-			final Instance inst = InstanceManager.getInstance().getInstance(instanceId);
-			inst.setSpawnLoc(new int[]
-			{
-				player.getX(),
-				player.getY(),
-				player.getZ()
-			});
-			world = new KegorWorld();
-			world.instanceId = instanceId;
-			world.templateId = INSTANCEID;
-			world.status = 0;
-			
-			((KegorWorld) world).storeTime[0] = System.currentTimeMillis();
-			InstanceManager.getInstance().addWorld(world);
-			teleto.instanceId = instanceId;
-			teleportplayer(player, teleto);
-			world.allowed.add(player.getObjectId());
-			return instanceId;
+			return 0;
 		}
+		
+		instanceId = InstanceManager.getInstance().createDynamicInstance(template);
+		final Instance inst = InstanceManager.getInstance().getInstance(instanceId);
+		inst.setSpawnLoc(new int[]
+		{
+			player.getX(),
+			player.getY(),
+			player.getZ()
+		});
+		world = new KegorWorld();
+		world.setTemplateId(INSTANCEID);
+		world.setInstanceId(instanceId);
+		world.setStatus(0);
+		((KegorWorld) world).storeTime[0] = System.currentTimeMillis();
+		InstanceManager.getInstance().addWorld(world);
+		teleto.instanceId = instanceId;
+		teleportplayer(player, teleto);
+		world.addAllowed(player.getObjectId());
+		return instanceId;
 	}
 	
 	@Override
@@ -220,10 +212,7 @@ public class FreyaKegonSolo extends Quest
 		if (npc.getNpcId() == KEGOR_IN_CAVE)
 		{
 			InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
-			if ((tmpworld != null) && (tmpworld instanceof KegorWorld))
-			{
-				;
-			}
+			if (tmpworld instanceof KegorWorld)
 			{
 				KegorWorld world = (KegorWorld) tmpworld;
 				
@@ -232,14 +221,14 @@ public class FreyaKegonSolo extends Quest
 					world.liveMobs = new FastList<>();
 					for (int[] spawn : MOB_SPAWNS)
 					{
-						L2Attackable spawnedMob = (L2Attackable) addSpawn(MONSTER, spawn[0], spawn[1], spawn[2], spawn[3], false, 0, false, world.instanceId);
+						L2Attackable spawnedMob = (L2Attackable) addSpawn(MONSTER, spawn[0], spawn[1], spawn[2], spawn[3], false, 0, false, world.getInstanceId());
 						world.liveMobs.add(spawnedMob);
 					}
 				}
 				
 				else if (event.equalsIgnoreCase("buff"))
 				{
-					if ((world != null) && (world.liveMobs != null) && !world.liveMobs.isEmpty())
+					if (((world.liveMobs != null)) && !world.liveMobs.isEmpty())
 					{
 						for (L2Attackable monster : world.liveMobs)
 						{
@@ -283,7 +272,7 @@ public class FreyaKegonSolo extends Quest
 		int npcId = npc.getNpcId();
 		String htmltext = getNoQuestMsg(player);
 		
-		QuestState hostQuest = player.getQuestState("10284_AcquisitionOfDivineSword");
+		QuestState hostQuest = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 		
 		if (hostQuest == null)
 		{
@@ -314,10 +303,7 @@ public class FreyaKegonSolo extends Quest
 		else if (npc.getNpcId() == KEGOR_IN_CAVE)
 		{
 			InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(player.getInstanceId());
-			if ((tmpworld != null) && (tmpworld instanceof KegorWorld))
-			{
-				;
-			}
+			if (tmpworld instanceof KegorWorld)
 			{
 				KegorWorld world = (KegorWorld) tmpworld;
 				if ((hostQuest.getInt("progress") == 2) && (hostQuest.getQuestItemsCount(ANTIDOTE) > 0) && !world.underAttack)
@@ -335,7 +321,7 @@ public class FreyaKegonSolo extends Quest
 				
 				else if (hostQuest.getState() == State.COMPLETED)
 				{
-					world.allowed.remove(world.allowed.indexOf(player.getObjectId()));
+					world.removeAllowed(world.getAllowed().indexOf(player.getObjectId()));
 					teleCoord tele = new teleCoord();
 					tele.instanceId = 0;
 					tele.x = 178823;
@@ -352,7 +338,7 @@ public class FreyaKegonSolo extends Quest
 	@Override
 	public String onFirstTalk(L2Npc npc, L2PcInstance player)
 	{
-		QuestState hostQuest = player.getQuestState("10284_AcquisitionOfDivineSword");
+		QuestState hostQuest = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 		if (hostQuest == null)
 		{
 			return null;
@@ -361,10 +347,7 @@ public class FreyaKegonSolo extends Quest
 		if (npc.getNpcId() == KEGOR_IN_CAVE)
 		{
 			InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(player.getInstanceId());
-			if ((tmpworld != null) && (tmpworld instanceof KegorWorld))
-			{
-				;
-			}
+			if (tmpworld instanceof KegorWorld)
 			{
 				KegorWorld world = (KegorWorld) tmpworld;
 				
@@ -399,21 +382,17 @@ public class FreyaKegonSolo extends Quest
 		return null;
 	}
 	
-	@SuppressWarnings("cast")
 	@Override
 	public final String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
 	{
-		QuestState hostQuest = player.getQuestState("10284_AcquisitionOfDivineSword");
+		QuestState hostQuest = player.getQuestState("Q10284_AcquisitionOfDivineSword");
 		if ((hostQuest == null) || (hostQuest.getState() != State.STARTED))
 		{
 			return null;
 		}
 		
 		InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
-		if ((tmpworld != null) && (tmpworld instanceof KegorWorld))
-		{
-			;
-		}
+		if (tmpworld instanceof KegorWorld)
 		{
 			KegorWorld world = (KegorWorld) tmpworld;
 			
@@ -421,7 +400,7 @@ public class FreyaKegonSolo extends Quest
 			{
 				if (world.liveMobs != null)
 				{
-					world.liveMobs.remove((L2Attackable) npc);
+					world.liveMobs.remove(npc);
 					if (world.liveMobs.isEmpty() && (world.KEGOR != null) && !world.KEGOR.isDead() && (hostQuest.getInt("progress") == 2))
 					{
 						world.underAttack = false;
@@ -434,7 +413,7 @@ public class FreyaKegonSolo extends Quest
 						hostQuest.set("cond", "6");
 						hostQuest.playSound("ItemSound.quest_middle");
 						
-						Instance inst = InstanceManager.getInstance().getInstance(world.instanceId);
+						Instance inst = InstanceManager.getInstance().getInstance(world.getInstanceId());
 						inst.setDuration(3 * 60000);
 						inst.setEmptyDestroyTime(0);
 					}
@@ -446,7 +425,7 @@ public class FreyaKegonSolo extends Quest
 				NpcSay cs = new NpcSay(npc.getObjectId(), Say2.ALL, npc.getNpcId(), NpcStringId.HOW_COULD_I_FALL_IN_A_PLACE_LIKE_THIS);
 				npc.broadcastPacket(cs);
 				
-				Instance inst = InstanceManager.getInstance().getInstance(world.instanceId);
+				Instance inst = InstanceManager.getInstance().getInstance(world.getInstanceId());
 				inst.setDuration(60000);
 				inst.setEmptyDestroyTime(0);
 			}
@@ -462,6 +441,6 @@ public class FreyaKegonSolo extends Quest
 	
 	public static void main(String[] args)
 	{
-		new FreyaKegonSolo(-1, qn, "instances");
+		new FreyaKegonSolo(-1, FreyaKegonSolo.class.getSimpleName(), "instances");
 	}
 }

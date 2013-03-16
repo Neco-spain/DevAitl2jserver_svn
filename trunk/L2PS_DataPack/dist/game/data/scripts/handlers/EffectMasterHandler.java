@@ -83,6 +83,7 @@ import handlers.effecthandlers.PhysicalAttackMute;
 import handlers.effecthandlers.PhysicalMute;
 import handlers.effecthandlers.ProtectionBlessing;
 import handlers.effecthandlers.RandomizeHate;
+import handlers.effecthandlers.RebalanceHP;
 import handlers.effecthandlers.RecoBonus;
 import handlers.effecthandlers.Recovery;
 import handlers.effecthandlers.Relax;
@@ -119,6 +120,7 @@ public final class EffectMasterHandler
 	private static final Class<?>[] _effects =
 	{
 		AbortCast.class,
+		RebalanceHP.class,
 		Betray.class,
 		BigHead.class,
 		BlockResurrection.class,
@@ -177,8 +179,8 @@ public final class EffectMasterHandler
 		PhysicalMute.class,
 		ProtectionBlessing.class,
 		RandomizeHate.class,
-		Recovery.class,
 		RecoBonus.class,
+		Recovery.class,
 		Relax.class,
 		RemoveTarget.class,
 		RestorationRandom.class,

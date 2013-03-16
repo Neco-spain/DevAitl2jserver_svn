@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.skills;
 
@@ -54,7 +58,6 @@ public enum L2SkillType
 	BLOW,
 	SIGNET(L2SkillSignet.class),
 	SIGNET_CASTTIME(L2SkillSignetCasttime.class),
-	
 	// Disablers
 	BLEED,
 	POISON,
@@ -67,11 +70,9 @@ public enum L2SkillType
 	MUTE,
 	PARALYZE,
 	DISARM,
-	
 	// hp, mp, cp
 	HEAL,
 	HOT,
-	BALANCE_LIFE,
 	HEAL_PERCENT,
 	HEAL_STATIC,
 	COMBATPOINTHEAL,
@@ -86,27 +87,23 @@ public enum L2SkillType
 	HPMPHEAL_PERCENT,
 	HPCPHEAL_PERCENT,
 	CHAIN_HEAL,
-	
 	// sp
 	GIVE_SP,
 	// reco
 	GIVE_RECO,
 	// vitality
 	GIVE_VITALITY,
-	
 	// Aggro
 	AGGDAMAGE,
 	AGGREDUCE,
 	AGGREMOVE,
 	AGGREDUCE_CHAR,
 	AGGDEBUFF,
-	
 	// Fishing
 	FISHING,
 	PUMPING,
 	REELING,
-	
-	// MISC
+	// Misc
 	UNLOCK,
 	UNLOCK_SPECIAL,
 	ENCHANT_ARMOR,
@@ -125,13 +122,11 @@ public enum L2SkillType
 	INSTANT_JUMP,
 	DETECTION,
 	DUMMY,
-	
 	// Creation
 	COMMON_CRAFT,
 	DWARVEN_CRAFT,
 	CREATE_ITEM(L2SkillCreateItem.class),
 	LEARN_SKILL(L2SkillLearnSkill.class),
-	
 	// Summons
 	SUMMON(L2SkillSummon.class),
 	FEED_PET,
@@ -141,7 +136,6 @@ public enum L2SkillType
 	BETRAY,
 	DECOY(L2SkillDecoy.class),
 	SPAWN(L2SkillSpawn.class),
-	
 	// Cancel
 	CANCEL,
 	CANCEL_ALL,
@@ -183,15 +177,14 @@ public enum L2SkillType
 	
 	// Skill is done within the core.
 	COREDONE,
-	
 	// Refuel airship
 	REFUEL,
 	// Nornil's Power (Nornil's Garden instance)
 	NORNILS_POWER,
-	
 	// unimplemented
 	NOTDONE,
 	BALLISTA,
+	BALANCE_LIFE,
 	BOMB,
 	CAPTURE;
 	

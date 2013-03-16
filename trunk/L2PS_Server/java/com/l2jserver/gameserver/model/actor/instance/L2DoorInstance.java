@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
@@ -18,7 +22,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javolution.util.FastList;
 
@@ -37,7 +40,6 @@ import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.knownlist.DoorKnownList;
-import com.l2jserver.gameserver.model.actor.stat.DoorStat;
 import com.l2jserver.gameserver.model.actor.status.DoorStatus;
 import com.l2jserver.gameserver.model.actor.templates.L2DoorTemplate;
 import com.l2jserver.gameserver.model.entity.Castle;
@@ -55,14 +57,8 @@ import com.l2jserver.gameserver.network.serverpackets.StaticObject;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.util.Rnd;
 
-/**
- * This class ...
- * @version $Revision: 1.3.2.2.2.5 $ $Date: 2005/03/27 15:29:32 $
- */
 public class L2DoorInstance extends L2Character
 {
-	protected static final Logger log = Logger.getLogger(L2DoorInstance.class.getName());
-	
 	public static final byte OPEN_BY_CLICK = 1;
 	public static final byte OPEN_BY_TIME = 2;
 	public static final byte OPEN_BY_ITEM = 4;
@@ -120,10 +116,6 @@ public class L2DoorInstance extends L2Character
 	/** This class may be created only by L2Character and only for AI */
 	public class AIAccessor extends L2Character.AIAccessor
 	{
-		protected AIAccessor()
-		{
-		}
-		
 		@Override
 		public L2DoorInstance getActor()
 		{
@@ -197,22 +189,10 @@ public class L2DoorInstance extends L2Character
 	}
 	
 	@Override
-	public final DoorStat getStat()
-	{
-		return (DoorStat) super.getStat();
-	}
-	
-	@Override
 	public L2DoorTemplate getTemplate()
 	{
 		return (L2DoorTemplate) super.getTemplate();
 		
-	}
-	
-	@Override
-	public void initCharStat()
-	{
-		setStat(new DoorStat(this));
 	}
 	
 	@Override

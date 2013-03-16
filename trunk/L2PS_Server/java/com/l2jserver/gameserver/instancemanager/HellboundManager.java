@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J Server
+ * 
+ * This file is part of L2J Server.
+ * 
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.instancemanager;
 
@@ -30,7 +34,6 @@ import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
-import com.l2jserver.util.Rnd;
 
 /**
  * @author _DS_, GKR
@@ -271,15 +274,7 @@ public class HellboundManager
 					spawnDat.setLocy(rs.getInt("locy"));
 					spawnDat.setLocz(rs.getInt("locz"));
 					spawnDat.setHeading(rs.getInt("heading"));
-					spawnDat.setRespawnDelay(rs.getInt("respawn_delay"));
-					spawnDat.setRespawnMinDelay(0);
-					spawnDat.setRespawnMaxDelay(0);
-					int respawnRandom = (rs.getInt("respawn_random"));
-					if (respawnRandom > 0) // Random respawn time, if needed
-					{
-						spawnDat.setRespawnMinDelay(Math.max(rs.getInt("respawn_delay") - respawnRandom, 1));
-						spawnDat.setRespawnMaxDelay(rs.getInt("respawn_delay") + respawnRandom);
-					}
+					spawnDat.setRespawnDelay(rs.getInt("respawn_delay"), rs.getInt("respawn_random"));
 					spawnDat.setMinLvl(rs.getInt("min_hellbound_level"));
 					spawnDat.setMaxLvl(rs.getInt("max_hellbound_level"));
 					
@@ -304,9 +299,6 @@ public class HellboundManager
 	
 	public static final class HellboundSpawn extends L2Spawn
 	{
-		/** The delay between a L2NpcInstance remove and its re-spawn */
-		private int _respawnDelay;
-		
 		private int _minLvl;
 		private int _maxLvl;
 		
@@ -333,38 +325,6 @@ public class HellboundManager
 		public final void setMaxLvl(int lvl)
 		{
 			_maxLvl = lvl;
-		}
-		
-		@Override
-		public final void decreaseCount(L2Npc oldNpc)
-		{
-			if (getRespawnDelay() <= 0)
-			{
-				stopRespawn();
-			}
-			else if (getRespawnMaxDelay() > getRespawnMinDelay())
-			{
-				setRespawnDelay(Rnd.get(getRespawnMinDelay(), getRespawnMaxDelay()));
-			}
-			
-			super.decreaseCount(oldNpc);
-		}
-		
-		/**
-		 * @param i delay in seconds
-		 */
-		@Override
-		public void setRespawnDelay(int i)
-		{
-			_respawnDelay = i * 1000;
-			
-			super.setRespawnDelay(i);
-		}
-		
-		@Override
-		public int getRespawnDelay()
-		{
-			return _respawnDelay;
 		}
 	}
 	

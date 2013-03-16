@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00278_HomeSecurity;
 
@@ -27,15 +31,24 @@ import com.l2jserver.gameserver.model.quest.State;
 public class Q00278_HomeSecurity extends Quest
 {
 	// NPC
-	private static final int Tunatun = 31537;
-	private static final int[] Monster =
+	private static final int TUNATUN = 31537;
+	private static final int[] MONSTER =
 	{
 		18905,
 		18906,
 		18907
 	};
 	// Item
-	private static final int SelMahumMane = 15531;
+	private static final int SEL_MAHUM_MANE = 15531;
+	
+	public Q00278_HomeSecurity(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(TUNATUN);
+		addTalkId(TUNATUN);
+		addKillId(MONSTER);
+		registerQuestItems(SEL_MAHUM_MANE);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -53,9 +66,7 @@ public class Q00278_HomeSecurity extends Quest
 		}
 		else if (event.equalsIgnoreCase("31537-04.htm"))
 		{
-			st.set("cond", "1");
-			st.playSound("ItemSound.quest_accept");
-			st.setState(State.STARTED);
+			st.startQuest();
 		}
 		else if (event.equalsIgnoreCase("31537-07.html"))
 		{
@@ -114,13 +125,77 @@ public class Q00278_HomeSecurity extends Quest
 				st.giveItems(959, 1);
 			}
 			
-			st.takeItems(SelMahumMane, -1);
-			st.unset("cond");
-			st.playSound("ItemSound.quest_finish");
-			st.exitQuest(true);
+			st.exitQuest(true, true);
 			htmltext = "31537-07.html";
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		L2PcInstance partyMember = getRandomPartyMember(player, 1);
+		if (partyMember == null)
+		{
+			return null;
+		}
+		final QuestState st = partyMember.getQuestState(getName());
+		
+		int chance, i1;
+		if (st.isCond(1))
+		{
+			switch (npc.getNpcId())
+			{
+				case 18907: // Beast Devourer
+				case 18906: // Farm Bandit
+					chance = getRandom(1000);
+					if (chance < 85)
+					{
+						st.giveItems(SEL_MAHUM_MANE, 1);
+						if (st.getQuestItemsCount(SEL_MAHUM_MANE) >= 300)
+						{
+							st.setCond(2, true);
+						}
+						else
+						{
+							st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+						}
+					}
+					break;
+				case 18905: // Farm Ravager (Crazy)
+					chance = getRandom(1000);
+					if (chance < 486)
+					{
+						i1 = getRandom(6) + 1;
+						if ((i1 + st.getQuestItemsCount(SEL_MAHUM_MANE)) >= 300)
+						{
+							st.giveItems(SEL_MAHUM_MANE, (300 - st.getQuestItemsCount(SEL_MAHUM_MANE)));
+							st.setCond(2, true);
+						}
+						else
+						{
+							st.giveItems(SEL_MAHUM_MANE, i1);
+							st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+						}
+					}
+					else
+					{
+						i1 = (getRandom(5) + 1);
+						if ((i1 + st.getQuestItemsCount(SEL_MAHUM_MANE)) >= 300)
+						{
+							st.giveItems(SEL_MAHUM_MANE, (300 - st.getQuestItemsCount(SEL_MAHUM_MANE)));
+							st.setCond(2, true);
+						}
+						else
+						{
+							st.giveItems(SEL_MAHUM_MANE, i1);
+							st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+						}
+					}
+					break;
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -139,101 +214,17 @@ public class Q00278_HomeSecurity extends Quest
 				htmltext = "31537-01.htm";
 				break;
 			case State.STARTED:
-				if ((st.getInt("cond") == 1) || (st.getQuestItemsCount(SelMahumMane) < 300))
+				if (st.isCond(1) || (st.getQuestItemsCount(SEL_MAHUM_MANE) < 300))
 				{
 					htmltext = "31537-06.html";
 				}
-				else if ((st.getInt("cond") == 2) && (st.getQuestItemsCount(SelMahumMane) >= 300))
+				else if (st.isCond(2) && (st.getQuestItemsCount(SEL_MAHUM_MANE) >= 300))
 				{
 					htmltext = "31537-05.html";
 				}
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		final QuestState st = partyMember.getQuestState(getName());
-		
-		int chance, i1;
-		if (st.getInt("cond") == 1)
-		{
-			switch (npc.getNpcId())
-			{
-				case 18907: // Beast Devourer
-				case 18906: // Farm Bandit
-					chance = getRandom(1000);
-					if (chance < 85)
-					{
-						st.giveItems(SelMahumMane, 1);
-						if (st.getQuestItemsCount(SelMahumMane) >= 300)
-						{
-							st.set("cond", "2");
-							st.playSound("ItemSound.quest_middle");
-						}
-						else
-						{
-							st.playSound("ItemSound.quest_itemget");
-						}
-					}
-					break;
-				case 18905: // Farm Ravager (Crazy)
-					chance = getRandom(1000);
-					if (chance < 486)
-					{
-						i1 = getRandom(6) + 1;
-						if ((i1 + st.getQuestItemsCount(SelMahumMane)) >= 300)
-						{
-							st.set("cond", "2");
-							st.playSound("ItemSound.quest_middle");
-							st.giveItems(SelMahumMane, (300 - st.getQuestItemsCount(SelMahumMane)));
-						}
-						else
-						{
-							st.giveItems(SelMahumMane, i1);
-							st.playSound("ItemSound.quest_itemget");
-						}
-					}
-					else
-					{
-						i1 = (getRandom(5) + 1);
-						if ((i1 + st.getQuestItemsCount(SelMahumMane)) >= 300)
-						{
-							st.set("cond", "2");
-							st.playSound("ItemSound.quest_middle");
-							st.giveItems(SelMahumMane, (300 - st.getQuestItemsCount(SelMahumMane)));
-						}
-						else
-						{
-							st.giveItems(SelMahumMane, i1);
-							st.playSound("ItemSound.quest_itemget");
-						}
-					}
-					break;
-			}
-		}
-		return null;
-	}
-	
-	public Q00278_HomeSecurity(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(Tunatun);
-		addTalkId(Tunatun);
-		addKillId(Monster);
-		
-		questItemIds = new int[]
-		{
-			SelMahumMane
-		};
 	}
 	
 	public static void main(String[] args)

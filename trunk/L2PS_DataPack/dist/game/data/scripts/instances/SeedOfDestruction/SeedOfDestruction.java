@@ -1,3 +1,17 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://com.l2jserver.ru/>.
+ */
 package instances.SeedOfDestruction;
 
 import java.util.Calendar;
@@ -7,11 +21,11 @@ import java.util.Map;
 import javolution.util.FastList;
 import javolution.util.FastMap;
 
+import com.l2jserver.Config;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.SkillTable;
-import com.l2jserver.gameserver.instancemanager.GraciaSeedsManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
+import com.l2jserver.gameserver.instancemanager.SoDManager;
 import com.l2jserver.gameserver.model.L2CharPosition;
 import com.l2jserver.gameserver.model.L2CommandChannel;
 import com.l2jserver.gameserver.model.L2Object;
@@ -25,6 +39,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2Effect;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.skills.L2Skill;
@@ -41,6 +56,9 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Util;
 import com.l2jserver.util.Rnd;
 
+/**
+ * Author: RobikBobik L2PS Team
+ */
 public class SeedOfDestruction extends Quest
 {
 	
@@ -71,8 +89,8 @@ public class SeedOfDestruction extends Quest
 	
 	private static final String qn = "SeedOfDestruction";
 	private static final int INSTANCEID = 110; // this is the client number
-	private static final int MIN_PLAYERS = 36;
-	private static final int MAX_PLAYERS = 45;
+	private static final int MIN_PLAYERS = Config.MIN_TIAT_PLAYERS;
+	private static final int MAX_PLAYERS = Config.MAX_TIAT_PLAYERS;
 	private static final int MAX_DEVICESPAWNEDMOBCOUNT = 100;
 	private static final boolean debug = false;
 	private static final int EXIT_TIME = 5; // exit time
@@ -4411,7 +4429,7 @@ public class SeedOfDestruction extends Quest
 	private static final int RESET_DAY_1 = 4;
 	private static final int RESET_DAY_2 = 7;
 	
-	private class teleCoord
+	protected class teleCoord
 	{
 		int instanceId;
 		int x;
@@ -4423,58 +4441,56 @@ public class SeedOfDestruction extends Quest
 	{
 		if (debug)
 		{
+			_log.info("SoD is now in test mode - DEBUG OR GM PLAYER");
 			return true;
 		}
-		else
+		if (player.getParty() == null)
 		{
-			if (player.getParty() == null)
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_PARTY_CANT_ENTER));
-				return false;
-			}
-			L2CommandChannel channel = player.getParty().getCommandChannel();
-			if (channel == null)
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_COMMAND_CHANNEL_CANT_ENTER));
-				return false;
-			}
-			else if (channel.getLeader() != player)
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ONLY_PARTY_LEADER_CAN_ENTER));
-				return false;
-			}
-			else if ((channel.getMemberCount() < MIN_PLAYERS) || (channel.getMemberCount() > MAX_PLAYERS))
-			{
-				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.PARTY_EXCEEDED_THE_LIMIT_CANT_ENTER));
-				return false;
-			}
-			for (L2PcInstance channelMember : channel.getMembers())
-			{
-				if (channelMember.getLevel() < 78)
-				{
-					SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_LEVEL_REQUIREMENT_NOT_SUFFICIENT));
-					sm.addPcName(channelMember);
-					channel.broadcastPacket(sm);
-					return false;
-				}
-				if (!Util.checkIfInRange(1000, player, channelMember, true))
-				{
-					SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_IS_IN_LOCATION_THAT_CANNOT_BE_ENTERED));
-					sm.addPcName(channelMember);
-					channel.broadcastPacket(sm);
-					return false;
-				}
-				Long reentertime = InstanceManager.getInstance().getInstanceTime(channelMember.getObjectId(), INSTANCEID);
-				if (System.currentTimeMillis() < reentertime)
-				{
-					SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_MAY_NOT_REENTER_YET));
-					sm.addPcName(channelMember);
-					channel.broadcastPacket(sm);
-					return false;
-				}
-			}
-			return true;
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_PARTY_CANT_ENTER));
+			return false;
 		}
+		L2CommandChannel channel = player.getParty().getCommandChannel();
+		if (channel == null)
+		{
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.NOT_IN_COMMAND_CHANNEL_CANT_ENTER));
+			return false;
+		}
+		else if (channel.getLeader() != player)
+		{
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ONLY_PARTY_LEADER_CAN_ENTER));
+			return false;
+		}
+		else if ((channel.getMemberCount() < MIN_PLAYERS) || (channel.getMemberCount() > MAX_PLAYERS))
+		{
+			player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.PARTY_EXCEEDED_THE_LIMIT_CANT_ENTER));
+			return false;
+		}
+		for (L2PcInstance channelMember : channel.getMembers())
+		{
+			if (channelMember.getLevel() < 78)
+			{
+				SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_LEVEL_REQUIREMENT_NOT_SUFFICIENT));
+				sm.addPcName(channelMember);
+				channel.broadcastPacket(sm);
+				return false;
+			}
+			if (!Util.checkIfInRange(1000, player, channelMember, true))
+			{
+				SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_IS_IN_LOCATION_THAT_CANNOT_BE_ENTERED));
+				sm.addPcName(channelMember);
+				channel.broadcastPacket(sm);
+				return false;
+			}
+			Long reentertime = InstanceManager.getInstance().getInstanceTime(channelMember.getObjectId(), INSTANCEID);
+			if (System.currentTimeMillis() < reentertime)
+			{
+				SystemMessage sm = (SystemMessage.getSystemMessage(SystemMessageId.C1_MAY_NOT_REENTER_YET));
+				sm.addPcName(channelMember);
+				channel.broadcastPacket(sm);
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private int checkworld(L2PcInstance player)
@@ -4502,9 +4518,9 @@ public class SeedOfDestruction extends Quest
 		}
 		else if (inst == 1)
 		{
-			teleto.instanceId = world.instanceId;
+			teleto.instanceId = world.getInstanceId();
 			teleportplayer(player, teleto, (SODWorld) world);
-			return world.instanceId;
+			return world.getInstanceId();
 		}
 		// New instance
 		else
@@ -4515,9 +4531,9 @@ public class SeedOfDestruction extends Quest
 			}
 			int instanceId = InstanceManager.getInstance().createDynamicInstance(template);
 			world = new SODWorld(System.currentTimeMillis() + 5400000);
-			world.instanceId = instanceId;
-			world.templateId = INSTANCEID;
-			world.status = 0;
+			world.setTemplateId(INSTANCEID);
+			world.setInstanceId(instanceId);
+			world.setStatus(0);
 			InstanceManager.getInstance().addWorld(world);
 			spawnState((SODWorld) world);
 			for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
@@ -4536,7 +4552,7 @@ public class SeedOfDestruction extends Quest
 				InstanceManager.getInstance().setInstanceTime(player.getObjectId(), INSTANCEID, (System.currentTimeMillis()));
 				teleportplayer(player, teleto, (SODWorld) world);
 				removeBuffs(player);
-				world.allowed.add(player.getObjectId());
+				world.addAllowed(player.getObjectId());
 			}
 			else
 			{
@@ -4546,35 +4562,10 @@ public class SeedOfDestruction extends Quest
 					InstanceManager.getInstance().setInstanceTime(channelMember.getObjectId(), INSTANCEID, (System.currentTimeMillis()));
 					teleportplayer(channelMember, teleto, (SODWorld) world);
 					removeBuffs(channelMember);
-					world.allowed.add(channelMember.getObjectId());
+					world.addAllowed(channelMember.getObjectId());
 				}
 			}
 			return instanceId;
-		}
-	}
-	
-	protected void openDoor(int doorId, int instanceId)
-	{
-		for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
-		{
-			if (door.getDoorId() == doorId)
-			{
-				door.openMe();
-			}
-		}
-	}
-	
-	protected void closeDoor(int doorId, int instanceId)
-	{
-		for (L2DoorInstance door : InstanceManager.getInstance().getInstance(instanceId).getDoors())
-		{
-			if (door.getDoorId() == doorId)
-			{
-				if (door.getOpen())
-				{
-					door.closeMe();
-				}
-			}
 		}
 	}
 	
@@ -4664,7 +4655,7 @@ public class SeedOfDestruction extends Quest
 	protected void spawnState(SODWorld world)
 	{
 		world.npcList.clear();
-		switch (world.status)
+		switch (world.getStatus())
 		{
 			case 0:
 				spawn(world, ENTRANCE_GROUND_SPAWNS_1, true, false);
@@ -4672,11 +4663,11 @@ public class SeedOfDestruction extends Quest
 				spawn(world, ENTRANCE_UPPER_SPAWNS, false, true);
 				break;
 			case 1:
-				ExShowScreenMessage message1 = new ExShowScreenMessage(NpcStringId.THE_ENEMIES_HAVE_ATTACKED_EVERYONE_COME_OUT_AND_FIGHT_URGH, 5, 1);
+				ExShowScreenMessage message1 = new ExShowScreenMessage(NpcStringId.THE_ENEMIES_HAVE_ATTACKED_EVERYONE_COME_OUT_AND_FIGHT_URGH, 5, 5000);
 				sendScreenMessage(world, message1);
 				for (int i : ENTRANCE_ROOM_DOORS)
 				{
-					openDoor(i, world.instanceId);
+					openDoor(i, world.getInstanceId());
 				}
 				spawn(world, SQUARE_SPAWNS_STATIC, false, true);
 				spawn(world, SQUARE_SPAWNS_MAIN, true, false);
@@ -4686,23 +4677,23 @@ public class SeedOfDestruction extends Quest
 				// handled elsewhere
 				return;
 			case 4:
-				ExShowScreenMessage message2 = new ExShowScreenMessage(NpcStringId.OBELISK_HAS_COLLAPSED_DONT_LET_THE_ENEMIES_JUMP_AROUND_WILDLY_ANYMORE, 5, 1);
+				ExShowScreenMessage message2 = new ExShowScreenMessage(NpcStringId.OBELISK_HAS_COLLAPSED_DONT_LET_THE_ENEMIES_JUMP_AROUND_WILDLY_ANYMORE, 5, 5000);
 				sendScreenMessage(world, message2);
 				for (int i : SQUARE_DOORS)
 				{
-					openDoor(i, world.instanceId);
+					openDoor(i, world.getInstanceId());
 				}
 				spawn(world, CORRIDOR_SPAWNS_UPPER, false, true);
 				spawn(world, CORRIDOR_SPAWNS_GROUND, false, false);
 				world.killedDevice = 0;
 				break;
 			case 5:
-				openDoor(SCOUTPASS_DOOR, world.instanceId);
+				openDoor(SCOUTPASS_DOOR, world.getInstanceId());
 				spawn(world, SQUARE_SPAWNS_HALF, false, false);
 				spawn(world, SCOUTPASS_SPAWNS_UPPER, false, true);
 				spawn(world, SCOUTPASS_SPAWNS_GROUND, false, false);
 				spawn(world, PREFORT_SPAWNS, false, false);
-				ExShowScreenMessage message3 = new ExShowScreenMessage(NpcStringId.ENEMIES_ARE_TRYING_TO_DESTROY_THE_FORTRESS_EVERYONE_DEFEND_THE_FORTRESS, 5, 1);
+				ExShowScreenMessage message3 = new ExShowScreenMessage(NpcStringId.ENEMIES_ARE_TRYING_TO_DESTROY_THE_FORTRESS_EVERYONE_DEFEND_THE_FORTRESS, 5, 5000);
 				sendScreenMessage(world, message3);
 				spawn(world, FORT_SPAWNS_UPPER, false, true);
 				spawn(world, FORT_SPAWNS_GROUND, false, false);
@@ -4710,7 +4701,7 @@ public class SeedOfDestruction extends Quest
 				break;
 			case 6:
 				runThrone(world);
-				openDoor(THRONE_DOOR, world.instanceId);
+				openDoor(THRONE_DOOR, world.getInstanceId());
 				spawn(world, FORT_PORTALS, false, true);
 				break;
 			case 7:
@@ -4722,14 +4713,14 @@ public class SeedOfDestruction extends Quest
 				// instance end
 				break;
 		}
-		world.status++;
+		world.incStatus();
 	}
 	
 	protected void spawn(SODWorld world, int[][] spawnTable, boolean addToKillTable, boolean isImmobilized)
 	{
 		for (int[] mob : spawnTable)
 		{
-			L2Npc npc = addSpawn(mob[0], mob[1], mob[2], mob[3], mob[4], false, 0, false, world.instanceId);
+			L2Npc npc = addSpawn(mob[0], mob[1], mob[2], mob[3], mob[4], false, 0, false, world.getInstanceId());
 			if (addToKillTable)
 			{
 				world.npcList.put(npc, false);
@@ -4781,7 +4772,7 @@ public class SeedOfDestruction extends Quest
 	
 	private void sendScreenMessage(SODWorld world, ExShowScreenMessage message)
 	{
-		for (int objId : world.allowed)
+		for (int objId : world.getAllowed())
 		{
 			L2PcInstance player = L2World.getInstance().getPlayer(objId);
 			if (player != null)
@@ -4793,40 +4784,40 @@ public class SeedOfDestruction extends Quest
 	
 	protected void runThrone(SODWorld world)
 	{
-		world._portalForCamera = addSpawn(SPAWN_DEVICE, -248781, 206325, -11966, 0, false, 0, false, world.instanceId);
+		world._portalForCamera = addSpawn(SPAWN_DEVICE, -248781, 206325, -11966, 0, false, 0, false, world.getInstanceId());
 		world._portalForCamera.setIsNoRndWalk(true);
 		
 		for (int i = 0; i < 12; i++)
 		{
-			L2Npc npc1 = addSpawn(22543, ONETR[i][0], ONETR[i][1], ONETR[i][2], 16285, false, 0, false, world.instanceId);
+			L2Npc npc1 = addSpawn(22543, ONETR[i][0], ONETR[i][1], ONETR[i][2], 16285, false, 0, false, world.getInstanceId());
 			npc1.setIsNoRndWalk(true);
 			world._mags.add(npc1);
 			
-			L2Npc npc2 = addSpawn(22541, TWOTR[i][0], TWOTR[i][1], TWOTR[i][2], 16285, false, 0, false, world.instanceId);
+			L2Npc npc2 = addSpawn(22541, TWOTR[i][0], TWOTR[i][1], TWOTR[i][2], 16285, false, 0, false, world.getInstanceId());
 			npc2.setIsNoRndWalk(true);
 		}
 		for (int i = 0; i < 6; i++)
 		{
-			L2Npc npc3 = addSpawn(FRETR[i][0], FRETR[i][1], FRETR[i][2], FRETR[i][3], 16285, false, 0, false, world.instanceId);
+			L2Npc npc3 = addSpawn(FRETR[i][0], FRETR[i][1], FRETR[i][2], FRETR[i][3], 16285, false, 0, false, world.getInstanceId());
 			npc3.setIsNoRndWalk(true);
 			
-			L2Npc npc4 = addSpawn(22536, FORTR[i][0], FORTR[i][1], FORTR[i][2], 16285, false, 0, false, world.instanceId);
+			L2Npc npc4 = addSpawn(22536, FORTR[i][0], FORTR[i][1], FORTR[i][2], 16285, false, 0, false, world.getInstanceId());
 			npc4.setIsNoRndWalk(true);
 			
-			L2Npc npc5 = addSpawn(22537, FIVETR[i][0], FIVETR[i][1], FIVETR[i][2], 16285, false, 0, false, world.instanceId);
+			L2Npc npc5 = addSpawn(22537, FIVETR[i][0], FIVETR[i][1], FIVETR[i][2], 16285, false, 0, false, world.getInstanceId());
 			npc5.setIsNoRndWalk(true);
 		}
 		
 		for (int i = 0; i < 4; i++)
 		{
-			L2Npc npc = addSpawn(NAEZD, NAEZDSPAWNS[i][0], NAEZDSPAWNS[i][1], NAEZDSPAWNS[i][2], NAEZDSPAWNS[i][3], false, 0, false, world.instanceId);
+			L2Npc npc = addSpawn(NAEZD, NAEZDSPAWNS[i][0], NAEZDSPAWNS[i][1], NAEZDSPAWNS[i][2], NAEZDSPAWNS[i][3], false, 0, false, world.getInstanceId());
 			npc.setIsNoRndWalk(true);
 			world.naezds.add(npc);
 		}
-		world._MovePeltast = addSpawn(PELTAST, -250403, 207556, -11957, 16383, false, 0, false, world.instanceId);
+		world._MovePeltast = addSpawn(PELTAST, -250403, 207556, -11957, 16383, false, 0, false, world.getInstanceId());
 		world._MovePeltast.setIsNoRndWalk(true);
 		
-		world._priest = addSpawn(PRIEST, -250408, 205862, -11727, 16383, false, 0, false, world.instanceId);
+		world._priest = addSpawn(PRIEST, -250408, 205862, -11727, 16383, false, 0, false, world.getInstanceId());
 		world._priest.setIsNoRndWalk(true);
 	}
 	
@@ -4850,23 +4841,23 @@ public class SeedOfDestruction extends Quest
 		if (tmpworld instanceof SODWorld)
 		{
 			SODWorld world = (SODWorld) tmpworld;
-			if ((world.status == 2) && (npc.getNpcId() == OBELISK))
+			if ((world.getStatus() == 2) && (npc.getNpcId() == OBELISK))
 			{
-				world.status = 4;
+				world.setStatus(4);
 				spawn(world, SQUARE_SPAWNS_MAIN, false, false);
 			}
-			else if ((world.status == 3) && (npc.getNpcId() == OBELISK))
+			else if ((world.getStatus() == 3) && (npc.getNpcId() == OBELISK))
 			{
-				world.status = 4;
+				world.setStatus(4);
 				spawn(world, SQUARE_SPAWNS_HALF, false, false);
 			}
-			else if ((world.status <= 8) && (npc.getNpcId() == TIADA))
+			else if ((world.getStatus() <= 8) && (npc.getNpcId() == TIADA))
 			{
 				if (npc.getCurrentHp() < (npc.getMaxHp() / 2))
 				{
 					if (_numAtk < 1)
 					{
-						ExShowScreenMessage message4 = new ExShowScreenMessage(NpcStringId.COME_OUT_WARRIORS_PROTECT_SEED_OF_DESTRUCTION, 5, 1);
+						ExShowScreenMessage message4 = new ExShowScreenMessage(NpcStringId.COME_OUT_WARRIORS_PROTECT_SEED_OF_DESTRUCTION, 5, 5000);
 						sendScreenMessage(world, message4);
 						world._tiada.doCast(SkillTable.getInstance().getInfo(5818, 1));
 						world._tiada.doCast(SkillTable.getInstance().getInfo(181, 1));
@@ -4888,7 +4879,7 @@ public class SeedOfDestruction extends Quest
 		{
 			SODWorld world = (SODWorld) tmpworld;
 			teleCoord teleto = new teleCoord();
-			teleto.instanceId = world.instanceId;
+			teleto.instanceId = world.getInstanceId();
 			if (event.equalsIgnoreCase("Part1"))
 			{
 				world.ZoneWaitForTP = false;
@@ -4943,7 +4934,7 @@ public class SeedOfDestruction extends Quest
 			}
 			else if (event.equalsIgnoreCase("Part10"))
 			{
-				world._ChangePortal = addSpawn(ChangePortal, -250402, 206519, -11905, 0, false, 0, false, world.instanceId);
+				world._ChangePortal = addSpawn(ChangePortal, -250402, 206519, -11905, 0, false, 0, false, world.getInstanceId());
 				world._ChangePortal.setIsNoRndWalk(true);
 				world._priest.doCast(SkillTable.getInstance().getInfo(5816, 1));
 				startQuestTimer("Part11", 300, world._priest, null);
@@ -4962,16 +4953,16 @@ public class SeedOfDestruction extends Quest
 			{
 				cancelQuestTimers("PartUnnamed");
 				
-				world._tiada = addSpawn(TIADA, -250400, 207271, -11961, 16285, false, 0, false, world.instanceId);
+				world._tiada = addSpawn(TIADA, -250400, 207271, -11961, 16285, false, 0, false, world.getInstanceId());
 				world._tiada.setIsNoRndWalk(true);
 				world._tiada.getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
-				world._naezdTR1 = addSpawn(NAEZD, -250154, 207203, -11970, 33818, false, 0, false, world.instanceId);
+				world._naezdTR1 = addSpawn(NAEZD, -250154, 207203, -11970, 33818, false, 0, false, world.getInstanceId());
 				world._naezdTR1.setIsNoRndWalk(true);
-				world._naezdTR2 = addSpawn(NAEZD, -250209, 206941, -11966, 27379, false, 0, false, world.instanceId);
+				world._naezdTR2 = addSpawn(NAEZD, -250209, 206941, -11966, 27379, false, 0, false, world.getInstanceId());
 				world._naezdTR2.setIsNoRndWalk(true);
-				world._naezdTL1 = addSpawn(NAEZD, -250652, 207203, -11970, 0, false, 0, false, world.instanceId);
+				world._naezdTL1 = addSpawn(NAEZD, -250652, 207203, -11970, 0, false, 0, false, world.getInstanceId());
 				world._naezdTL1.setIsNoRndWalk(true);
-				world._naezdTL2 = addSpawn(NAEZD, -250597, 206941, -11966, 6867, false, 0, false, world.instanceId);
+				world._naezdTL2 = addSpawn(NAEZD, -250597, 206941, -11966, 6867, false, 0, false, world.getInstanceId());
 				world._naezdTL2.setIsNoRndWalk(true);
 				broadcastPacket((new SpecialCamera(world._tiada.getObjectId(), 400, 90, 5, 1500, 13000, 0, 0, 1, 0)), world);
 				startQuestTimer("Part12", 100, world._tiada, null);
@@ -5074,7 +5065,7 @@ public class SeedOfDestruction extends Quest
 					plr.showQuestMovie(6);
 				}
 				Delete(npc);
-				for (L2Npc mob : InstanceManager.getInstance().getInstance(world.instanceId).getNpcs())
+				for (L2Npc mob : InstanceManager.getInstance().getInstance(world.getInstanceId()).getNpcs())
 				{
 					mob.deleteMe();
 				}
@@ -5089,12 +5080,12 @@ public class SeedOfDestruction extends Quest
 			}
 			else if (event.equalsIgnoreCase("Spawn"))
 			{
-				if (world.status <= 7)
+				if (world.getStatus() <= 7)
 				{
-					L2PcInstance target = L2World.getInstance().getPlayer(world.allowed.get(Rnd.get(world.allowed.size())));
+					L2PcInstance target = L2World.getInstance().getPlayer(world.getAllowed().get(Rnd.get(world.getAllowed().size())));
 					if ((world.deviceSpawnedMobCount < MAX_DEVICESPAWNEDMOBCOUNT) && (target != null) && (target.getInstanceId() == npc.getInstanceId()) && !target.isDead())
 					{
-						L2Attackable mob = (L2Attackable) addSpawn(SPAWN_MOB_IDS[Rnd.get(SPAWN_MOB_IDS.length)], npc.getSpawn().getLocx(), npc.getSpawn().getLocy(), npc.getSpawn().getLocz(), npc.getSpawn().getHeading(), false, 0, false, world.instanceId);
+						L2Attackable mob = (L2Attackable) addSpawn(SPAWN_MOB_IDS[Rnd.get(SPAWN_MOB_IDS.length)], npc.getSpawn().getLocx(), npc.getSpawn().getLocy(), npc.getSpawn().getLocz(), npc.getSpawn().getHeading(), false, 0, false, world.getInstanceId());
 						world.deviceSpawnedMobCount++;
 						mob.setSeeThroughSilentMove(true);
 						mob.setRunning();
@@ -5118,25 +5109,25 @@ public class SeedOfDestruction extends Quest
 		if (tmpworld instanceof SODWorld)
 		{
 			SODWorld world = (SODWorld) tmpworld;
-			if (world.status == 1)
+			if (world.getStatus() == 1)
 			{
 				if (checkKillProgress(npc, world))
 				{
 					spawnState(world);
 				}
 			}
-			else if (world.status == 2)
+			else if (world.getStatus() == 2)
 			{
 				if (checkKillProgress(npc, world))
 				{
-					world.status++;
+					world.incStatus();
 				}
 			}
-			else if ((world.status == 4) && (npc.getNpcId() == OBELISK))
+			else if ((world.getStatus() == 4) && (npc.getNpcId() == OBELISK))
 			{
 				spawnState(world);
 			}
-			else if ((world.status == 5) && (npc.getNpcId() == POWERFUL_DEVICE))
+			else if ((world.getStatus() == 5) && (npc.getNpcId() == POWERFUL_DEVICE))
 			{
 				world.killedDevice++;
 				if (world.killedDevice >= 3)
@@ -5144,7 +5135,7 @@ public class SeedOfDestruction extends Quest
 					spawnState(world);
 				}
 			}
-			else if ((world.status == 6) && (npc.getNpcId() == THRONE_POWERFUL_DEVICE))
+			else if ((world.getStatus() == 6) && (npc.getNpcId() == THRONE_POWERFUL_DEVICE))
 			{
 				world.killedDevice++;
 				if (world.killedDevice >= 2)
@@ -5152,18 +5143,18 @@ public class SeedOfDestruction extends Quest
 					spawnState(world);
 				}
 			}
-			else if (world.status >= 7)
+			else if (world.getStatus() >= 7)
 			{
 				if (npc.getNpcId() == TIADA)
 				{
-					world.status++;
-					GraciaSeedsManager.getInstance().increaseSoDTiatKilled();
+					world.incStatus();
+					SoDManager.getInstance().increaseSoDTiatKilled();
 					Delete(npc);
-					for (L2Npc mob : InstanceManager.getInstance().getInstance(world.instanceId).getNpcs())
+					for (L2Npc mob : InstanceManager.getInstance().getInstance(world.getInstanceId()).getNpcs())
 					{
 						mob.deleteMe();
 					}
-					Instance inst = InstanceManager.getInstance().getInstance(world.instanceId);
+					Instance inst = InstanceManager.getInstance().getInstance(world.getInstanceId());
 					inst.setDuration(EXIT_TIME * 60000);
 					inst.setEmptyDestroyTime(0);
 					startQuestTimer("KillTiadaPart1", 250, world._tiada, null);
@@ -5173,7 +5164,7 @@ public class SeedOfDestruction extends Quest
 				}
 				else if (npc.getNpcId() == 29162)
 				{
-					L2Attackable mob = (L2Attackable) addSpawn(npc.getNpcId(), npc.getSpawn().getLocx(), npc.getSpawn().getLocy(), npc.getSpawn().getLocz(), npc.getSpawn().getHeading(), false, 0, false, world.instanceId);
+					L2Attackable mob = (L2Attackable) addSpawn(npc.getNpcId(), npc.getSpawn().getLocx(), npc.getSpawn().getLocy(), npc.getSpawn().getLocz(), npc.getSpawn().getHeading(), false, 0, false, world.getInstanceId());
 					mob.setIsNoRndWalk(true);
 					mob.setSeeThroughSilentMove(true);
 					mob.setIsRaidMinion(true);
@@ -5204,7 +5195,7 @@ public class SeedOfDestruction extends Quest
 		}
 		if (npcId == ALENOS)
 		{
-			if (GraciaSeedsManager.getInstance().getSoDState() == 1)
+			if (SoDManager.getInstance().getSoDState() == 1)
 			{
 				teleCoord tele = new teleCoord();
 				tele.x = -242759;
@@ -5212,7 +5203,7 @@ public class SeedOfDestruction extends Quest
 				tele.z = -9986;
 				enterInstance(player, "SeedOfDestruction.xml", tele);
 			}
-			else if (GraciaSeedsManager.getInstance().getSoDState() == 2)
+			else if (SoDManager.getInstance().getSoDState() == 2)
 			{
 				teleCoord tele = new teleCoord();
 				tele.x = -245800;
@@ -5249,15 +5240,15 @@ public class SeedOfDestruction extends Quest
 			if (tmpworld instanceof SODWorld)
 			{
 				SODWorld world = (SODWorld) tmpworld;
-				if (world.status == 2)
+				if (world.getStatus() == 2)
 				{
 					return "32601-1.htm";
 				}
-				if ((world.status > 2) && (world.status < 9))
+				if ((world.getStatus() > 2) && (world.getStatus() < 9))
 				{
 					return "32601-2.htm";
 				}
-				if (world.status == 9)
+				if (world.getStatus() == 9)
 				{
 					return "32601-3.htm";
 				}

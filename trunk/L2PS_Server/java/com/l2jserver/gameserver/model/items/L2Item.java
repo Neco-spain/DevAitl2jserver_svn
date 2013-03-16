@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.items;
 
@@ -155,7 +159,7 @@ public abstract class L2Item
 	public static final int CRYSTAL_S80 = 0x06; // ??
 	public static final int CRYSTAL_S84 = 0x07; // ??
 	
-	private static final int[] crystalItemId =
+	private static final int[] CRYSTAL_ITEM_ID =
 	{
 		0,
 		1458,
@@ -166,7 +170,7 @@ public abstract class L2Item
 		1462,
 		1462
 	};
-	private static final int[] crystalEnchantBonusArmor =
+	private static final int[] CRYSTAL_ENCHANT_BONUS_ARMOR =
 	{
 		0,
 		11,
@@ -177,7 +181,7 @@ public abstract class L2Item
 		25,
 		25
 	};
-	private static final int[] crystalEnchantBonusWeapon =
+	private static final int[] CRYSTAL_ENCHANT_BONUS_WEAPON =
 	{
 		0,
 		90,
@@ -383,8 +387,8 @@ public abstract class L2Item
 				}
 				catch (Exception nfe)
 				{
-					// Incorrect syntax, dont add new skill
-					_log.info(StringUtil.concat("> Couldnt parse ", skills, " in weapon unequip skills! item ", this.toString()));
+					// Incorrect syntax, don't add new skill
+					_log.info(StringUtil.concat("Couldnt parse ", skills, " in weapon unequip skills! item ", toString()));
 				}
 				if ((id > 0) && (level > 0))
 				{
@@ -396,11 +400,6 @@ public abstract class L2Item
 		_common = ((_itemId >= 11605) && (_itemId <= 12361));
 		_heroItem = ((_itemId >= 6611) && (_itemId <= 6621)) || ((_itemId >= 9388) && (_itemId <= 9390)) || (_itemId == 6842);
 		_pvpItem = ((_itemId >= 10667) && (_itemId <= 10835)) || ((_itemId >= 12852) && (_itemId <= 12977)) || ((_itemId >= 14363) && (_itemId <= 14525)) || (_itemId == 14528) || (_itemId == 14529) || (_itemId == 14558) || ((_itemId >= 15913) && (_itemId <= 16024)) || ((_itemId >= 16134) && (_itemId <= 16147)) || (_itemId == 16149) || (_itemId == 16151) || (_itemId == 16153) || (_itemId == 16155) || (_itemId == 16157) || (_itemId == 16159) || ((_itemId >= 16168) && (_itemId <= 16176)) || ((_itemId >= 16179) && (_itemId <= 16220));
-	}
-	
-	public final L2Skill getUnequipSkill()
-	{
-		return _unequipSkill == null ? null : _unequipSkill.getSkill();
 	}
 	
 	/**
@@ -514,7 +513,7 @@ public abstract class L2Item
 	 */
 	public final int getCrystalItemId()
 	{
-		return crystalItemId[_crystalType];
+		return CRYSTAL_ITEM_ID[_crystalType];
 	}
 	
 	/**
@@ -565,9 +564,9 @@ public abstract class L2Item
 			{
 				case TYPE2_SHIELD_ARMOR:
 				case TYPE2_ACCESSORY:
-					return _crystalCount + (crystalEnchantBonusArmor[getCrystalType()] * ((3 * enchantLevel) - 6));
+					return _crystalCount + (CRYSTAL_ENCHANT_BONUS_ARMOR[getCrystalType()] * ((3 * enchantLevel) - 6));
 				case TYPE2_WEAPON:
-					return _crystalCount + (crystalEnchantBonusWeapon[getCrystalType()] * ((2 * enchantLevel) - 3));
+					return _crystalCount + (CRYSTAL_ENCHANT_BONUS_WEAPON[getCrystalType()] * ((2 * enchantLevel) - 3));
 				default:
 					return _crystalCount;
 			}
@@ -578,9 +577,9 @@ public abstract class L2Item
 			{
 				case TYPE2_SHIELD_ARMOR:
 				case TYPE2_ACCESSORY:
-					return _crystalCount + (crystalEnchantBonusArmor[getCrystalType()] * enchantLevel);
+					return _crystalCount + (CRYSTAL_ENCHANT_BONUS_ARMOR[getCrystalType()] * enchantLevel);
 				case TYPE2_WEAPON:
-					return _crystalCount + (crystalEnchantBonusWeapon[getCrystalType()] * enchantLevel);
+					return _crystalCount + (CRYSTAL_ENCHANT_BONUS_WEAPON[getCrystalType()] * enchantLevel);
 				default:
 					return _crystalCount;
 			}
@@ -979,6 +978,14 @@ public abstract class L2Item
 	public final SkillHolder[] getSkills()
 	{
 		return _skillHolder;
+	}
+	
+	/**
+	 * @return skill that activates, when player unequip this weapon or armor
+	 */
+	public final L2Skill getUnequipSkill()
+	{
+		return _unequipSkill == null ? null : _unequipSkill.getSkill();
 	}
 	
 	public boolean checkCondition(L2Character activeChar, L2Object target, boolean sendMessage)

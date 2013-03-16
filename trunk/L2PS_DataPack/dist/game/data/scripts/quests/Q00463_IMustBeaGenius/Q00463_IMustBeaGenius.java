@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00463_IMustBeaGenius;
 
@@ -34,9 +38,30 @@ import com.l2jserver.gameserver.network.serverpackets.NpcSay;
  */
 public class Q00463_IMustBeaGenius extends Quest
 {
+	private static class DropInfo
+	{
+		private final int _count;
+		private final int _chance;
+		
+		public DropInfo(int count, int chance)
+		{
+			_count = count;
+			_chance = chance;
+		}
+		
+		public int getCount()
+		{
+			return _count;
+		}
+		
+		public int getSpecialChance()
+		{
+			return _chance;
+		}
+	}
+	
 	// NPC
 	private static final int GUTENHAGEN = 32069;
-	
 	// Items
 	private static final int CORPSE_LOG = 15510;
 	private static final int COLLECTION = 15511;
@@ -78,6 +103,15 @@ public class Q00463_IMustBeaGenius extends Quest
 	// Misc @formatter:on
 	private static final int MIN_LEVEL = 70;
 	
+	public Q00463_IMustBeaGenius(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(GUTENHAGEN);
+		addTalkId(GUTENHAGEN);
+		addKillId(MOBS.keySet());
+		registerQuestItems(COLLECTION, CORPSE_LOG);
+	}
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
@@ -118,6 +152,55 @@ public class Q00463_IMustBeaGenius extends Quest
 				break;
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return super.onKill(npc, player, isSummon);
+		}
+		
+		if (st.isCond(1))
+		{
+			boolean msg = false;
+			int number = MOBS.get(npc.getNpcId()).getCount();
+			
+			if (MOBS.get(npc.getNpcId()).getSpecialChance() == st.getInt("chance"))
+			{
+				number = getRandom(100) + 1;
+			}
+			
+			if (number > 0)
+			{
+				st.giveItems(CORPSE_LOG, number);
+				msg = true;
+			}
+			else if ((number < 0) && ((st.getQuestItemsCount(CORPSE_LOG) + number) > 0))
+			{
+				st.takeItems(CORPSE_LOG, Math.abs(number));
+				msg = true;
+			}
+			
+			if (msg)
+			{
+				final NpcSay ns = new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getNpcId(), NpcStringId.ATT_ATTACK_S1_RO_ROGUE_S2);
+				ns.addStringParameter(player.getName());
+				ns.addStringParameter(String.valueOf(number));
+				npc.broadcastPacket(ns);
+				
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				if (st.getQuestItemsCount(CORPSE_LOG) == st.getInt("number"))
+				{
+					st.takeItems(CORPSE_LOG, -1);
+					st.giveItems(COLLECTION, 1);
+					st.setCond(2, true);
+				}
+			}
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -165,89 +248,8 @@ public class Q00463_IMustBeaGenius extends Quest
 		return htmltext;
 	}
 	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return super.onKill(npc, player, isPet);
-		}
-		
-		if (st.isCond(1))
-		{
-			boolean msg = false;
-			int number = MOBS.get(npc.getNpcId()).getCount();
-			
-			if (MOBS.get(npc.getNpcId()).getSpecialChance() == st.getInt("chance"))
-			{
-				number = getRandom(100) + 1;
-			}
-			
-			if (number > 0)
-			{
-				st.giveItems(CORPSE_LOG, number);
-				msg = true;
-			}
-			else if ((number < 0) && ((st.getQuestItemsCount(CORPSE_LOG) + number) > 0))
-			{
-				st.takeItems(CORPSE_LOG, Math.abs(number));
-				msg = true;
-			}
-			
-			if (msg)
-			{
-				final NpcSay ns = new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getNpcId(), NpcStringId.ATT_ATTACK_S1_RO_ROGUE_S2);
-				ns.addStringParameter(player.getName());
-				ns.addStringParameter(String.valueOf(number));
-				npc.broadcastPacket(ns);
-				
-				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
-				if (st.getQuestItemsCount(CORPSE_LOG) == st.getInt("number"))
-				{
-					st.takeItems(CORPSE_LOG, -1);
-					st.giveItems(COLLECTION, 1);
-					st.setCond(2, true);
-				}
-			}
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00463_IMustBeaGenius(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(GUTENHAGEN);
-		addTalkId(GUTENHAGEN);
-		addKillId(MOBS.keySet());
-		
-		registerQuestItems(COLLECTION, CORPSE_LOG);
-	}
-	
 	public static void main(String[] args)
 	{
 		new Q00463_IMustBeaGenius(463, Q00463_IMustBeaGenius.class.getSimpleName(), "I Must Be a Genius");
-	}
-	
-	private static class DropInfo
-	{
-		private final int _count;
-		private final int _chance;
-		
-		public DropInfo(int count, int chance)
-		{
-			_count = count;
-			_chance = chance;
-		}
-		
-		public int getSpecialChance()
-		{
-			return _chance;
-		}
-		
-		public int getCount()
-		{
-			return _count;
-		}
 	}
 }

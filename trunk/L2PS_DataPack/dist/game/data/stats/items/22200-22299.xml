@@ -38,23 +38,13 @@
 		<!-- Description: Box containing an Attribute Ore. Which one could it be? -->
 		<set name="icon" val="icon.etc_pi_gift_box_i04" />
 		<set name="material" val="cotton" />
-		<set name="is_tradable" val="False" />
-		<set name="is_dropable" val="False" />
-		<set name="is_sellable" val="False" />
-		<set name="is_stackable" val="True" />
-		<set name="handler" val="ExtractableItems" />
-		<set name="capsuled_items" val="9546,1,1,50;9547,1,1,50;9548,1,1,50;9549,1,1,50;9550,1,1,50;9551,1,1,50" />
+		<set name="is_stackable" val="true" />
 	</item>
 	<item id="22205" type="EtcItem" name="Attribute Crystal Box - Event">
 		<!-- Description: Box containing an Attribute Crystal. Which one could it be? -->
 		<set name="icon" val="icon.etc_pi_gift_box_i04" />
 		<set name="material" val="cotton" />
-		<set name="is_tradable" val="False" />
-		<set name="is_dropable" val="False" />
-		<set name="is_sellable" val="False" />
-		<set name="is_stackable" val="True" />
-		<set name="handler" val="ExtractableItems" />
-		<set name="capsuled_items" val="9552,1,1,50;9553,1,1,50;9554,1,1,50;9555,1,1,50;9556,1,1,50;9557,1,1,50" />
+		<set name="is_stackable" val="true" />
 	</item>
 	<item id="22206" type="EtcItem" name="Soul Crystal - Stage 17 Box - Event">
 		<!-- Description: Box containing a Soul Crystal - Step 17. Which one could it be? -->

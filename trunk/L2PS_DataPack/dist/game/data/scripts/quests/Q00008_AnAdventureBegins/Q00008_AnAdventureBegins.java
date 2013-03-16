@@ -1,80 +1,90 @@
+/*
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00008_AnAdventureBegins;
 
-import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.base.Race;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 
 /**
- * Author: RobikBobik L2PS Team
+ * An Adventure Begins (8)
+ * @author malyelfik
  */
 public class Q00008_AnAdventureBegins extends Quest
 {
-	private final static int QUEST_NPC[] =
-	{
-		30134,
-		30355,
-		30144
-	};
-	private final static int QUEST_ITEM[] =
-	{
-		7573
-	};
-	private final static int QUEST_REWARD[] =
-	{
-		7559,
-		7570
-	};
+	// NPCs
+	private static final int JASMINE = 30134;
+	private static final int ROSELYN = 30355;
+	private static final int HARNE = 30144;
+	// Items
+	private static final int ROSELYNS_NOTE = 7573;
+	private static final int SCROLL_OF_ESCAPE_GIRAN = 7559;
+	private static final int MARK_OF_TRAVELER = 7570;
+	// Misc
+	private static final int MIN_LEVEL = 3;
 	
-	public Q00008_AnAdventureBegins(int questId, String name, String descr)
+	private Q00008_AnAdventureBegins(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		addStartNpc(QUEST_NPC[0]);
-		for (int npcId : QUEST_NPC)
-		{
-			addTalkId(npcId);
-		}
-		questItemIds = QUEST_ITEM;
+		addStartNpc(JASMINE);
+		addTalkId(JASMINE, ROSELYN, HARNE);
+		registerQuestItems(ROSELYNS_NOTE);
 	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		
 		String htmltext = event;
-		
-		QuestState qs = player.getQuestState(getName());
-		if (qs == null)
+		switch (event)
 		{
-			return htmltext;
-		}
-		
-		if (event.equalsIgnoreCase("30134-03.htm"))
-		{
-			qs.set("cond", "1");
-			qs.setState(State.STARTED);
-			qs.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("30355-02.htm"))
-		{
-			qs.set("cond", "2");
-			qs.giveItems(QUEST_ITEM[0], 1);
-			qs.playSound("ItemSound.quest_middle");
-		}
-		else if (event.equalsIgnoreCase("30144-02.htm"))
-		{
-			qs.set("cond", "3");
-			qs.takeItems(QUEST_ITEM[0], 1);
-			qs.playSound("ItemSound.quest_middle");
-		}
-		else if (event.equalsIgnoreCase("30134-06.htm"))
-		{
-			qs.giveItems(QUEST_REWARD[0], (long) Config.RATE_QUEST_REWARD);
-			qs.giveItems(QUEST_REWARD[1], 1);
-			qs.unset("cond");
-			qs.exitQuest(false);
-			qs.playSound("ItemSound.quest_finish");
+			case "30134-03.htm":
+				st.startQuest();
+				break;
+			case "30134-06.html":
+				st.giveItems(SCROLL_OF_ESCAPE_GIRAN, 1);
+				st.giveItems(MARK_OF_TRAVELER, 1);
+				st.exitQuest(false, true);
+				break;
+			case "30355-02.html":
+				st.setCond(2, true);
+				st.giveItems(ROSELYNS_NOTE, 1);
+				break;
+			case "30144-02.html":
+				if (!st.hasQuestItems(ROSELYNS_NOTE))
+				{
+					return "30144-03.html";
+				}
+				st.takeItems(ROSELYNS_NOTE, -1);
+				st.setCond(3, true);
+				break;
+			default:
+				htmltext = null;
+				break;
 		}
 		return htmltext;
 	}
@@ -82,80 +92,68 @@ public class Q00008_AnAdventureBegins extends Quest
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
-		QuestState qs = player.getQuestState(getName());
-		if (qs == null)
-		{
-			qs = newQuestState(player);
-		}
 		String htmltext = getNoQuestMsg(player);
-		final int cond = qs.getInt("cond");
-		final int npcId = npc.getNpcId();
-		
-		switch (qs.getState())
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
 		{
-			case State.COMPLETED:
-				htmltext = getAlreadyCompletedMsg(player);
-				break;
-			case State.CREATED:
-				if (npcId == QUEST_NPC[0])
+			return htmltext;
+		}
+		
+		switch (npc.getNpcId())
+		{
+			case JASMINE:
+				switch (st.getState())
 				{
-					if ((player.getRace().ordinal() == 2) && (player.getLevel() >= 3))
-					{
-						htmltext = "30134-02.htm";
-					}
-					else
-					{
-						htmltext = "30134-01.htm";
-						qs.exitQuest(true);
-					}
+					case State.CREATED:
+						htmltext = ((player.getRace() == Race.DarkElf) && (player.getLevel() >= MIN_LEVEL)) ? "30134-02.htm" : "30134-01.html";
+						break;
+					case State.STARTED:
+						if (st.isCond(1))
+						{
+							htmltext = "30134-04.html";
+						}
+						else if (st.isCond(3))
+						{
+							htmltext = "30134-05.html";
+						}
+						break;
+					case State.COMPLETED:
+						htmltext = getAlreadyCompletedMsg(player);
+						break;
 				}
 				break;
-			case State.STARTED:
-				if (npcId == QUEST_NPC[1])
+			case ROSELYN:
+				if (st.isStarted())
 				{
-					switch (cond)
+					if (st.isCond(1))
 					{
-						case 1:
-							if (qs.getQuestItemsCount(QUEST_ITEM[0]) == 0)
-							{
-								htmltext = "30355-01.htm";
-							}
-							break;
-						case 2:
-							htmltext = "30355-03.htm";
-							break;
+						htmltext = "30355-01.html";
+					}
+					else if (st.isCond(2))
+					{
+						htmltext = "30355-03.html";
 					}
 				}
-				else if (npcId == QUEST_NPC[0])
+				break;
+			case HARNE:
+				if (st.isStarted())
 				{
-					switch (cond)
+					if (st.isCond(2))
 					{
-						case 1:
-							if (qs.getQuestItemsCount(QUEST_ITEM[0]) == 0)
-							{
-								htmltext = "30355-01.htm";
-							}
-							break;
-						case 2:
-							htmltext = "30355-03.htm";
-							break;
+						htmltext = "30144-01.html";
 					}
-				}
-				else if (npcId == QUEST_NPC[2])
-				{
-					if ((cond == 2) && (qs.getQuestItemsCount(QUEST_ITEM[0]) > 0))
+					else if (st.isCond(3))
 					{
-						htmltext = "30144-01.htm";
+						htmltext = "30144-04.html";
 					}
 				}
 				break;
 		}
-		
 		return htmltext;
 	}
 	
 	public static void main(String[] args)
 	{
-		new Q00008_AnAdventureBegins(8, Q00008_AnAdventureBegins.class.getSimpleName(), "");
+		new Q00008_AnAdventureBegins(8, Q00008_AnAdventureBegins.class.getSimpleName(), "An Adventure Begins");
 	}
 }

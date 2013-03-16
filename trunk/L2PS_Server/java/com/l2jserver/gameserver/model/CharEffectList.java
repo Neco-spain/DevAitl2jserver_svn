@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model;
 
@@ -27,9 +31,9 @@ import javolution.util.FastMap;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.effects.EffectFlag;
 import com.l2jserver.gameserver.model.effects.L2Effect;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.olympiad.OlympiadGameManager;
@@ -46,29 +50,6 @@ public class CharEffectList
 {
 	protected static final Logger _log = Logger.getLogger(CharEffectList.class.getName());
 	private static final L2Effect[] EMPTY_EFFECTS = new L2Effect[0];
-	
-	public static final int EFFECT_FLAG_CHARM_OF_COURAGE = 0x1;
-	public static final int EFFECT_FLAG_CHARM_OF_LUCK = 0x2;
-	public static final int EFFECT_FLAG_PHOENIX_BLESSING = 0x4;
-	public static final int EFFECT_FLAG_NOBLESS_BLESSING = 0x8;
-	public static final int EFFECT_FLAG_SILENT_MOVE = 0x10;
-	public static final int EFFECT_FLAG_PROTECTION_BLESSING = 0x20;
-	public static final int EFFECT_FLAG_RELAXING = 0x40;
-	public static final int EFFECT_FLAG_FEAR = 0x80;
-	public static final int EFFECT_FLAG_CONFUSED = 0x100;
-	public static final int EFFECT_FLAG_MUTED = 0x200;
-	public static final int EFFECT_FLAG_PSYCHICAL_MUTED = 0x400;
-	// public static final int EFFECT_FLAG_PARALYZE = 2048; //too much abuse in code
-	public static final int EFFECT_FLAG_PSYCHICAL_ATTACK_MUTED = 0x800;
-	public static final int EFFECT_FLAG_DISARMED = 0x1000;
-	public static final int EFFECT_FLAG_ROOTED = 0x2000;
-	public static final int EFFECT_FLAG_SLEEP = 0x4000;
-	public static final int EFFECT_FLAG_STUNNED = 0x8000;
-	public static final int EFFECT_FLAG_BETRAYED = 0x10000;
-	public static final int EFFECT_FLAG_INVUL = 0x40000;
-	public static final int EFFECT_FLAG_PARALYZED = 0x80000;
-	public static final int EFFECT_FLAG_BLOCK_RESURRECTION = 0x100000;
-	public static final int EFFECT_FLAG_SERVITOR_SHARE = 0x200000;
 	
 	private FastList<L2Effect> _buffs;
 	private FastList<L2Effect> _debuffs;
@@ -789,7 +770,7 @@ public class CharEffectList
 		}
 		
 		// Remove the active skill L2effect from _effects of the L2Character
-		if (effectList.remove(effect) && (_owner instanceof L2PcInstance) && effect.getShowIcon())
+		if (effectList.remove(effect) && _owner.isPlayer() && effect.getShowIcon())
 		{
 			SystemMessage sm;
 			if (effect.getSkill().isToggle())
@@ -1171,7 +1152,7 @@ public class CharEffectList
 			return;
 		}
 		
-		if (!(_owner instanceof L2Playable))
+		if (!_owner.isPlayable())
 		{
 			updateEffectFlags();
 			return;
@@ -1179,9 +1160,11 @@ public class CharEffectList
 		
 		AbnormalStatusUpdate mi = null;
 		PartySpelled ps = null;
+		PartySpelled psSummon = null;
 		ExOlympiadSpelledInfo os = null;
+		boolean isSummon = false;
 		
-		if (_owner instanceof L2PcInstance)
+		if (_owner.isPlayer())
 		{
 			if (_partyOnly)
 			{
@@ -1197,14 +1180,16 @@ public class CharEffectList
 				ps = new PartySpelled(_owner);
 			}
 			
-			if (((L2PcInstance) _owner).isInOlympiadMode() && ((L2PcInstance) _owner).isOlympiadStart())
+			if (_owner.getActingPlayer().isInOlympiadMode() && _owner.getActingPlayer().isOlympiadStart())
 			{
-				os = new ExOlympiadSpelledInfo((L2PcInstance) _owner);
+				os = new ExOlympiadSpelledInfo(_owner.getActingPlayer());
 			}
 		}
-		else if (_owner instanceof L2Summon)
+		else if (_owner.isSummon())
 		{
+			isSummon = true;
 			ps = new PartySpelled(_owner);
+			psSummon = new PartySpelled(_owner);
 		}
 		
 		boolean foundRemovedOnAction = false;
@@ -1249,7 +1234,18 @@ public class CharEffectList
 					
 					if (ps != null)
 					{
-						e.addPartySpelledIcon(ps);
+						if (isSummon || (!e.getSkill().isToggle() && !(e.getSkill().isStatic() && ((e.getEffectType() == L2EffectType.HEAL_OVER_TIME) || (e.getEffectType() == L2EffectType.CPHEAL_OVER_TIME) || (e.getEffectType() == L2EffectType.MANA_HEAL_OVER_TIME)))))
+						{
+							e.addPartySpelledIcon(ps);
+						}
+					}
+					
+					if (psSummon != null)
+					{
+						if (!e.getSkill().isToggle() && !(e.getSkill().isStatic() && ((e.getEffectType() == L2EffectType.HEAL_OVER_TIME) || (e.getEffectType() == L2EffectType.CPHEAL_OVER_TIME) || (e.getEffectType() == L2EffectType.MANA_HEAL_OVER_TIME))))
+						{
+							e.addPartySpelledIcon(psSummon);
+						}
 					}
 					
 					if (os != null)
@@ -1306,6 +1302,11 @@ public class CharEffectList
 						e.addPartySpelledIcon(ps);
 					}
 					
+					if (psSummon != null)
+					{
+						e.addPartySpelledIcon(psSummon);
+					}
+					
 					if (os != null)
 					{
 						e.addOlympiadSpelledIcon(os);
@@ -1324,7 +1325,7 @@ public class CharEffectList
 		
 		if (ps != null)
 		{
-			if (_owner instanceof L2Summon)
+			if (_owner.isSummon())
 			{
 				L2PcInstance summonOwner = ((L2Summon) _owner).getOwner();
 				
@@ -1332,7 +1333,8 @@ public class CharEffectList
 				{
 					if (summonOwner.isInParty())
 					{
-						summonOwner.getParty().broadcastPacket(ps);
+						summonOwner.getParty().broadcastToPartyMembers(summonOwner, psSummon); // send to all member except summonOwner
+						summonOwner.sendPacket(ps); // now send to summonOwner
 					}
 					else
 					{
@@ -1340,7 +1342,7 @@ public class CharEffectList
 					}
 				}
 			}
-			else if ((_owner instanceof L2PcInstance) && _owner.isInParty())
+			else if (_owner.isPlayer() && _owner.isInParty())
 			{
 				_owner.getParty().broadcastPacket(ps);
 			}
@@ -1348,7 +1350,7 @@ public class CharEffectList
 		
 		if (os != null)
 		{
-			final OlympiadGameTask game = OlympiadGameManager.getInstance().getOlympiadTask(((L2PcInstance) _owner).getOlympiadGameId());
+			final OlympiadGameTask game = OlympiadGameManager.getInstance().getOlympiadTask(_owner.getActingPlayer().getOlympiadGameId());
 			if ((game != null) && game.isBattleStarted())
 			{
 				game.getZone().broadcastPacketToObservers(os);
@@ -1457,12 +1459,12 @@ public class CharEffectList
 	
 	/**
 	 * Check if target is affected with special buff
-	 * @param bitFlag flag of special buff
+	 * @param flag of special buff
 	 * @return boolean true if affected
 	 */
-	public boolean isAffected(int bitFlag)
+	public boolean isAffected(EffectFlag flag)
 	{
-		return (_effectFlags & bitFlag) != 0;
+		return (_effectFlags & flag.getMask()) != 0;
 	}
 	
 	/**

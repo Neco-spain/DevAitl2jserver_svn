@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00179_IntoTheLargeCavern;
 
@@ -28,10 +32,16 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00179_IntoTheLargeCavern extends Quest
 {
+	// NPCs
+	private static final int KEKROPUS = 32138;
+	private static final int MENACING_MACHINE = 32258;
 	
-	// NPC's
-	private static final int _kekropus = 32138;
-	private static final int _nornil = 32258;
+	public Q00179_IntoTheLargeCavern(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(KEKROPUS);
+		addTalkId(KEKROPUS, MENACING_MACHINE);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -43,31 +53,27 @@ public class Q00179_IntoTheLargeCavern extends Quest
 			return htmltext;
 		}
 		
-		if (npc.getNpcId() == _kekropus)
+		if (npc.getNpcId() == KEKROPUS)
 		{
 			if (event.equalsIgnoreCase("32138-03.html"))
 			{
-				st.setState(State.STARTED);
-				st.set("cond", "1");
-				st.playSound("ItemSound.quest_accept");
+				st.startQuest();
 			}
 		}
-		else if (npc.getNpcId() == _nornil)
+		else if (npc.getNpcId() == MENACING_MACHINE)
 		{
 			if (event.equalsIgnoreCase("32258-08.html"))
 			{
 				st.giveItems(391, 1);
 				st.giveItems(413, 1);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(false);
+				st.exitQuest(false, true);
 			}
 			else if (event.equalsIgnoreCase("32258-09.html"))
 			{
 				st.giveItems(847, 2);
 				st.giveItems(890, 2);
 				st.giveItems(910, 1);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(false);
+				st.exitQuest(false, true);
 			}
 		}
 		return htmltext;
@@ -83,7 +89,7 @@ public class Q00179_IntoTheLargeCavern extends Quest
 			return htmltext;
 		}
 		
-		if (npc.getNpcId() == _kekropus)
+		if (npc.getNpcId() == KEKROPUS)
 		{
 			switch (st.getState())
 			{
@@ -111,7 +117,7 @@ public class Q00179_IntoTheLargeCavern extends Quest
 					}
 					break;
 				case State.STARTED:
-					if (st.getInt("cond") == 1)
+					if (st.isCond(1))
 					{
 						htmltext = "32138-03.htm";
 					}
@@ -121,19 +127,11 @@ public class Q00179_IntoTheLargeCavern extends Quest
 					break;
 			}
 		}
-		else if ((npc.getNpcId() == _nornil) && (st.getState() == State.STARTED))
+		else if ((npc.getNpcId() == MENACING_MACHINE) && (st.getState() == State.STARTED))
 		{
 			htmltext = "32258-01.html";
 		}
 		return htmltext;
-	}
-	
-	public Q00179_IntoTheLargeCavern(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(_kekropus);
-		addTalkId(_kekropus, _nornil);
 	}
 	
 	public static void main(String[] args)

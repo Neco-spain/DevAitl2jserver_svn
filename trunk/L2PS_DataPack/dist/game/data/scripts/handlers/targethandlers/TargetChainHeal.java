@@ -29,6 +29,9 @@ import com.l2jserver.gameserver.model.skills.L2Skill;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.network.SystemMessageId;
 
+/**
+ * Author: RobikBobik
+ */
 public class TargetChainHeal implements ITargetTypeHandler
 {
 	@Override
@@ -57,7 +60,6 @@ public class TargetChainHeal implements ITargetTypeHandler
 				
 				return _emptyTargetList;
 			}
-			
 			for (L2Character o : primarytarget.getKnownList().getKnownCharactersInRadius(skill.getSkillRadius()))
 			{
 				if (o == activeChar)
@@ -80,53 +82,47 @@ public class TargetChainHeal implements ITargetTypeHandler
 			{
 				return targetList.toArray(new L2Character[targetList.size()]);
 			}
-			else
+			Collections.sort(targetList, new Comparator<L2Character>()
 			{
-				Collections.sort(targetList, new Comparator<L2Character>()
+				@Override
+				public int compare(L2Character o1, L2Character o2)
 				{
-					@Override
-					public int compare(L2Character o1, L2Character o2)
-					{
-						double percentlost = o1.getCurrentHp() / o1.getMaxHp();
-						double percentlost2 = o2.getCurrentHp() / o2.getMaxHp();
-						return Double.compare(percentlost, percentlost2);
-					}
-				});
-				if (targetList.size() > 11)
-				
-				{
-					targetList = targetList.subList(0, 11);
-					if (!targetList.contains(primarytarget))
-					{
-						targetList.set(10, targetList.get(0));
-						targetList.set(0, primarytarget);
-					}
-					else if (targetList.get(0) != primarytarget)
-					{
-						int pos = 1;
-						for (;; pos++)
-						{
-							if (targetList.get(pos) == primarytarget)
-							{
-								break;
-							}
-							
-							if (pos >= 10)
-							{
-								break;
-							}
-						}
-						targetList.set(pos, targetList.get(0));
-						targetList.set(0, primarytarget);
-					}
+					double percentlost = o1.getCurrentHp() / o1.getMaxHp();
+					double percentlost2 = o2.getCurrentHp() / o2.getMaxHp();
+					return Double.compare(percentlost, percentlost2);
 				}
-				return targetList.toArray(new L2Character[targetList.size()]);
+			});
+			if (targetList.size() > 11)
+			
+			{
+				targetList = targetList.subList(0, 11);
+				if (!targetList.contains(primarytarget))
+				{
+					targetList.set(10, targetList.get(0));
+					targetList.set(0, primarytarget);
+				}
+				else if (targetList.get(0) != primarytarget)
+				{
+					int pos = 1;
+					for (;; pos++)
+					{
+						if (targetList.get(pos) == primarytarget)
+						{
+							break;
+						}
+						
+						if (pos >= 10)
+						{
+							break;
+						}
+					}
+					targetList.set(pos, targetList.get(0));
+					targetList.set(0, primarytarget);
+				}
 			}
+			return targetList.toArray(new L2Character[targetList.size()]);
 		}
-		else
-		{
-			return _emptyTargetList;
-		}
+		return _emptyTargetList;
 	}
 	
 	@Override

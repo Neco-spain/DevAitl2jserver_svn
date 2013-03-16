@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
@@ -29,11 +33,11 @@ import com.l2jserver.gameserver.datatables.CharNameTable;
 import com.l2jserver.gameserver.datatables.CharTemplateTable;
 import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
-import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.L2ShortCut;
 import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.L2World;
+import com.l2jserver.gameserver.model.actor.appearance.PcAppearance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.stat.PcStat;
 import com.l2jserver.gameserver.model.actor.templates.L2PcTemplate;
@@ -183,7 +187,6 @@ public final class CharacterCreate extends L2GameClientPacket
 			}
 			
 			template = CharTemplateTable.getInstance().getTemplate(_classId);
-			
 			if ((template == null) || (template.getClassBaseLevel() > 1))
 			{
 				if (Config.DEBUG)
@@ -194,9 +197,8 @@ public final class CharacterCreate extends L2GameClientPacket
 				sendPacket(new CharCreateFail(CharCreateFail.REASON_CREATION_FAILED));
 				return;
 			}
-			
-			int objectId = IdFactory.getInstance().getNextId();
-			newChar = L2PcInstance.create(objectId, template, getClient().getAccountName(), _name, _hairStyle, _hairColor, _face, _sex != 0);
+			final PcAppearance app = new PcAppearance(_face, _hairColor, _hairStyle, _sex != 0);
+			newChar = L2PcInstance.create(template, getClient().getAccountName(), _name, app);
 		}
 		
 		newChar.setCurrentHp(template.getBaseHpMax());
@@ -368,6 +370,10 @@ public final class CharacterCreate extends L2GameClientPacket
 		}
 	}
 	
+	/**
+	 * TODO: Unhardcode it using the new listeners.
+	 * @param player
+	 */
 	public void startTutorialQuest(L2PcInstance player)
 	{
 		final QuestState qs = player.getQuestState("Q00255_Tutorial");

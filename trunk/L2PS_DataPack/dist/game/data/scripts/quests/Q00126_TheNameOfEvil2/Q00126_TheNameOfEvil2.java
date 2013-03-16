@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00126_TheNameOfEvil2;
 
@@ -29,7 +33,7 @@ import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
  */
 public class Q00126_TheNameOfEvil2 extends Quest
 {
-	// NPC
+	// NPCs
 	private static final int SHILENS_STONE_STATUE = 32109;
 	private static final int MUSHIKA = 32114;
 	private static final int ASAMAH = 32115;
@@ -42,6 +46,14 @@ public class Q00126_TheNameOfEvil2 extends Quest
 	private static final int BONE_POWDER = 8783;
 	// Reward
 	private static final int ENCHANT_WEAPON_A = 729;
+	
+	public Q00126_TheNameOfEvil2(int id, String name, String descr)
+	{
+		super(id, name, descr);
+		addStartNpc(ASAMAH);
+		addTalkId(ASAMAH, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU, WARRIORS_GRAVE, SHILENS_STONE_STATUE, MUSHIKA);
+		registerQuestItems(GAZKH_FRAGMENT, BONE_POWDER);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -317,7 +329,6 @@ public class Q00126_TheNameOfEvil2 extends Quest
 				st.exitQuest(false, true);
 				break;
 		}
-		
 		return event;
 	}
 	
@@ -348,7 +359,7 @@ public class Q00126_TheNameOfEvil2 extends Quest
 						}
 						break;
 					case State.STARTED:
-						switch (st.getInt("cond"))
+						switch (st.getCond())
 						{
 							case 1:
 								htmltext = "32115-1d.html";
@@ -394,7 +405,7 @@ public class Q00126_TheNameOfEvil2 extends Quest
 			case ULU_KAIMU:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 							htmltext = "32119-1.html";
@@ -418,7 +429,7 @@ public class Q00126_TheNameOfEvil2 extends Quest
 			case BALU_KAIMU:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 						case 2:
@@ -445,7 +456,7 @@ public class Q00126_TheNameOfEvil2 extends Quest
 			case CHUTA_KAIMU:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 						case 2:
@@ -475,7 +486,7 @@ public class Q00126_TheNameOfEvil2 extends Quest
 			case WARRIORS_GRAVE:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 						case 2:
@@ -538,7 +549,7 @@ public class Q00126_TheNameOfEvil2 extends Quest
 			case SHILENS_STONE_STATUE:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 						case 2:
@@ -580,12 +591,11 @@ public class Q00126_TheNameOfEvil2 extends Quest
 			case MUSHIKA:
 				if (st.isStarted())
 				{
-					int cond = st.getInt("cond");
-					if (cond < 22)
+					if (st.getCond() < 22)
 					{
 						htmltext = "32114-4.html";
 					}
-					else if (cond == 22)
+					else if (st.isCond(22))
 					{
 						htmltext = "32114-1.html";
 					}
@@ -597,15 +607,6 @@ public class Q00126_TheNameOfEvil2 extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	public Q00126_TheNameOfEvil2(int id, String name, String descr)
-	{
-		super(id, name, descr);
-		
-		addStartNpc(ASAMAH);
-		addTalkId(ASAMAH, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU, WARRIORS_GRAVE, SHILENS_STONE_STATUE, MUSHIKA);
-		registerQuestItems(GAZKH_FRAGMENT, BONE_POWDER);
 	}
 	
 	public static void main(String[] args)

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.zone.type;
 
@@ -109,40 +113,37 @@ public class L2OlympiadStadiumZone extends L2ZoneRespawn
 			}
 		}
 	}
-
+	
 	public final void spawnBuffers()
 	{
 		for (L2Npc buffer : InstanceManager.getInstance().getInstance(getInstanceId()).getNpcs())
 		{
-			if (buffer instanceof L2OlympiadManagerInstance && !buffer.isVisible())
+			if ((buffer instanceof L2OlympiadManagerInstance) && !buffer.isVisible())
 			{
 				buffer.spawnMe();
 			}
 		}
 	}
-
+	
 	public final void deleteBuffers()
 	{
 		for (L2Npc buffer : InstanceManager.getInstance().getInstance(getInstanceId()).getNpcs())
 		{
-			if (buffer instanceof L2OlympiadManagerInstance && buffer.isVisible())
+			if ((buffer instanceof L2OlympiadManagerInstance) && buffer.isVisible())
 			{
 				buffer.decayMe();
 			}
 		}
 	}
-
+	
 	public final void broadcastStatusUpdate(L2PcInstance player)
 	{
 		final ExOlympiadUserInfo packet = new ExOlympiadUserInfo(player);
-		for (L2Character character : getCharactersInside())
+		for (L2PcInstance target : getPlayersInside())
 		{
-			if ((character != null) && character.isPlayer())
+			if ((target != null) && (target.inObserverMode() || (target.getOlympiadSide() != player.getOlympiadSide())))
 			{
-				if (character.getActingPlayer().inObserverMode() || (character.getActingPlayer().getOlympiadSide() != player.getOlympiadSide()))
-				{
-					character.sendPacket(packet);
-				}
+				target.sendPacket(packet);
 			}
 		}
 	}
@@ -173,7 +174,7 @@ public class L2OlympiadStadiumZone extends L2ZoneRespawn
 				}
 			}
 		}
-
+		
 		if (character.isPlayable())
 		{
 			final L2PcInstance player = character.getActingPlayer();
@@ -195,7 +196,7 @@ public class L2OlympiadStadiumZone extends L2ZoneRespawn
 			}
 		}
 	}
-
+	
 	@Override
 	protected final void onExit(L2Character character)
 	{

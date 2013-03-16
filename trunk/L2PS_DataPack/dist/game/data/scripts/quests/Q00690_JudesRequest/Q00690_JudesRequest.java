@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00690_JudesRequest;
 
@@ -27,11 +31,10 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00690_JudesRequest extends Quest
 {
-	// NPC
+	// NPCs
 	private static final int JUDE = 32356;
 	private static final int LESSER_EVIL = 22398;
 	private static final int GREATER_EVIL = 22399;
-	
 	// Items
 	private static final int EVIL_WEAPON = 10327;
 	private static final int[][] REWARDS =
@@ -60,6 +63,14 @@ public class Q00690_JudesRequest extends Quest
 		}
 	};
 	
+	public Q00690_JudesRequest(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(JUDE);
+		addTalkId(JUDE);
+		addKillId(LESSER_EVIL, GREATER_EVIL);
+	}
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
@@ -73,9 +84,7 @@ public class Q00690_JudesRequest extends Quest
 		
 		if (event.equalsIgnoreCase("32356-03.htm"))
 		{
-			st.set("cond", "1");
-			st.setState(State.STARTED);
-			st.playSound("ItemSound.quest_accept");
+			st.startQuest();
 		}
 		else if (event.equalsIgnoreCase("32356-07.htm"))
 		{
@@ -83,7 +92,7 @@ public class Q00690_JudesRequest extends Quest
 			{
 				st.giveItems(REWARDS[0][getRandom(REWARDS[0].length)], 1);
 				st.takeItems(EVIL_WEAPON, 200);
-				st.playSound("ItemSound.quest_middle");
+				st.playSound(QuestSound.ITEMSOUND_QUEST_MIDDLE);
 				htmltext = "32356-07.htm";
 			}
 			else
@@ -94,8 +103,7 @@ public class Q00690_JudesRequest extends Quest
 		else if (event.equalsIgnoreCase("32356-08.htm"))
 		{
 			st.takeItems(EVIL_WEAPON, -1);
-			st.playSound("ItemSound.quest_finish");
-			st.exitQuest(true);
+			st.exitQuest(true, true);
 		}
 		else if (event.equalsIgnoreCase("32356-09.htm"))
 		{
@@ -103,7 +111,7 @@ public class Q00690_JudesRequest extends Quest
 			{
 				st.giveItems(REWARDS[1][getRandom(REWARDS[1].length)], 1);
 				st.takeItems(EVIL_WEAPON, 5);
-				st.playSound("ItemSound.quest_middle");
+				st.playSound(QuestSound.ITEMSOUND_QUEST_MIDDLE);
 				htmltext = "32356-09.htm";
 			}
 			else
@@ -112,6 +120,39 @@ public class Q00690_JudesRequest extends Quest
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		L2PcInstance partyMember = getRandomPartyMember(player, 1);
+		if (partyMember == null)
+		{
+			return null;
+		}
+		final QuestState st = partyMember.getQuestState(getName());
+		
+		final int npcId = npc.getNpcId();
+		int chance = 0;
+		if (npcId == LESSER_EVIL)
+		{
+			chance = 173;
+		}
+		else if (npcId == GREATER_EVIL)
+		{
+			chance = 246;
+		}
+		// Apply the quest drop rate:
+		chance *= Config.RATE_QUEST_DROP;
+		// Normalize
+		chance %= 1000;
+		
+		if (getRandom(1000) <= chance)
+		{
+			st.giveItems(EVIL_WEAPON, Math.max(chance / 1000, 1));
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		return null;
 	}
 	
 	@Override
@@ -153,49 +194,6 @@ public class Q00690_JudesRequest extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		final QuestState st = partyMember.getQuestState(getName());
-		
-		final int npcId = npc.getNpcId();
-		int chance = 0;
-		if (npcId == LESSER_EVIL)
-		{
-			chance = 173;
-		}
-		else if (npcId == GREATER_EVIL)
-		{
-			chance = 246;
-		}
-		// Apply the quest drop rate:
-		chance *= Config.RATE_QUEST_DROP;
-		// Normalize
-		chance %= 1000;
-		
-		if (getRandom(1000) <= chance)
-		{
-			st.giveItems(EVIL_WEAPON, Math.max(chance / 1000, 1));
-			st.playSound("ItemSound.quest_itemget");
-		}
-		return null;
-	}
-	
-	public Q00690_JudesRequest(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(JUDE);
-		addTalkId(JUDE);
-		addKillId(LESSER_EVIL);
-		addKillId(GREATER_EVIL);
 	}
 	
 	public static void main(String[] args)

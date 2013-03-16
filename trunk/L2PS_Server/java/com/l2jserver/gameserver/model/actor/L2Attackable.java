@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor;
 
@@ -39,6 +43,7 @@ import com.l2jserver.gameserver.datatables.ManorData;
 import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.eventsmanager.PcCafePointsManager;
 import com.l2jserver.gameserver.instancemanager.CursedWeaponsManager;
+import com.l2jserver.gameserver.instancemanager.WalkingManager;
 import com.l2jserver.gameserver.model.L2CharPosition;
 import com.l2jserver.gameserver.model.L2CommandChannel;
 import com.l2jserver.gameserver.model.L2DropCategory;
@@ -59,7 +64,6 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.items.type.L2EtcItemType;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.skills.L2Skill;
-import com.l2jserver.gameserver.model.stats.Rates;
 import com.l2jserver.gameserver.model.stats.Stats;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -88,7 +92,7 @@ public class L2Attackable extends L2Npc
 		/** Number of damages that the attacker L2Character gave to this L2Attackable. */
 		private int _damage = 0;
 		
-		protected AggroInfo(L2Character pAttacker)
+		AggroInfo(L2Character pAttacker)
 		{
 			_attacker = pAttacker;
 		}
@@ -503,7 +507,7 @@ public class L2Attackable extends L2Npc
 			}
 		}
 		
-		if (isEventMob)
+		if (isEventMob())
 		{
 			return;
 		}
@@ -578,7 +582,7 @@ public class L2Attackable extends L2Npc
 				{
 					for (Quest quest : getTemplate().getEventQuests(Quest.QuestEventType.ON_KILL))
 					{
-						ThreadPoolManager.getInstance().scheduleEffect(new OnKillNotifyTask(this, quest, player, killer instanceof L2Summon), _onKillDelay);
+						ThreadPoolManager.getInstance().scheduleEffect(new OnKillNotifyTask(this, quest, player, (killer != null) && killer.isSummon()), _onKillDelay);
 					}
 				}
 			}
@@ -595,20 +599,20 @@ public class L2Attackable extends L2Npc
 		private final L2Attackable _attackable;
 		private final Quest _quest;
 		private final L2PcInstance _killer;
-		private final boolean _isPet;
+		private final boolean _isSummon;
 		
-		public OnKillNotifyTask(L2Attackable attackable, Quest quest, L2PcInstance killer, boolean isPet)
+		public OnKillNotifyTask(L2Attackable attackable, Quest quest, L2PcInstance killer, boolean isSummon)
 		{
 			_attackable = attackable;
 			_quest = quest;
 			_killer = killer;
-			_isPet = isPet;
+			_isSummon = isSummon;
 		}
 		
 		@Override
 		public void run()
 		{
-			_quest.notifyKill(_attackable, _killer, _isPet);
+			_quest.notifyKill(_attackable, _killer, _isSummon);
 		}
 	}
 	
@@ -708,8 +712,8 @@ public class L2Attackable extends L2Npc
 			if (!rewards.isEmpty())
 			{
 				L2Party attackerParty;
-				long exp;
-				int levelDiff, partyDmg, partyLvl, sp;
+				long exp, exp_premium = 0;
+				int levelDiff, partyDmg, partyLvl, sp, sp_premium;
 				float partyMul, penalty;
 				RewardInfo reward2;
 				int[] tmp;
@@ -767,7 +771,7 @@ public class L2Attackable extends L2Npc
 							// mob = 24, atk = 50, diff = 26 (no xp)
 							levelDiff = attacker.getLevel() - getLevel();
 							
-							tmp = calculateExpAndSp(levelDiff, damage);
+							tmp = calculateExpAndSp(levelDiff, damage, attacker.getPremiumService());
 							exp = tmp[0];
 							exp *= 1 - penalty;
 							sp = tmp[1];
@@ -778,15 +782,6 @@ public class L2Attackable extends L2Npc
 								sp *= Config.CHAMPION_REWARDS;
 							}
 							
-							if (attacker instanceof L2PcInstance)
-							{
-								if (((L2PcInstance) attacker).canGetExpAndSp() == false)
-								{
-									exp = 0;
-									sp = 0;
-								}
-							}
-							
 							// Check for an over-hit enabled strike
 							if (attacker instanceof L2PcInstance)
 							{
@@ -795,6 +790,7 @@ public class L2Attackable extends L2Npc
 								{
 									player.sendPacket(SystemMessageId.OVER_HIT);
 									exp += calculateOverhitExp(exp);
+									exp_premium += calculateOverhitExp(exp_premium);
 								}
 							}
 							
@@ -940,7 +936,10 @@ public class L2Attackable extends L2Npc
 						levelDiff = partyLvl - getLevel();
 						
 						// Calculate Exp and SP rewards
-						tmp = calculateExpAndSp(levelDiff, partyDmg);
+						tmp = calculateExpAndSp(levelDiff, partyDmg, 1);
+						exp_premium = tmp[0];
+						sp_premium = tmp[1];
+						tmp = calculateExpAndSp(levelDiff, partyDmg, 0);
 						exp = tmp[0];
 						sp = tmp[1];
 						
@@ -952,6 +951,8 @@ public class L2Attackable extends L2Npc
 						
 						exp *= partyMul;
 						sp *= partyMul;
+						exp_premium *= partyMul;
+						sp_premium *= partyMul;
 						
 						// Check for an over-hit enabled strike
 						// (When in party, the over-hit exp bonus is given to the whole party and splitted proportionally through the party members)
@@ -968,7 +969,7 @@ public class L2Attackable extends L2Npc
 						// Distribute Experience and SP rewards to L2PcInstance Party members in the known area of the last attacker
 						if (partyDmg > 0)
 						{
-							attackerParty.distributeXpAndSp(exp, sp, rewardedMembers, partyLvl, partyDmg, this);
+							attackerParty.distributeXpAndSp(exp_premium, sp_premium, exp, sp, rewardedMembers, partyLvl, partyDmg, this);
 						}
 					}
 				}
@@ -1009,6 +1010,12 @@ public class L2Attackable extends L2Npc
 		{
 			try
 			{
+				// If monster is on walk - stop it
+				if (isWalker() && !isCoreAIDisabled() && WalkingManager.getInstance().isOnWalk(this))
+				{
+					WalkingManager.getInstance().stopMoving(this, false, true);
+				}
+				
 				L2PcInstance player = attacker.getActingPlayer();
 				if (player != null)
 				{
@@ -1016,7 +1023,7 @@ public class L2Attackable extends L2Npc
 					{
 						for (Quest quest : getTemplate().getEventQuests(Quest.QuestEventType.ON_ATTACK))
 						{
-							quest.notifyAttack(this, player, damage, attacker instanceof L2Summon, skill);
+							quest.notifyAttack(this, player, damage, attacker.isSummon(), skill);
 						}
 					}
 				}
@@ -1071,7 +1078,7 @@ public class L2Attackable extends L2Npc
 			{
 				for (Quest quest : getTemplate().getEventQuests(Quest.QuestEventType.ON_AGGRO_RANGE_ENTER))
 				{
-					quest.notifyAggroRangeEnter(this, targetPlayer, (attacker instanceof L2Summon));
+					quest.notifyAggroRangeEnter(this, targetPlayer, attacker.isSummon());
 				}
 			}
 		}
@@ -1109,10 +1116,8 @@ public class L2Attackable extends L2Npc
 				return;
 			}
 			
-			for (L2Character aggroed : getAggroList().keySet())
+			for (AggroInfo ai : getAggroList().values())
 			{
-				AggroInfo ai = getAggroList().get(aggroed);
-				
 				if (ai == null)
 				{
 					return;
@@ -1121,7 +1126,6 @@ public class L2Attackable extends L2Npc
 			}
 			
 			amount = getHating(mostHated);
-			
 			if (amount <= 0)
 			{
 				((L2AttackableAI) getAI()).setGlobalAggro(-25);
@@ -1131,14 +1135,14 @@ public class L2Attackable extends L2Npc
 			}
 			return;
 		}
-		AggroInfo ai = getAggroList().get(target);
 		
+		AggroInfo ai = getAggroList().get(target);
 		if (ai == null)
 		{
 			return;
 		}
-		ai.addHate(-amount);
 		
+		ai.addHate(-amount);
 		if (ai.getHate() <= 0)
 		{
 			if (getMostHated() == null)
@@ -1333,7 +1337,7 @@ public class L2Attackable extends L2Npc
 				deepBlueDrop = 3;
 				if (drop.getItemId() == PcInventory.ADENA_ID)
 				{
-					deepBlueDrop *= (int) lastAttacker.getRate(Rates.DROP_ITEM, PcInventory.ADENA_ID, (isRaid() && !isRaidMinion()));
+					deepBlueDrop *= isRaid() && !isRaidMinion() ? (int) Config.RATE_DROP_ITEMS_BY_RAID : (int) Config.RATE_DROP_ITEMS;
 				}
 			}
 		}
@@ -1351,7 +1355,30 @@ public class L2Attackable extends L2Npc
 		}
 		
 		// Applies Drop rates
-		dropChance *= lastAttacker.getRate(isSweep ? Rates.SPOIL : Rates.DROP_ITEM, drop.getItemId(), (isRaid() && !isRaidMinion()));
+		if (Config.RATE_DROP_ITEMS_ID.containsKey(drop.getItemId()))
+		{
+			if (lastAttacker.getPremiumService() == 1)
+			{
+				dropChance *= Config.PREMIUM_RATE_DROP_ITEMS_ID.get(drop.getItemId());
+			}
+			dropChance *= Config.RATE_DROP_ITEMS_ID.get(drop.getItemId());
+		}
+		else if (isSweep)
+		{
+			if (lastAttacker.getPremiumService() == 1)
+			{
+				dropChance *= Config.PREMIUM_RATE_DROP_SPOIL;
+			}
+			dropChance *= Config.RATE_DROP_SPOIL;
+		}
+		else
+		{
+			if (lastAttacker.getPremiumService() == 1)
+			{
+				dropChance *= isRaid() && !isRaidMinion() ? Config.PREMIUM_RATE_DROP_ITEMS_BY_RAID : Config.PREMIUM_RATE_DROP_ITEMS;
+			}
+			dropChance *= isRaid() && !isRaidMinion() ? Config.RATE_DROP_ITEMS_BY_RAID : Config.RATE_DROP_ITEMS;
+		}
 		
 		if (Config.CHAMPION_ENABLE && isChampion())
 		{
@@ -1469,7 +1496,11 @@ public class L2Attackable extends L2Npc
 		}
 		
 		// Applies Drop rates
-		categoryDropChance *= lastAttacker.getRate(Rates.DROP_ITEM, -1, (isRaid() && !isRaidMinion()));
+		if (lastAttacker.getPremiumService() == 1)
+		{
+			categoryDropChance *= isRaid() && !isRaidMinion() ? Config.PREMIUM_RATE_DROP_ITEMS_BY_RAID : Config.PREMIUM_RATE_DROP_ITEMS;
+		}
+		categoryDropChance *= isRaid() && !isRaidMinion() ? Config.RATE_DROP_ITEMS_BY_RAID : Config.RATE_DROP_ITEMS;
 		
 		if (Config.CHAMPION_ENABLE && isChampion())
 		{
@@ -1504,7 +1535,24 @@ public class L2Attackable extends L2Npc
 			// At least 1 item will be dropped for sure. So the chance will be adjusted to 100%
 			// if smaller.
 			
-			double dropChance = drop.getChance() * lastAttacker.getRate(Rates.DROP_ITEM, drop.getItemId(), (isRaid() && !isRaidMinion()));
+			double dropChance = drop.getChance();
+			
+			if (Config.RATE_DROP_ITEMS_ID.containsKey(drop.getItemId()))
+			{
+				if (lastAttacker.getPremiumService() == 1)
+				{
+					dropChance *= Config.PREMIUM_RATE_DROP_ITEMS_ID.get(drop.getItemId());
+				}
+				dropChance *= Config.RATE_DROP_ITEMS_ID.get(drop.getItemId());
+			}
+			else
+			{
+				if (lastAttacker.getPremiumService() == 1)
+				{
+					dropChance *= isRaid() && !isRaidMinion() ? Config.PREMIUM_RATE_DROP_ITEMS_BY_RAID : Config.PREMIUM_RATE_DROP_ITEMS;
+				}
+				dropChance *= isRaid() && !isRaidMinion() ? Config.RATE_DROP_ITEMS_BY_RAID : Config.RATE_DROP_ITEMS;
+			}
 			
 			if (Config.CHAMPION_ENABLE && isChampion())
 			{
@@ -2185,7 +2233,7 @@ public class L2Attackable extends L2Npc
 	{
 		// Calculate the over-hit damage
 		// Ex: mob had 10 HP left, over-hit skill did 50 damage total, over-hit damage is 40
-		double overhitDmg = ((getCurrentHp() - damage) * (-1));
+		double overhitDmg = -(getCurrentHp() - damage);
 		if (overhitDmg < 0)
 		{
 			// we didn't killed the mob with the over-hit strike. (it wasn't really an over-hit strike)
@@ -2278,13 +2326,7 @@ public class L2Attackable extends L2Npc
 		return _absorbersList;
 	}
 	
-	/**
-	 * Calculate the Experience and SP to distribute to attacker (L2PcInstance, L2ServitorInstance or L2Party) of the L2Attackable.
-	 * @param diff The difference of level between attacker (L2PcInstance, L2ServitorInstance or L2Party) and the L2Attackable
-	 * @param damage The damages given by the attacker (L2PcInstance, L2ServitorInstance or L2Party)
-	 * @return
-	 */
-	private int[] calculateExpAndSp(int diff, int damage)
+	private int[] calculateExpAndSp(int diff, int damage, int IsPremium)
 	{
 		double xp;
 		double sp;
@@ -2294,13 +2336,13 @@ public class L2Attackable extends L2Npc
 			diff = -5; // makes possible to use ALT_GAME_EXPONENT configuration
 		}
 		
-		xp = ((double) getExpReward() * damage) / getMaxHp();
+		xp = ((double) getExpReward(IsPremium) * damage) / getMaxHp();
 		if (Config.ALT_GAME_EXPONENT_XP != 0)
 		{
 			xp *= Math.pow(2., -diff / Config.ALT_GAME_EXPONENT_XP);
 		}
 		
-		sp = ((double) getSpReward() * damage) / getMaxHp();
+		sp = ((double) getSpReward(IsPremium) * damage) / getMaxHp();
 		if (Config.ALT_GAME_EXPONENT_SP != 0)
 		{
 			sp *= Math.pow(2., -diff / Config.ALT_GAME_EXPONENT_SP);
@@ -2535,7 +2577,7 @@ public class L2Attackable extends L2Npc
 	@Override
 	public boolean hasRandomAnimation()
 	{
-		return ((Config.MAX_MONSTER_ANIMATION > 0) && !(this instanceof L2GrandBossInstance));
+		return ((Config.MAX_MONSTER_ANIMATION > 0) && isRandomAnimationEnabled() && !(this instanceof L2GrandBossInstance));
 	}
 	
 	@Override
@@ -2695,7 +2737,6 @@ public class L2Attackable extends L2Npc
 		return null;
 	}
 	
-	@Override
 	public void setChampion(boolean champ)
 	{
 		_champion = champ;

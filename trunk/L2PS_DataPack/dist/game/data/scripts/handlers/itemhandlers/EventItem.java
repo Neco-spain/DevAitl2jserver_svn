@@ -20,9 +20,9 @@ package handlers.itemhandlers;
 
 import java.util.logging.Logger;
 
-import com.l2jserver.gameserver.eventsmanager.HandysBlockCheckerManager;
-import com.l2jserver.gameserver.eventsmanager.HandysBlockCheckerManager.ArenaParticipantsHolder;
 import com.l2jserver.gameserver.handler.IItemHandler;
+import com.l2jserver.gameserver.instancemanager.HandysBlockCheckerManager;
+import com.l2jserver.gameserver.instancemanager.HandysBlockCheckerManager.ArenaParticipantsHolder;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2BlockInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;

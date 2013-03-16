@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00636_TruthBeyond;
 
@@ -39,7 +43,6 @@ public final class Q00636_TruthBeyond extends Quest
 	public Q00636_TruthBeyond(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		
 		addStartNpc(ELIYAH);
 		addTalkId(ELIYAH, FLAURON);
 		addEnterZoneId(ZONE);
@@ -64,6 +67,20 @@ public final class Q00636_TruthBeyond extends Quest
 			st.exitQuest(true, true);
 		}
 		return event;
+	}
+	
+	@Override
+	public final String onEnterZone(L2Character character, L2ZoneType zone)
+	{
+		// QuestState already null on enter because quest is finished
+		if (character.isPlayer())
+		{
+			if (character.getActingPlayer().destroyItemByItemId("Mark", VISITOR_MARK, 1, character, false))
+			{
+				character.getActingPlayer().addItem("Mark", FADED_MARK, 1, character, true);
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -99,7 +116,7 @@ public final class Q00636_TruthBeyond extends Quest
 		}
 		else if (st.getState() == State.STARTED) // Flauron only
 		{
-			if (st.getInt("cond") == 1)
+			if (st.isCond(1))
 			{
 				return "32010-01.htm";
 			}
@@ -107,20 +124,6 @@ public final class Q00636_TruthBeyond extends Quest
 			return "32010-03.htm";
 		}
 		return getNoQuestMsg(player);
-	}
-	
-	@Override
-	public final String onEnterZone(L2Character character, L2ZoneType zone)
-	{
-		// QuestState already null on enter because quest is finished
-		if (character.isPlayer())
-		{
-			if (character.getActingPlayer().destroyItemByItemId("Mark", VISITOR_MARK, 1, character, false))
-			{
-				character.getActingPlayer().addItem("Mark", FADED_MARK, 1, character, true);
-			}
-		}
-		return null;
 	}
 	
 	public static void main(String[] args)

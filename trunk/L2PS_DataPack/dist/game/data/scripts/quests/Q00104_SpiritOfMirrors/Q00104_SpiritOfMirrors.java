@@ -1,13 +1,25 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00104_SpiritOfMirrors;
 
-import com.l2jserver.gameserver.customs.CustomMessage;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
  * Author: RobikBobik L2PS Team
@@ -167,7 +179,7 @@ public class Q00104_SpiritOfMirrors extends Quest
 						st.giveItems(SPIRITSHOT_NO_GRADE_FOR_BEGINNERS, 3000);
 						st.giveItems(SPIRITSHOT_NO_GRADE, 500);
 						st.giveItems(WAND_OF_ADEPT, 1);
-						player.sendPacket(new ExShowScreenMessage(((new CustomMessage("Newbie.Message3", player.getLang())).toString()), 3000));
+						player.sendMessage("You received the New Weapon. Go find the Newbie Guide.");
 					}
 					else
 					{

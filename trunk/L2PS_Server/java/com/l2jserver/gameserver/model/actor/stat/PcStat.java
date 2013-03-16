@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor.stat;
 
@@ -19,13 +23,13 @@ import javolution.util.FastList;
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.datatables.NpcTable;
+import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2ClassMasterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PetInstance;
 import com.l2jserver.gameserver.model.entity.RecoBonus;
 import com.l2jserver.gameserver.model.quest.QuestState;
-import com.l2jserver.gameserver.model.stats.Rates;
 import com.l2jserver.gameserver.model.stats.Stats;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
@@ -48,7 +52,6 @@ public class PcStat extends PlayableStat
 	private int _oldMaxCp; // stats watch
 	private float _vitalityPoints = 1;
 	private byte _vitalityLevel = 0;
-	private long _initialExp = 0;
 	
 	public static final int VITALITY_LEVELS[] =
 	{
@@ -67,7 +70,6 @@ public class PcStat extends PlayableStat
 	public PcStat(L2PcInstance activeChar)
 	{
 		super(activeChar);
-		_initialExp = getExp();
 	}
 	
 	@Override
@@ -103,13 +105,16 @@ public class PcStat extends PlayableStat
 	}
 	
 	/**
-	 * Add Experience and SP rewards to the L2PcInstance, remove its Karma (if necessary) and Launch increase level task.<BR>
-	 * <BR>
-	 * <B><U> Actions </U> :</B><BR>
-	 * <BR>
-	 * <li>Remove Karma when the player kills L2MonsterInstance</li> <li>Send a Server->Client packet StatusUpdate to the L2PcInstance</li> <li>Send a Server->Client System Message to the L2PcInstance</li> <li>If the L2PcInstance increases it's level, send a Server->Client packet SocialAction
-	 * (broadcast)</li> <li>If the L2PcInstance increases it's level, manage the increase level task (Max MP, Max MP, Recommandation, Expertise and beginner skills...)</li> <li>If the L2PcInstance increases it's level, send a Server->Client packet UserInfo to the L2PcInstance</li><BR>
-	 * <BR>
+	 * Add Experience and SP rewards to the L2PcInstance, remove its Karma (if necessary) and Launch increase level task.<br>
+	 * <B><U>Actions </U>:</B>
+	 * <ul>
+	 * <li>Remove Karma when the player kills L2MonsterInstance</li>
+	 * <li>Send a Server->Client packet StatusUpdate to the L2PcInstance</li>
+	 * <li>Send a Server->Client System Message to the L2PcInstance</li>
+	 * <li>If the L2PcInstance increases it's level, send a Server->Client packet SocialAction (broadcast)</li>
+	 * <li>If the L2PcInstance increases it's level, manage the increase level task (Max MP, Max MP, Recommendation, Expertise and beginner skills...)</li>
+	 * <li>If the L2PcInstance increases it's level, send a Server->Client packet UserInfo to the L2PcInstance</li>
+	 * </ul>
 	 * @param addToExp The Experience value to add
 	 * @param addToSp The SP value to add
 	 */
@@ -301,6 +306,7 @@ public class PcStat extends PlayableStat
 			getActiveChar().setCurrentCp(getMaxCp());
 			getActiveChar().broadcastPacket(new SocialAction(getActiveChar().getObjectId(), SocialAction.LEVEL_UP));
 			getActiveChar().sendPacket(SystemMessageId.YOU_INCREASED_YOUR_LEVEL);
+			
 			L2ClassMasterInstance.showQuestionMark(getActiveChar());
 		}
 		
@@ -337,8 +343,7 @@ public class PcStat extends PlayableStat
 		getActiveChar().sendPacket(new UserInfo(getActiveChar()));
 		getActiveChar().sendPacket(new ExBrExtraUserInfo(getActiveChar()));
 		getActiveChar().sendPacket(new ExVoteSystemInfo(getActiveChar()));
-		getActiveChar().incAdventPoints(Config.POINT_FOR_LV_HUNB, false);
-		
+		getActiveChar().incAdventPoints(2000, false);
 		return levelIncreased;
 	}
 	
@@ -542,7 +547,7 @@ public class PcStat extends PlayableStat
 		val += Config.RUN_SPD_BOOST;
 		
 		// Apply max run speed cap.
-		if ((val > Config.MAX_RUN_SPEED) && !getActiveChar().isGM())
+		if ((val > Config.MAX_RUN_SPEED) && !getActiveChar().canOverrideCond(PcCondOverride.MAX_STATS_VALUE))
 		{
 			return Config.MAX_RUN_SPEED;
 		}
@@ -555,7 +560,7 @@ public class PcStat extends PlayableStat
 	{
 		int val = super.getPAtkSpd();
 		
-		if ((val > Config.MAX_PATK_SPEED) && !getActiveChar().isGM())
+		if ((val > Config.MAX_PATK_SPEED) && !getActiveChar().canOverrideCond(PcCondOverride.MAX_STATS_VALUE))
 		{
 			return Config.MAX_PATK_SPEED;
 		}
@@ -568,7 +573,7 @@ public class PcStat extends PlayableStat
 	{
 		int val = super.getEvasionRate(target);
 		
-		if ((val > Config.MAX_EVASION) && !getActiveChar().isGM())
+		if ((val > Config.MAX_EVASION) && !getActiveChar().canOverrideCond(PcCondOverride.MAX_STATS_VALUE))
 		{
 			return Config.MAX_EVASION;
 		}
@@ -581,7 +586,7 @@ public class PcStat extends PlayableStat
 	{
 		int val = super.getMAtkSpd();
 		
-		if ((val > Config.MAX_MATK_SPEED) && !getActiveChar().isGM())
+		if ((val > Config.MAX_MATK_SPEED) && !getActiveChar().canOverrideCond(PcCondOverride.MAX_STATS_VALUE))
 		{
 			return Config.MAX_MATK_SPEED;
 		}
@@ -740,7 +745,7 @@ public class PcStat extends PlayableStat
 			points = Math.max(_vitalityPoints + points, MIN_VITALITY_POINTS);
 		}
 		
-		if (points == _vitalityPoints)
+		if (Math.abs(points - _vitalityPoints) <= 1e-6)
 		{
 			return;
 		}
@@ -797,8 +802,11 @@ public class PcStat extends PlayableStat
 		// Bonus from Nevit's Blessing
 		nevits = RecoBonus.getRecoMultiplier(getActiveChar());
 		
+		// Bonus from Nevit's Hunting
+		// TODO: Nevit's hunting bonus
+		
 		// Bonus exp from skills
-		bonusExp = calcStat(Stats.BONUS_EXP, 1.0, null, null);
+		bonusExp = 1 + (calcStat(Stats.BONUS_EXP, 0, null, null) / 100);
 		
 		if (vitality > 1.0)
 		{
@@ -812,13 +820,10 @@ public class PcStat extends PlayableStat
 		{
 			bonus += (hunting - 1);
 		}
-		if (bonusExp > 1.0)
+		if (bonusExp > 1)
 		{
 			bonus += (bonusExp - 1);
 		}
-		
-		// Apply premium bonus
-		bonus *= getActiveChar().getRate(Rates.PREMIUM_BONUS_EXP);
 		
 		// Check for abnormal bonuses
 		bonus = Math.max(bonus, 1);
@@ -841,8 +846,11 @@ public class PcStat extends PlayableStat
 		// Bonus from Nevit's Blessing
 		nevits = RecoBonus.getRecoMultiplier(getActiveChar());
 		
+		// Bonus from Nevit's Hunting
+		// TODO: Nevit's hunting bonus
+		
 		// Bonus sp from skills
-		bonusSp = calcStat(Stats.BONUS_SP, 1.0, null, null);
+		bonusSp = 1 + (calcStat(Stats.BONUS_SP, 0, null, null) / 100);
 		
 		if (vitality > 1.0)
 		{
@@ -856,13 +864,10 @@ public class PcStat extends PlayableStat
 		{
 			bonus += (hunting - 1);
 		}
-		if (bonusSp > 1.0)
+		if (bonusSp > 1)
 		{
 			bonus += (bonusSp - 1);
 		}
-		
-		// Apply premium bonus
-		bonus *= getActiveChar().getRate(Rates.PREMIUM_BONUS_SP);
 		
 		// Check for abnormal bonuses
 		bonus = Math.max(bonus, 1);
@@ -937,10 +942,5 @@ public class PcStat extends PlayableStat
 	public void removeLevelListener(PlayerLevelListener listener)
 	{
 		levelListeners.remove(listener);
-	}
-	
-	public boolean hasEarnedExp()
-	{
-		return _initialExp < getExp();
 	}
 }

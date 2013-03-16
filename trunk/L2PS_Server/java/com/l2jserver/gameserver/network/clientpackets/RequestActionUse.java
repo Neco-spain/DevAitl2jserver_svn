@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
@@ -92,15 +96,8 @@ public final class RequestActionUse extends L2GameClientPacket
 			_log.finest(activeChar + " requested action use Id: " + _actionId + " Ctrl pressed:" + _ctrlPressed + " Shift pressed:" + _shiftPressed);
 		}
 		
-		// Don't do anything if player is dead
-		if (activeChar.isAlikeDead() || activeChar.isDead())
-		{
-			sendPacket(ActionFailed.STATIC_PACKET);
-			return;
-		}
-		
-		// Don't do anything if player is confused
-		if (activeChar.isOutOfControl())
+		// Don't do anything if player is dead or confused
+		if (activeChar.isAlikeDead() || activeChar.isDead() || activeChar.isOutOfControl())
 		{
 			sendPacket(ActionFailed.STATIC_PACKET);
 			return;
@@ -109,7 +106,7 @@ public final class RequestActionUse extends L2GameClientPacket
 		// Don't allow to do some action if player is transformed
 		if (activeChar.isTransformed())
 		{
-			int[] allowedActions = activeChar.isTransformed() ? ExBasicActionList._actionsOnTransform : ExBasicActionList._defaultActionList;
+			int[] allowedActions = activeChar.isTransformed() ? ExBasicActionList.ACTIONS_ON_TRANSFORM : ExBasicActionList.DEFAULT_ACTION_LIST;
 			if (!(Arrays.binarySearch(allowedActions, _actionId) >= 0))
 			{
 				sendPacket(ActionFailed.STATIC_PACKET);
@@ -947,8 +944,8 @@ public final class RequestActionUse extends L2GameClientPacket
 			return;
 		}
 		
-		final double distance = Math.sqrt(requester.getPlanDistanceSq(target));
-		if ((distance > 2000) || (distance < 70) || (requester.getObjectId() == target.getObjectId()))
+		final int distance = (int) Math.sqrt(requester.getPlanDistanceSq(target));
+		if ((distance > 900) || (distance < 40) || (requester.getObjectId() == target.getObjectId()))
 		{
 			sendPacket(SystemMessageId.TARGET_DO_NOT_MEET_LOC_REQUIREMENTS);
 			return;

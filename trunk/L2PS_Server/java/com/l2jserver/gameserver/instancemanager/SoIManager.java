@@ -142,7 +142,7 @@ public class SoIManager
 	{
 		_log.info("Seed of Infinity Manager: Closing the seed.");
 		ServerVariables.unset("SoI_opened");
-		com.l2jserver.gameserver.features.data.EnergySeeds.SoiSeedStop();
+		com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiSeedStop();
 		DoorTable.getInstance().getDoor(14240102).closeMe();
 		for (L2PcInstance ch : ZoneManager.getInstance().getZoneById(200033).getPlayersInside())
 		{
@@ -155,24 +155,24 @@ public class SoIManager
 	
 	public static void checkStageAndSpawn()
 	{
-		com.l2jserver.gameserver.features.data.EnergySeeds.SoiCloseMouthStop();
-		com.l2jserver.gameserver.features.data.EnergySeeds.SoiMouthStop();
-		com.l2jserver.gameserver.features.data.EnergySeeds.SoiAbyssGaze2Stop();
-		com.l2jserver.gameserver.features.data.EnergySeeds.SoiAbyssGaze1Stop();
+		com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiCloseMouthStop();
+		com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiMouthStop();
+		com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiAbyssGaze2Stop();
+		com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiAbyssGaze1Stop();
 		switch (getCurrentStage())
 		{
 			case 1:
 			case 4:
-				com.l2jserver.gameserver.features.data.EnergySeeds.SoiMouthSpawn();
-				com.l2jserver.gameserver.features.data.EnergySeeds.SoiAbyssGaze2Spawn();
+				com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiMouthSpawn();
+				com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiAbyssGaze2Spawn();
 				break;
 			case 5:
-				com.l2jserver.gameserver.features.data.EnergySeeds.SoiCloseMouthSpawn();
-				com.l2jserver.gameserver.features.data.EnergySeeds.SoiAbyssGaze2Spawn();
+				com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiCloseMouthSpawn();
+				com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiAbyssGaze2Spawn();
 				break;
 			default:
-				com.l2jserver.gameserver.features.data.EnergySeeds.SoiCloseMouthSpawn();
-				com.l2jserver.gameserver.features.data.EnergySeeds.SoiAbyssGaze1Spawn();
+				com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiCloseMouthSpawn();
+				com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiAbyssGaze1Spawn();
 				break;
 		}
 	}
@@ -254,7 +254,7 @@ public class SoIManager
 	
 	private static void spawnOpenedSeed()
 	{
-		com.l2jserver.gameserver.features.data.EnergySeeds.SoiSeedSpawn();
+		com.l2jserver.gameserver.features.data.ai.EnergySeeds.SoiSeedSpawn();
 	}
 	
 	public static void teleportInSeed(L2PcInstance player)

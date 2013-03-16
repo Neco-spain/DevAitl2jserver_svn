@@ -26,6 +26,10 @@ import com.l2jserver.gameserver.model.quest.QuestState.QuestType;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.util.Util;
 
+/**
+ * Dragon Trophy - Valakas (907)
+ * @author Zoey76
+ */
 public class Q00907_DragonTrophyValakas extends Quest
 {
 	// NPC
@@ -44,6 +48,16 @@ public class Q00907_DragonTrophyValakas extends Quest
 		addStartNpc(KLEIN);
 		addTalkId(KLEIN);
 		addKillId(VALAKAS);
+	}
+	
+	@Override
+	public void actionForEachPlayer(L2PcInstance player, L2Npc npc, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if ((st != null) && st.isCond(1) && Util.checkIfInRange(1500, npc, player, false))
+		{
+			st.setCond(2, true);
+		}
 	}
 	
 	@Override
@@ -75,6 +89,13 @@ public class Q00907_DragonTrophyValakas extends Quest
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	{
+		executeForEachPlayer(killer, npc, isSummon, true, true);
+		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -151,23 +172,6 @@ public class Q00907_DragonTrophyValakas extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isPet)
-	{
-		executeForEachPlayer(killer, npc, isPet, true, true);
-		return super.onKill(npc, killer, isPet);
-	}
-	
-	@Override
-	public void actionForEachPlayer(L2PcInstance player, L2Npc npc, boolean isPet)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if ((st != null) && st.isCond(1) && Util.checkIfInRange(1500, npc, player, false))
-		{
-			st.setCond(2, true);
-		}
 	}
 	
 	public static void main(String[] args)

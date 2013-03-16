@@ -27,6 +27,7 @@
 		<door doorId="21100104" /><!-- opened="false"-->
 	</doorlist>	
 	<spawnlist>
+	<group name="general">
 		<spawn npcId="32792" x="120928" y="-86462" z="-3397" heading="0" respawn="0" />	
 		<!-- Spawn: Seven Signs, To the Monastery of Silence -->
 	    <spawn npcId="32813" x="37623" y="-50882" z="-1157" heading="33304" respawn="0" />
@@ -140,5 +141,6 @@
 		<spawn npcId="32858" x="46672" y="-248368" z="-6720" heading="0" respawn="0"/>				
 		<spawn npcId="32859" x="44114" y="-250912" z="-6720" heading="0" respawn="0"/>				
 		<spawn npcId="32860" x="46672" y="-250915" z="-6720" heading="0" respawn="0"/>
+		</group>
 	</spawnlist>	
 </instance>

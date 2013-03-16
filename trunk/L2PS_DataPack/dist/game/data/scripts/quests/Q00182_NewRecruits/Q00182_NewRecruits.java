@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00182_NewRecruits;
 
@@ -28,10 +32,16 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00182_NewRecruits extends Quest
 {
+	// NPCs
+	private static final int KEKROPUS = 32138;
+	private static final int MENACING_MACHINE = 32258;
 	
-	// NPC's
-	private static final int _kekropus = 32138;
-	private static final int _nornil = 32258;
+	public Q00182_NewRecruits(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(KEKROPUS);
+		addTalkId(KEKROPUS, MENACING_MACHINE);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -43,28 +53,24 @@ public class Q00182_NewRecruits extends Quest
 			return htmltext;
 		}
 		
-		if (npc.getNpcId() == _kekropus)
+		if (npc.getNpcId() == KEKROPUS)
 		{
 			if (event.equalsIgnoreCase("32138-03.html"))
 			{
-				st.setState(State.STARTED);
-				st.set("cond", "1");
-				st.playSound("ItemSound.quest_accept");
+				st.startQuest();
 			}
 		}
-		else if (npc.getNpcId() == _nornil)
+		else if (npc.getNpcId() == MENACING_MACHINE)
 		{
 			if (event.equalsIgnoreCase("32258-04.html"))
 			{
 				st.giveItems(847, 2);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(false);
+				st.exitQuest(false, true);
 			}
 			else if (event.equalsIgnoreCase("32258-05.html"))
 			{
 				st.giveItems(890, 2);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(false);
+				st.exitQuest(false, true);
 			}
 		}
 		return htmltext;
@@ -81,7 +87,7 @@ public class Q00182_NewRecruits extends Quest
 		}
 		
 		final int npcId = npc.getNpcId();
-		if (npcId == _kekropus)
+		if (npcId == KEKROPUS)
 		{
 			switch (st.getState())
 			{
@@ -111,19 +117,11 @@ public class Q00182_NewRecruits extends Quest
 					break;
 			}
 		}
-		else if ((npcId == _nornil) && st.isStarted())
+		else if ((npcId == MENACING_MACHINE) && st.isStarted())
 		{
 			htmltext = "32258-01.html";
 		}
 		return htmltext;
-	}
-	
-	public Q00182_NewRecruits(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(_kekropus);
-		addTalkId(_kekropus, _nornil);
 	}
 	
 	public static void main(String[] args)

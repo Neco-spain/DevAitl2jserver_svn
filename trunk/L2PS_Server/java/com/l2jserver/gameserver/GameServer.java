@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver;
 
@@ -32,7 +36,6 @@ import org.mmocore.network.SelectorThread;
 import com.l2jserver.Config;
 import com.l2jserver.L2DatabaseFactory;
 import com.l2jserver.Server;
-import com.l2jserver.ServerInfo;
 import com.l2jserver.gameserver.cache.CrestCache;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.datatables.AdminTable;
@@ -50,7 +53,6 @@ import com.l2jserver.gameserver.datatables.EnchantItemData;
 import com.l2jserver.gameserver.datatables.EnchantOptionsData;
 import com.l2jserver.gameserver.datatables.EventDroplist;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
-import com.l2jserver.gameserver.datatables.FakePcsTable;
 import com.l2jserver.gameserver.datatables.FishData;
 import com.l2jserver.gameserver.datatables.FishingMonstersData;
 import com.l2jserver.gameserver.datatables.FishingRodsData;
@@ -62,18 +64,18 @@ import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.ManorData;
 import com.l2jserver.gameserver.datatables.MerchantPriceConfigTable;
 import com.l2jserver.gameserver.datatables.MultiSell;
+import com.l2jserver.gameserver.datatables.NevitAdventTable;
 import com.l2jserver.gameserver.datatables.NpcBufferTable;
-import com.l2jserver.gameserver.datatables.NpcPersonalAIData;
 import com.l2jserver.gameserver.datatables.NpcTable;
 import com.l2jserver.gameserver.datatables.NpcWalkerRoutesData;
 import com.l2jserver.gameserver.datatables.OfflineTradersTable;
 import com.l2jserver.gameserver.datatables.PetDataTable;
-import com.l2jserver.gameserver.datatables.PremiumTable;
 import com.l2jserver.gameserver.datatables.PrimeShopTable;
 import com.l2jserver.gameserver.datatables.RecipeData;
 import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
 import com.l2jserver.gameserver.datatables.SpawnTable;
+import com.l2jserver.gameserver.datatables.SpawnTableData;
 import com.l2jserver.gameserver.datatables.StaticObjects;
 import com.l2jserver.gameserver.datatables.SummonItemsData;
 import com.l2jserver.gameserver.datatables.SummonSkillsTable;
@@ -81,12 +83,9 @@ import com.l2jserver.gameserver.datatables.TeleportLocationTable;
 import com.l2jserver.gameserver.datatables.UITable;
 import com.l2jserver.gameserver.eventengine.Interface;
 import com.l2jserver.gameserver.eventengine.Main;
-import com.l2jserver.gameserver.eventsmanager.LeaderboardArena;
-import com.l2jserver.gameserver.eventsmanager.LeaderboardCraft;
-import com.l2jserver.gameserver.eventsmanager.LeaderboardFisherman;
 import com.l2jserver.gameserver.eventsmanager.PcCafePointsManager;
-import com.l2jserver.gameserver.fence.FenceBuilderManager;
-import com.l2jserver.gameserver.fence.MovieMakerManager;
+import com.l2jserver.gameserver.eventsmanager.VoteEvent;
+import com.l2jserver.gameserver.eventsmanager.VoteEvent2;
 import com.l2jserver.gameserver.geoeditorcon.GeoEditorListener;
 import com.l2jserver.gameserver.handler.EffectHandler;
 import com.l2jserver.gameserver.idfactory.IdFactory;
@@ -102,7 +101,6 @@ import com.l2jserver.gameserver.instancemanager.CoupleManager;
 import com.l2jserver.gameserver.instancemanager.CursedWeaponsManager;
 import com.l2jserver.gameserver.instancemanager.DayNightSpawnManager;
 import com.l2jserver.gameserver.instancemanager.DimensionalRiftManager;
-import com.l2jserver.gameserver.instancemanager.ExpirableServicesManager;
 import com.l2jserver.gameserver.instancemanager.FortManager;
 import com.l2jserver.gameserver.instancemanager.FortSiegeManager;
 import com.l2jserver.gameserver.instancemanager.FourSepulchersManager;
@@ -130,10 +128,7 @@ import com.l2jserver.gameserver.model.AutoSpawnHandler;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.PartyMatchRoomList;
 import com.l2jserver.gameserver.model.PartyMatchWaitingList;
-import com.l2jserver.gameserver.model.VoteMain;
 import com.l2jserver.gameserver.model.entity.Hero;
-import com.l2jserver.gameserver.model.entity.VoteEvent;
-import com.l2jserver.gameserver.model.entity.VoteEvent2;
 import com.l2jserver.gameserver.model.olympiad.Olympiad;
 import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.L2GamePacketHandler;
@@ -201,28 +196,27 @@ public class GameServer
 		new File(Config.DATAPACK_ROOT, "data/crests").mkdirs();
 		new File("log/game").mkdirs();
 		
+		// load script engines
+		printSection("Engines");
 		L2ScriptEngineManager.getInstance();
-		ServerInfo.info();
 		
-		if (Config.ALLOW_HOPZONE_VOTE_REWARD)
-		{
-			VoteEvent.getInstance();
-		}
-		if (Config.ALLOW_TOPZONE_VOTE_REWARD)
-		{
-			VoteEvent2.getInstance();
-		}
+		printSection("World");
+		// start game time control early
 		GameTimeController.getInstance();
 		InstanceManager.getInstance();
 		L2World.getInstance();
 		MapRegionManager.getInstance();
 		Announcements.getInstance();
 		GlobalVariablesManager.getInstance();
+		
+		printSection("Skills");
 		EffectHandler.getInstance().executeScript();
 		EnchantGroupsData.getInstance();
 		SkillTreesData.getInstance();
 		SkillTable.getInstance();
 		SummonSkillsTable.getInstance();
+		
+		printSection("Items");
 		ItemTable.getInstance();
 		EnchantItemData.getInstance();
 		EnchantOptionsData.getInstance();
@@ -237,6 +231,8 @@ public class GameServer
 		FishingMonstersData.getInstance();
 		FishingRodsData.getInstance();
 		HennaData.getInstance();
+		
+		printSection("Characters");
 		ClassListData.getInstance();
 		InitialEquipmentData.getInstance();
 		ExperienceTable.getInstance();
@@ -247,36 +243,34 @@ public class GameServer
 		RaidBossPointsManager.getInstance();
 		PetDataTable.getInstance();
 		CharSummonTable.getInstance().init();
-		PremiumTable.getInstance();
-		ExpirableServicesManager.getInstance();
+		NevitAdventTable.getInstance();
+		_log.info("Loaded Hunting Bonus for characters");
+		
+		printSection("Clans");
 		ClanTable.getInstance();
 		CHSiegeManager.getInstance();
 		ClanHallManager.getInstance();
 		AuctionManager.getInstance();
+		
+		printSection("Geodata");
 		GeoData.getInstance();
 		if (Config.GEODATA == 2)
 		{
 			PathFinding.getInstance();
 		}
+		
+		printSection("NPCs");
 		HerbDropTable.getInstance();
 		NpcTable.getInstance();
 		NpcWalkerRoutesData.getInstance();
 		WalkingManager.getInstance();
-		NpcPersonalAIData.getInstance();
 		StaticObjects.getInstance();
 		ZoneManager.getInstance();
 		DoorTable.getInstance();
-		if (Config.FENCE_MOVIE_BUILDER)
-		{
-			MovieMakerManager.getInstance();
-			FenceBuilderManager.getInstance();
-		}
-		PrimeShopTable.getInstance();
 		ItemAuctionManager.getInstance();
 		CastleManager.getInstance().loadInstances();
 		FortManager.getInstance().loadInstances();
 		NpcBufferTable.getInstance();
-		FakePcsTable.getInstance();
 		SpawnTable.getInstance();
 		HellboundManager.getInstance();
 		RaidBossSpawnManager.getInstance();
@@ -285,14 +279,21 @@ public class GameServer
 		FourSepulchersManager.getInstance().init();
 		DimensionalRiftManager.getInstance();
 		EventDroplist.getInstance();
+		
+		printSection("Siege");
 		SiegeManager.getInstance().getSieges();
 		FortSiegeManager.getInstance();
 		TerritoryWarManager.getInstance();
 		CastleManorManager.getInstance();
 		MercTicketManager.getInstance();
 		ManorData.getInstance();
+		
+		printSection("Olympiad");
 		Olympiad.getInstance();
 		Hero.getInstance();
+		
+		// Call to load caches
+		printSection("Cache");
 		HtmCache.getInstance();
 		CrestCache.getInstance();
 		TeleportLocationTable.getInstance();
@@ -302,16 +303,38 @@ public class GameServer
 		PetitionManager.getInstance();
 		AugmentationData.getInstance();
 		CursedWeaponsManager.getInstance();
+		printSection("XML Spawnlist");
+		SpawnTableData.getInstance();
+		printSection("Custom Scripts");
+		if (Config.ENABLE_EVENT_ENGINE)
+		{
+			Main.main();
+			Interface.start();
+		}
+		if (Config.ALLOW_HOPZONE_VOTE_REWARD)
+		{
+			VoteEvent.getInstance();
+		}
+		if (Config.ALLOW_TOPZONE_VOTE_REWARD)
+		{
+			VoteEvent2.getInstance();
+		}
+		PrimeShopTable.getInstance();
+		PcCafePointsManager.getInstance();
+		printSection("Scripts");
 		QuestManager.getInstance();
 		TransformationManager.getInstance();
 		BoatManager.getInstance();
 		AirShipManager.getInstance();
-		SoDManager.getInstance();
 		SoIManager.getInstance();
-		VoteMain.load();
+		SoDManager.getInstance();
+		CastleManager.getInstance().activateInstances();
+		FortManager.getInstance().activateInstances();
+		MerchantPriceConfigTable.getInstance().updateReferences();
 		
 		try
 		{
+			_log.info(getClass().getSimpleName() + ": Loading Server Scripts");
 			File scripts = new File(Config.DATAPACK_ROOT, "data/scripts.cfg");
 			if (!Config.ALT_DEV_NO_HANDLERS || !Config.ALT_DEV_NO_QUESTS)
 			{
@@ -337,44 +360,24 @@ public class GameServer
 		}
 		
 		MonsterRace.getInstance();
+		
 		SevenSigns.getInstance().spawnSevenSignsNPC();
 		SevenSignsFestival.getInstance();
 		AutoSpawnHandler.getInstance();
 		
 		FaenorScriptEngine.getInstance();
+		// Init of a cursed weapon manager
+		
+		_log.info("AutoSpawnHandler: Loaded " + AutoSpawnHandler.getInstance().size() + " handlers in total.");
 		
 		if (Config.ALLOW_WEDDING)
 		{
 			CoupleManager.getInstance();
 		}
 		
-		if (Config.RANK_ARENA_ENABLED)
-		{
-			LeaderboardArena.getInstance();
-		}
-		
-		if (Config.RANK_FISHERMAN_ENABLED)
-		{
-			LeaderboardFisherman.getInstance();
-		}
-		
-		if (Config.RANK_CRAFT_ENABLED)
-		{
-			LeaderboardCraft.getInstance();
-		}
-		
 		TaskManager.getInstance();
 		
 		AntiFeedManager.getInstance().registerEvent(AntiFeedManager.GAME_ID);
-		MerchantPriceConfigTable.getInstance().updateReferences();
-		CastleManager.getInstance().activateInstances();
-		FortManager.getInstance().activateInstances();
-		if (Config.ENABLE_EVENT_ENGINE)
-		{
-			Main.main();
-			Interface.start();
-		}
-		PcCafePointsManager.getInstance();
 		
 		if (Config.ALLOW_MAIL)
 		{
@@ -408,20 +411,9 @@ public class GameServer
 			_deadDetectThread = null;
 		}
 		System.gc();
-		
-		if (Config.AUTO_RESTART_ENABLE)
-		{
-			GameServerRestart.getInstance().StartCalculationOfNextRestartTime();
-		}
-		else
-		{
-			_log.info("[Auto Restart]: System is disabled.");
-		}
-		
 		// maxMemory is the upper limit the jvm can use, totalMemory the size of
 		// the current allocation pool, freeMemory the unused memory in the
 		// allocation pool
-		
 		long freeMem = ((Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()) + Runtime.getRuntime().freeMemory()) / 1048576;
 		long totalMem = Runtime.getRuntime().maxMemory() / 1048576;
 		_log.info(getClass().getSimpleName() + ": Started, free memory " + freeMem + " Mb of " + totalMem + " Mb");
@@ -492,6 +484,7 @@ public class GameServer
 		
 		// Initialize config
 		Config.load();
+		printSection("Database");
 		L2DatabaseFactory.getInstance();
 		gameServer = new GameServer();
 		

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.ai;
 
@@ -548,7 +552,7 @@ public abstract class AbstractAI implements Ctrl
 			
 			if (!_actor.isMoving())
 			{
-				_actor.sendPacket(ActionFailed.STATIC_PACKET);
+				clientActionFailed();
 				return;
 			}
 			
@@ -572,7 +576,7 @@ public abstract class AbstractAI implements Ctrl
 		}
 		else
 		{
-			_actor.sendPacket(ActionFailed.STATIC_PACKET);
+			clientActionFailed();
 		}
 	}
 	
@@ -596,13 +600,12 @@ public abstract class AbstractAI implements Ctrl
 			_accessor.moveTo(x, y, z);
 			
 			// Send a Server->Client packet CharMoveToLocation to the actor and all L2PcInstance in its _knownPlayers
-			MoveToLocation msg = new MoveToLocation(_actor);
-			_actor.broadcastPacket(msg);
+			_actor.broadcastPacket(new MoveToLocation(_actor));
 			
 		}
 		else
 		{
-			_actor.sendPacket(ActionFailed.STATIC_PACKET);
+			clientActionFailed();
 		}
 	}
 	
@@ -626,15 +629,12 @@ public abstract class AbstractAI implements Ctrl
 			_clientMoving = false;
 			
 			// Send a Server->Client packet StopMove to the actor and all L2PcInstance in its _knownPlayers
-			StopMove msg = new StopMove(_actor);
-			_actor.broadcastPacket(msg);
+			_actor.broadcastPacket(new StopMove(_actor));
 			
 			if (pos != null)
 			{
 				// Send a Server->Client packet StopRotation to the actor and all L2PcInstance in its _knownPlayers
-				StopRotation sr = new StopRotation(_actor.getObjectId(), pos.heading, 0);
-				_actor.sendPacket(sr);
-				_actor.broadcastPacket(sr);
+				_actor.broadcastPacket(new StopRotation(_actor.getObjectId(), pos.heading, 0));
 			}
 		}
 	}
@@ -647,8 +647,7 @@ public abstract class AbstractAI implements Ctrl
 		if (_clientMovingToPawnOffset > 0) // movetoPawn needs to be stopped
 		{
 			_clientMovingToPawnOffset = 0;
-			StopMove msg = new StopMove(_actor);
-			_actor.broadcastPacket(msg);
+			_actor.broadcastPacket(new StopMove(_actor));
 		}
 		_clientMoving = false;
 	}
@@ -761,14 +760,12 @@ public abstract class AbstractAI implements Ctrl
 			if ((_clientMovingToPawnOffset != 0) && (_followTarget != null))
 			{
 				// Send a Server->Client packet MoveToPawn to the actor and all L2PcInstance in its _knownPlayers
-				MoveToPawn msg = new MoveToPawn(_actor, _followTarget, _clientMovingToPawnOffset);
-				player.sendPacket(msg);
+				player.sendPacket(new MoveToPawn(_actor, _followTarget, _clientMovingToPawnOffset));
 			}
 			else
 			{
 				// Send a Server->Client packet CharMoveToLocation to the actor and all L2PcInstance in its _knownPlayers
-				MoveToLocation msg = new MoveToLocation(_actor);
-				player.sendPacket(msg);
+				player.sendPacket(new MoveToLocation(_actor));
 			}
 		}
 	}

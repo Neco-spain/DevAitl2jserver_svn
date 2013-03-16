@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00552_OlympiadVeteran;
 
@@ -30,26 +34,20 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00552_OlympiadVeteran extends Quest
 {
+	// NPC
 	private static final int MANAGER = 31688;
-	
-	private static final int Team_Event_Certificate = 17241;
-	private static final int Class_Free_Battle_Certificate = 17242;
-	private static final int Class_Battle_Certificate = 17243;
-	
+	// Items
+	private static final int TEAM_EVENT_CERTIFICATE = 17241;
+	private static final int CLASS_FREE_BATTLE_CERTIFICATE = 17242;
+	private static final int CLASS_BATTLE_CERTIFICATE = 17243;
 	private static final int OLY_CHEST = 17169;
 	
 	public Q00552_OlympiadVeteran(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		
 		addStartNpc(MANAGER);
 		addTalkId(MANAGER);
-		questItemIds = new int[]
-		{
-			Team_Event_Certificate,
-			Class_Free_Battle_Certificate,
-			Class_Battle_Certificate
-		};
+		registerQuestItems(TEAM_EVENT_CERTIFICATE, CLASS_FREE_BATTLE_CERTIFICATE, CLASS_BATTLE_CERTIFICATE);
 		setOlympiadUse(true);
 	}
 	
@@ -65,19 +63,16 @@ public class Q00552_OlympiadVeteran extends Quest
 		
 		if (event.equalsIgnoreCase("31688-03.html"))
 		{
-			st.setState(State.STARTED);
-			st.set("cond", "1");
-			st.playSound("ItemSound.quest_accept");
+			st.startQuest();
 		}
 		else if (event.equalsIgnoreCase("31688-04.html"))
 		{
-			final long count = st.getQuestItemsCount(Team_Event_Certificate) + st.getQuestItemsCount(Class_Free_Battle_Certificate) + st.getQuestItemsCount(Class_Battle_Certificate);
+			final long count = st.getQuestItemsCount(TEAM_EVENT_CERTIFICATE) + st.getQuestItemsCount(CLASS_FREE_BATTLE_CERTIFICATE) + st.getQuestItemsCount(CLASS_BATTLE_CERTIFICATE);
 			
 			if (count > 0)
 			{
 				st.giveItems(OLY_CHEST, count);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(QuestType.DAILY);
+				st.exitQuest(QuestType.DAILY, true);
 			}
 			else
 			{
@@ -85,6 +80,98 @@ public class Q00552_OlympiadVeteran extends Quest
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public void onOlympiadLose(L2PcInstance loser, CompetitionType type)
+	{
+		if (loser != null)
+		{
+			final QuestState st = loser.getQuestState(getName());
+			if ((st != null) && st.isStarted())
+			{
+				int matches;
+				switch (type)
+				{
+					case CLASSED:
+					{
+						matches = st.getInt("classed") + 1;
+						st.set("classed", String.valueOf(matches));
+						if (matches == 5)
+						{
+							st.giveItems(CLASS_BATTLE_CERTIFICATE, 1);
+						}
+						break;
+					}
+					case NON_CLASSED:
+					{
+						matches = st.getInt("nonclassed") + 1;
+						st.set("nonclassed", String.valueOf(matches));
+						if (matches == 5)
+						{
+							st.giveItems(CLASS_FREE_BATTLE_CERTIFICATE, 1);
+						}
+						break;
+					}
+					case TEAMS:
+					{
+						matches = st.getInt("teams") + 1;
+						st.set("teams", String.valueOf(matches));
+						if (matches == 5)
+						{
+							st.giveItems(TEAM_EVENT_CERTIFICATE, 1);
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void onOlympiadWin(L2PcInstance winner, CompetitionType type)
+	{
+		if (winner != null)
+		{
+			final QuestState st = winner.getQuestState(getName());
+			if ((st != null) && st.isStarted())
+			{
+				int matches;
+				switch (type)
+				{
+					case CLASSED:
+					{
+						matches = st.getInt("classed") + 1;
+						st.set("classed", String.valueOf(matches));
+						if ((matches == 5) && !st.hasQuestItems(CLASS_BATTLE_CERTIFICATE))
+						{
+							st.giveItems(CLASS_BATTLE_CERTIFICATE, 1);
+						}
+						break;
+					}
+					case NON_CLASSED:
+					{
+						matches = st.getInt("nonclassed") + 1;
+						st.set("nonclassed", String.valueOf(matches));
+						if ((matches == 5) && !st.hasQuestItems(CLASS_FREE_BATTLE_CERTIFICATE))
+						{
+							st.giveItems(CLASS_FREE_BATTLE_CERTIFICATE, 1);
+						}
+						break;
+					}
+					case TEAMS:
+					{
+						matches = st.getInt("teams") + 1;
+						st.set("teams", String.valueOf(matches));
+						if ((matches == 5) && !st.hasQuestItems(TEAM_EVENT_CERTIFICATE))
+						{
+							st.giveItems(TEAM_EVENT_CERTIFICATE, 1);
+						}
+						break;
+					}
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -122,14 +209,13 @@ public class Q00552_OlympiadVeteran extends Quest
 		}
 		else if (st.isStarted())
 		{
-			final long count = st.getQuestItemsCount(Team_Event_Certificate) + st.getQuestItemsCount(Class_Free_Battle_Certificate) + st.getQuestItemsCount(Class_Battle_Certificate);
+			final long count = st.getQuestItemsCount(TEAM_EVENT_CERTIFICATE) + st.getQuestItemsCount(CLASS_FREE_BATTLE_CERTIFICATE) + st.getQuestItemsCount(CLASS_BATTLE_CERTIFICATE);
 			
 			if (count == 3)
 			{
-				htmltext = "31688-04.html"; // reusing the same html
+				htmltext = "31688-04.html";
 				st.giveItems(OLY_CHEST, 4);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(QuestType.DAILY);
+				st.exitQuest(QuestType.DAILY, true);
 			}
 			else
 			{
@@ -137,98 +223,6 @@ public class Q00552_OlympiadVeteran extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public void onOlympiadWin(L2PcInstance winner, CompetitionType type)
-	{
-		if (winner != null)
-		{
-			final QuestState st = winner.getQuestState(getName());
-			if ((st != null) && st.isStarted())
-			{
-				int matches;
-				switch (type)
-				{
-					case CLASSED:
-					{
-						matches = st.getInt("classed") + 1;
-						st.set("classed", String.valueOf(matches));
-						if ((matches == 5) && !st.hasQuestItems(Class_Battle_Certificate))
-						{
-							st.giveItems(Class_Battle_Certificate, 1);
-						}
-						break;
-					}
-					case NON_CLASSED:
-					{
-						matches = st.getInt("nonclassed") + 1;
-						st.set("nonclassed", String.valueOf(matches));
-						if ((matches == 5) && !st.hasQuestItems(Class_Free_Battle_Certificate))
-						{
-							st.giveItems(Class_Free_Battle_Certificate, 1);
-						}
-						break;
-					}
-					case TEAMS:
-					{
-						matches = st.getInt("teams") + 1;
-						st.set("teams", String.valueOf(matches));
-						if ((matches == 5) && !st.hasQuestItems(Team_Event_Certificate))
-						{
-							st.giveItems(Team_Event_Certificate, 1);
-						}
-						break;
-					}
-				}
-			}
-		}
-	}
-	
-	@Override
-	public void onOlympiadLose(L2PcInstance loser, CompetitionType type)
-	{
-		if (loser != null)
-		{
-			final QuestState st = loser.getQuestState(getName());
-			if ((st != null) && st.isStarted())
-			{
-				int matches;
-				switch (type)
-				{
-					case CLASSED:
-					{
-						matches = st.getInt("classed") + 1;
-						st.set("classed", String.valueOf(matches));
-						if (matches == 5)
-						{
-							st.giveItems(Class_Battle_Certificate, 1);
-						}
-						break;
-					}
-					case NON_CLASSED:
-					{
-						matches = st.getInt("nonclassed") + 1;
-						st.set("nonclassed", String.valueOf(matches));
-						if (matches == 5)
-						{
-							st.giveItems(Class_Free_Battle_Certificate, 1);
-						}
-						break;
-					}
-					case TEAMS:
-					{
-						matches = st.getInt("teams") + 1;
-						st.set("teams", String.valueOf(matches));
-						if (matches == 5)
-						{
-							st.giveItems(Team_Event_Certificate, 1);
-						}
-						break;
-					}
-				}
-			}
-		}
 	}
 	
 	public static void main(String[] args)

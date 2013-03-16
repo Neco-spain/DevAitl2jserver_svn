@@ -8,7 +8,6 @@ CREATE TABLE `minions` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `minions` VALUES
-(18908,22779,2,2),
 -- Naia Failan
 (18484,22422,4,4),
 (18491,18493,1,1),
@@ -564,11 +563,6 @@ INSERT INTO `minions` VALUES
 (29147, 29149, 2, 2),
 (25710, 25711, 2, 2),
 (25710, 25712, 2, 2);
-
--- Mithril Mines Minions (Temporary)
-INSERT INTO `minions` VALUES
-(22678, 22684, 1, 1),
-(22679, 22686, 1, 1);
 
 -- Giants Cave
 INSERT INTO `minions` VALUES

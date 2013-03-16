@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model;
 
@@ -207,20 +211,6 @@ public final class L2World
 		return _allPlayers.forEachValue(proc);
 	}
 	
-	public final L2PcInstance[] getAllPls()
-	{
-		_allPlayers.lock();
-		
-		try
-		{
-			return _allPlayers.values(new L2PcInstance[_allPlayers.size()]);
-		}
-		finally
-		{
-			_allPlayers.unlock();
-		}
-	}
-	
 	/**
 	 * Return how many players are online.
 	 * @return number of online players.
@@ -388,8 +378,6 @@ public final class L2World
 			return;
 		}
 		
-		// removeObject(object);
-		
 		if (oldRegion != null)
 		{
 			// Remove the object from the L2ObjectHashSet(L2Object) _visibleObjects of L2WorldRegion
@@ -399,13 +387,12 @@ public final class L2World
 			// Go through all surrounding L2WorldRegion L2Characters
 			for (L2WorldRegion reg : oldRegion.getSurroundingRegions())
 			{
-				Collection<L2Object> vObj = reg.getVisibleObjects().values();
+				final Collection<L2Object> vObj = reg.getVisibleObjects().values();
 				for (L2Object obj : vObj)
 				{
 					if (obj != null)
 					{
 						obj.getKnownList().removeKnownObject(object);
-						object.getKnownList().removeKnownObject(obj);
 					}
 				}
 			}
@@ -423,12 +410,7 @@ public final class L2World
 				{
 					removeFromAllPlayers(player);
 				}
-				
-				// If selected L2Object is a GM L2PcInstance, remove it from Set(L2PcInstance) _gmList of GmListTable
-				// if (((L2PcInstance)object).isGM())
-				// GmListTable.getInstance().deleteGm((L2PcInstance)object);
 			}
-			
 		}
 	}
 	
@@ -708,17 +690,5 @@ public final class L2World
 	private static class SingletonHolder
 	{
 		protected static final L2World _instance = new L2World();
-	}
-	
-	public L2PcInstance findPlayer(int objectId)
-	{
-		L2Object obj = _allObjects.get(objectId);
-		
-		if (obj instanceof L2PcInstance)
-		{
-			return (L2PcInstance) obj;
-		}
-		
-		return null;
 	}
 }

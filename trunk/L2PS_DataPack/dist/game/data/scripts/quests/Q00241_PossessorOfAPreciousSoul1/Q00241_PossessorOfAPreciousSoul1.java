@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00241_PossessorOfAPreciousSoul1;
 
@@ -38,14 +42,13 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest
 	private static final int VIRGIL = 31742;
 	private static final int KASSANDRA = 31743;
 	private static final int OGMAR = 31744;
-	
+	// Mobs
 	private static final int BARAHAM = 27113;
 	private static final int MALRUK_SUCCUBUS_1 = 20244;
 	private static final int MALRUK_SUCCUBUS_TUREN_1 = 20245;
 	private static final int MALRUK_SUCCUBUS_2 = 20283;
 	private static final int MALRUK_SUCCUBUS_TUREN_2 = 20284;
 	private static final int TAIK_ORC_SUPPLY_LEADER = 20669;
-	
 	// Items
 	private static final int LEGEND_OF_SEVENTEEN = 7587;
 	private static final int MALRUK_SUCCUBUS_CLAW = 7597;
@@ -54,10 +57,18 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest
 	private static final int CRIMSON_MOSS = 7598;
 	private static final int RAHORAKTIS_MEDICINE = 7599;
 	private static final int VIRGILS_LETTER = 7677;
-	
 	// Rewards
 	private static final int CRIMSON_MOSS_CHANCE = 30;
 	private static final int MALRUK_SUCCUBUS_CLAW_CHANCE = 60;
+	
+	public Q00241_PossessorOfAPreciousSoul1(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(TALIEN);
+		addTalkId(TALIEN, STEDMIEL, GABRIELLE, GILMORE, KANTABILON, RAHORAKTI, CARADINE, KASSANDRA, VIRGIL, OGMAR);
+		addKillId(BARAHAM, MALRUK_SUCCUBUS_1, MALRUK_SUCCUBUS_TUREN_1, MALRUK_SUCCUBUS_2, MALRUK_SUCCUBUS_TUREN_2, TAIK_ORC_SUPPLY_LEADER);
+		registerQuestItems(LEGEND_OF_SEVENTEEN, MALRUK_SUCCUBUS_CLAW, ECHO_CRYSTAL, POETRY_BOOK, CRIMSON_MOSS, RAHORAKTIS_MEDICINE);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -78,23 +89,32 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest
 				st.startQuest();
 				break;
 			case "30753-02.html":
-				st.setCond(2, true);
+				if (st.isCond(1))
+				{
+					st.setCond(2, true);
+				}
 				break;
 			case "30754-02.html":
-				st.setCond(3, true);
+				if (st.isCond(2))
+				{
+					st.setCond(3, true);
+				}
 				break;
 			case "31739-05.html":
-				if (st.hasQuestItems(LEGEND_OF_SEVENTEEN))
+				if (st.isCond(4) && st.hasQuestItems(LEGEND_OF_SEVENTEEN))
 				{
 					st.takeItems(LEGEND_OF_SEVENTEEN, -1);
 					st.setCond(5, true);
 				}
 				break;
 			case "31042-02.html":
-				st.setCond(6, true);
+				if (st.isCond(5))
+				{
+					st.setCond(6, true);
+				}
 				break;
 			case "31042-05.html":
-				if (st.getQuestItemsCount(MALRUK_SUCCUBUS_CLAW) >= 10)
+				if (st.isCond(7) && (st.getQuestItemsCount(MALRUK_SUCCUBUS_CLAW) >= 10))
 				{
 					st.takeItems(MALRUK_SUCCUBUS_CLAW, -1);
 					st.giveItems(ECHO_CRYSTAL, 1);
@@ -102,37 +122,46 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest
 				}
 				break;
 			case "31739-08.html":
-				if (st.hasQuestItems(ECHO_CRYSTAL))
+				if (st.isCond(8) && st.hasQuestItems(ECHO_CRYSTAL))
 				{
 					st.takeItems(ECHO_CRYSTAL, -1);
 					st.setCond(9, true);
 				}
 				break;
 			case "30692-02.html":
-				if (!st.hasQuestItems(POETRY_BOOK))
+				if (st.isCond(9) && !st.hasQuestItems(POETRY_BOOK))
 				{
 					st.giveItems(POETRY_BOOK, 1);
 					st.setCond(10, true);
 				}
 				break;
 			case "31739-11.html":
-				if (st.hasQuestItems(POETRY_BOOK))
+				if (st.isCond(10) && st.hasQuestItems(POETRY_BOOK))
 				{
 					st.takeItems(POETRY_BOOK, -1);
 					st.setCond(11, true);
 				}
 				break;
 			case "31742-02.html":
-				st.setCond(12, true);
+				if (st.isCond(11))
+				{
+					st.setCond(12, true);
+				}
 				break;
 			case "31744-02.html":
-				st.setCond(13, true);
+				if (st.isCond(12))
+				{
+					st.setCond(13, true);
+				}
 				break;
 			case "31336-02.html":
-				st.setCond(14, true);
+				if (st.isCond(13))
+				{
+					st.setCond(14, true);
+				}
 				break;
 			case "31336-05.html":
-				if (st.getQuestItemsCount(CRIMSON_MOSS) >= 5)
+				if (st.isCond(15) && (st.getQuestItemsCount(CRIMSON_MOSS) >= 5))
 				{
 					st.takeItems(CRIMSON_MOSS, -1);
 					st.giveItems(RAHORAKTIS_MEDICINE, 1);
@@ -140,14 +169,17 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest
 				}
 				break;
 			case "31743-02.html":
-				if (st.hasQuestItems(RAHORAKTIS_MEDICINE))
+				if (st.isCond(16) && st.hasQuestItems(RAHORAKTIS_MEDICINE))
 				{
 					st.takeItems(RAHORAKTIS_MEDICINE, -1);
 					st.setCond(17, true);
 				}
 				break;
 			case "31742-05.html":
-				st.setCond(18, true);
+				if (st.isCond(17))
+				{
+					st.setCond(18, true);
+				}
 				break;
 			case "31740-05.html":
 				if (st.getCond() >= 18)
@@ -159,6 +191,71 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest
 				break;
 		}
 		return event;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember;
+		final QuestState st;
+		switch (npc.getNpcId())
+		{
+			case BARAHAM:
+				partyMember = getRandomPartyMember(player, 3);
+				if (partyMember == null)
+				{
+					return null;
+				}
+				
+				st = partyMember.getQuestState(getName());
+				st.giveItems(LEGEND_OF_SEVENTEEN, 1);
+				st.setCond(4, true);
+				break;
+			case MALRUK_SUCCUBUS_1:
+			case MALRUK_SUCCUBUS_TUREN_1:
+			case MALRUK_SUCCUBUS_2:
+			case MALRUK_SUCCUBUS_TUREN_2:
+				partyMember = getRandomPartyMember(player, 6);
+				if (partyMember == null)
+				{
+					return null;
+				}
+				st = partyMember.getQuestState(getName());
+				if ((MALRUK_SUCCUBUS_CLAW_CHANCE >= getRandom(100)) && (st.getQuestItemsCount(MALRUK_SUCCUBUS_CLAW) < 10))
+				{
+					st.giveItems(MALRUK_SUCCUBUS_CLAW, 1);
+					if (st.getQuestItemsCount(MALRUK_SUCCUBUS_CLAW) == 10)
+					{
+						st.setCond(7, true);
+					}
+					else
+					{
+						st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+					}
+				}
+				break;
+			case TAIK_ORC_SUPPLY_LEADER:
+				partyMember = getRandomPartyMember(player, 14);
+				if (partyMember == null)
+				{
+					return null;
+				}
+				st = partyMember.getQuestState(getName());
+				if ((CRIMSON_MOSS_CHANCE >= getRandom(100)) && (st.getQuestItemsCount(CRIMSON_MOSS) < 5))
+				{
+					st.giveItems(CRIMSON_MOSS, 1);
+					if (st.getQuestItemsCount(CRIMSON_MOSS) == 5)
+					{
+						st.setCond(15, true);
+					}
+					else
+					{
+						st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+					}
+				}
+				break;
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -346,88 +443,6 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember;
-		final QuestState st;
-		switch (npc.getNpcId())
-		{
-			case BARAHAM:
-				partyMember = getRandomPartyMember(player, "3");
-				if (partyMember == null)
-				{
-					return null;
-				}
-				
-				st = partyMember.getQuestState(getName());
-				st.giveItems(LEGEND_OF_SEVENTEEN, 1);
-				st.setCond(4, true);
-				break;
-			case MALRUK_SUCCUBUS_1:
-			case MALRUK_SUCCUBUS_TUREN_1:
-			case MALRUK_SUCCUBUS_2:
-			case MALRUK_SUCCUBUS_TUREN_2:
-				partyMember = getRandomPartyMember(player, "6");
-				if (partyMember == null)
-				{
-					return null;
-				}
-				st = partyMember.getQuestState(getName());
-				if ((MALRUK_SUCCUBUS_CLAW_CHANCE >= getRandom(100)) && (st.getQuestItemsCount(MALRUK_SUCCUBUS_CLAW) < 10))
-				{
-					st.giveItems(MALRUK_SUCCUBUS_CLAW, 1);
-					if (st.getQuestItemsCount(MALRUK_SUCCUBUS_CLAW) == 10)
-					{
-						st.setCond(7, true);
-					}
-					else
-					{
-						st.playSound("ItemSound.quest_itemget");
-					}
-				}
-				break;
-			case TAIK_ORC_SUPPLY_LEADER:
-				partyMember = getRandomPartyMember(player, "14");
-				if (partyMember == null)
-				{
-					return null;
-				}
-				st = partyMember.getQuestState(getName());
-				if ((CRIMSON_MOSS_CHANCE >= getRandom(100)) && (st.getQuestItemsCount(CRIMSON_MOSS) < 5))
-				{
-					st.giveItems(CRIMSON_MOSS, 1);
-					if (st.getQuestItemsCount(CRIMSON_MOSS) == 5)
-					{
-						st.setCond(15, true);
-					}
-					else
-					{
-						st.playSound("ItemSound.quest_itemget");
-					}
-				}
-				break;
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00241_PossessorOfAPreciousSoul1(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(TALIEN);
-		addTalkId(TALIEN, STEDMIEL, GABRIELLE, GILMORE, KANTABILON, RAHORAKTI, CARADINE, KASSANDRA, VIRGIL, OGMAR);
-		addKillId(BARAHAM, MALRUK_SUCCUBUS_1, MALRUK_SUCCUBUS_TUREN_1, MALRUK_SUCCUBUS_2, MALRUK_SUCCUBUS_TUREN_2, TAIK_ORC_SUPPLY_LEADER);
-		questItemIds = new int[]
-		{
-			LEGEND_OF_SEVENTEEN,
-			MALRUK_SUCCUBUS_CLAW,
-			ECHO_CRYSTAL,
-			POETRY_BOOK,
-			CRIMSON_MOSS,
-			RAHORAKTIS_MEDICINE
-		};
 	}
 	
 	public static void main(String[] args)

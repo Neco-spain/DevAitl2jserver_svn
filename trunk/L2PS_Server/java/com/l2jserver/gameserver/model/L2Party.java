@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model;
 
@@ -28,10 +32,6 @@ import com.l2jserver.gameserver.SevenSignsFestival;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.SkillTable;
-import com.l2jserver.gameserver.eventsmanager.PcCafePointsManager;
-import com.l2jserver.gameserver.eventsmanager.UCPoint;
-import com.l2jserver.gameserver.eventsmanager.UCTeam;
-import com.l2jserver.gameserver.eventsmanager.UCWaiting;
 import com.l2jserver.gameserver.instancemanager.DuelManager;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -70,7 +70,6 @@ import com.l2jserver.util.Rnd;
  */
 public class L2Party extends AbstractPlayerGroup
 {
-	private Object _ucState = null;
 	private static final Logger _log = Logger.getLogger(L2Party.class.getName());
 	private static final double[] BONUS_EXP_SP =
 	{
@@ -536,46 +535,6 @@ public class L2Party extends AbstractPlayerGroup
 				broadcastPacket(msg);
 				broadcastToPartyMembersNewLeader();
 			}
-			if (getUCState() != null)
-			{
-				if (getUCState() instanceof UCWaiting)
-				{
-					UCWaiting waiting = (UCWaiting) getUCState();
-					if ((_members == null) || (_members.size() < Config.UC_PARTY_LIMIT))
-					{
-						waiting.setParty(null);
-						waiting.clean();
-					}
-				}
-				else if (getUCState() instanceof UCTeam)
-				{
-					UCTeam team = (UCTeam) getUCState();
-					UCTeam otherTeam = team.getOtherTeam();
-					
-					if ((_members == null) || (_members.size() < Config.UC_PARTY_LIMIT))
-					{
-						UCPoint[] points = team.getBaseArena().getPoints();
-						for (UCPoint point : points)
-						{
-							point.actionDoors(false);
-						}
-						
-						team.setParty(null);
-						team.clean(true);
-						
-						otherTeam.setStatus(UCTeam.WIN);
-					}
-					
-					if (player.isDead())
-					{
-						UCTeam.resPlayer(player);
-					}
-					
-					player.setTeam(0);
-					player.cleanUCStats();
-					player.teleToLocation(team.getBaseArena().getLocation());
-				}
-			}
 			else if (getMembers().size() == 1)
 			{
 				if (isInCommandChannel())
@@ -760,7 +719,7 @@ public class L2Party extends AbstractPlayerGroup
 		
 		looter.addItem(spoil ? "Sweep" : "Party", item.getItemId(), item.getCount(), player, true);
 		
-		// Send messages to other aprty members about reward
+		// Send messages to other party members about reward
 		if (item.getCount() > 1)
 		{
 			SystemMessage msg = spoil ? SystemMessage.getSystemMessage(SystemMessageId.C1_SWEEPED_UP_S3_S2) : SystemMessage.getSystemMessage(SystemMessageId.C1_OBTAINED_S3_S2);
@@ -818,33 +777,22 @@ public class L2Party extends AbstractPlayerGroup
 		FastList.recycle((FastList<?>) ToReward);
 	}
 	
-	/**
-	 * Distribute Experience and SP rewards to L2PcInstance Party members in the known area of the last attacker.<BR>
-	 * <BR>
-	 * <B><U> Actions</U> :</B><BR>
-	 * <BR>
-	 * <li>Get the L2PcInstance owner of the L2ServitorInstance (if necessary)</li> <li>Calculate the Experience and SP reward distribution rate</li> <li>Add Experience and SP to the L2PcInstance</li><BR>
-	 * <BR>
-	 * <FONT COLOR=#FF0000><B> <U>Caution</U> : This method DOESN'T GIVE rewards to L2PetInstance</B></FONT><BR>
-	 * <BR>
-	 * Exception are L2PetInstances that leech from the owner's XP; they get the exp indirectly, via the owner's exp gain<BR>
-	 * @param xpReward The Experience reward to distribute
-	 * @param spReward The SP reward to distribute
-	 * @param rewardedMembers The list of L2PcInstance to reward
-	 * @param topLvl
-	 * @param partyDmg
-	 * @param target
-	 */
-	public void distributeXpAndSp(long xpReward, int spReward, List<L2Playable> rewardedMembers, int topLvl, int partyDmg, L2Attackable target)
+	public void distributeXpAndSp(long xpReward_pr, int spReward_pr, long xpReward, int spReward, List<L2Playable> rewardedMembers, int topLvl, int partyDmg, L2Attackable target)
 	{
 		List<L2Playable> validMembers = getValidMembers(rewardedMembers, topLvl);
 		
 		float penalty;
 		double sqLevel;
+		int temp_sp;
+		long temp_exp;
 		double preCalculation;
 		
 		xpReward *= getExpBonus(validMembers.size());
 		spReward *= getSpBonus(validMembers.size());
+		xpReward_pr *= getExpBonus(validMembers.size());
+		spReward_pr *= getSpBonus(validMembers.size());
+		temp_exp = xpReward;
+		temp_sp = spReward;
 		
 		double sqLevelSum = 0;
 		for (L2Playable character : validMembers)
@@ -860,9 +808,20 @@ public class L2Party extends AbstractPlayerGroup
 		{
 			for (L2Character member : rewardedMembers)
 			{
-				if (member.isDead() || !((L2PcInstance) member).canGetExpAndSp())
+				if (member.isDead())
 				{
 					continue;
+				}
+				
+				if (member.getPremiumService() == 1)
+				{
+					xpReward = xpReward_pr;
+					spReward = spReward_pr;
+				}
+				else
+				{
+					xpReward = temp_exp;
+					spReward = temp_sp;
 				}
 				
 				penalty = 0;
@@ -907,7 +866,6 @@ public class L2Party extends AbstractPlayerGroup
 						if (addexp > 0)
 						{
 							member.getActingPlayer().updateVitalityPoints(vitalityPoints, true, false);
-							PcCafePointsManager.getInstance().givePcCafePoint(((L2PcInstance) member), addexp);
 						}
 					}
 					else
@@ -1237,13 +1195,4 @@ public class L2Party extends AbstractPlayerGroup
 		return _members;
 	}
 	
-	public Object getUCState()
-	{
-		return _ucState;
-	}
-	
-	public void setUCState(Object uc)
-	{
-		_ucState = uc;
-	}
 }

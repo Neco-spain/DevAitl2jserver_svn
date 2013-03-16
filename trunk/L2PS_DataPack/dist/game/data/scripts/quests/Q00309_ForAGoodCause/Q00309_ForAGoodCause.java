@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00309_ForAGoodCause;
 
@@ -18,7 +22,6 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
-import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.network.serverpackets.RadarControl;
 import com.l2jserver.gameserver.util.Util;
 
@@ -29,9 +32,8 @@ import com.l2jserver.gameserver.util.Util;
  */
 public class Q00309_ForAGoodCause extends Quest
 {
-	// NPC's
+	// NPC
 	private static final int ATRA = 32647;
-	
 	// Mobs
 	private static final int CONTAMINATED_MUCROKIAN = 22654;
 	private static final int CHANGED_MUCROKIAN = 22655;
@@ -42,20 +44,16 @@ public class Q00309_ForAGoodCause extends Quest
 		22652,
 		22653
 	};
-	
 	// Quest Items
 	private static final int MUCROKIAN_HIDE = 14873;
 	private static final int FALLEN_MUCROKIAN_HIDE = 14874;
-	
 	private static final int MUCROKIAN_HIDE_CHANCE = 50;
 	private static final int FALLEN_HIDE_CHANCE = 50;
-	
 	// Rewards
 	private static final int REC_DYNASTY_EARRINGS_70 = 9985;
 	private static final int REC_DYNASTY_NECKLACE_70 = 9986;
 	private static final int REC_DYNASTY_RING_70 = 9987;
 	private static final int REC_DYNASTY_SIGIL_60 = 10115;
-	
 	private static final int REC_MOIRAI_CIRCLET_60 = 15777;
 	private static final int REC_MOIRAI_TUNIC_60 = 15780;
 	private static final int REC_MOIRAI_STOCKINGS_60 = 15783;
@@ -65,7 +63,6 @@ public class Q00309_ForAGoodCause extends Quest
 	private static final int REC_MOIRAI_EARRING_70 = 15814;
 	private static final int REC_MOIRAI_NECKLACE_70 = 15813;
 	private static final int REC_MOIRAI_RING_70 = 15812;
-	
 	private static final int[] MOIRAI_PIECES =
 	{
 		15647,
@@ -79,6 +76,14 @@ public class Q00309_ForAGoodCause extends Quest
 		15774
 	};
 	
+	public Q00309_ForAGoodCause(int id, String name, String descr)
+	{
+		super(id, name, descr);
+		addStartNpc(ATRA);
+		addTalkId(ATRA);
+		addKillId(MUCROKIANS);
+	}
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
@@ -91,9 +96,7 @@ public class Q00309_ForAGoodCause extends Quest
 		String htmltext = event;
 		if (event.equalsIgnoreCase("32647-05.html"))
 		{
-			st.setState(State.STARTED);
-			st.set("cond", "1");
-			st.playSound("ItemSound.quest_accept");
+			st.startQuest();
 			player.sendPacket(new RadarControl(0, 2, 77325, 205773, -3432));
 		}
 		else if (event.equalsIgnoreCase("claimreward"))
@@ -246,10 +249,61 @@ public class Q00309_ForAGoodCause extends Quest
 		}
 		else if (event.equalsIgnoreCase("32647-14.html") || event.equalsIgnoreCase("32647-07.html"))
 		{
-			st.playSound("ItemSound.quest_finish");
-			st.exitQuest(true);
+			st.exitQuest(true, true);
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if ((st != null) && (st.getInt("cond") == 1))
+		{
+			if (Util.contains(MUCROKIANS, npc.getNpcId()))
+			{
+				if (getRandom(100) < MUCROKIAN_HIDE_CHANCE)
+				{
+					st.giveItems(MUCROKIAN_HIDE, 1);
+					st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				}
+				else if ((npc.getNpcId() == CHANGED_MUCROKIAN) && (getRandom(100) < FALLEN_HIDE_CHANCE))
+				{
+					st.giveItems(FALLEN_MUCROKIAN_HIDE, 1);
+					st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				}
+				else if ((npc.getNpcId() == CONTAMINATED_MUCROKIAN) && (getRandom(100) < 10))
+				{
+					st.giveItems(MUCROKIAN_HIDE, 1);
+					st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				}
+			}
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	private String onPiecesExchangeRequest(QuestState st, int pieces, int event)
+	{
+		if (st.getQuestItemsCount(MUCROKIAN_HIDE) >= event)
+		{
+			st.giveItems(pieces, getRandom(1, 4));
+			st.takeItems(MUCROKIAN_HIDE, event);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_FINISH);
+			return "32647-16.html";
+		}
+		return "32647-15.html";
+	}
+	
+	private String onRecipeExchangeRequest(QuestState st, int recipe, int takeid, int quanty)
+	{
+		if (st.getQuestItemsCount(takeid) >= quanty)
+		{
+			st.giveItems(recipe, 1);
+			st.takeItems(takeid, quanty);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_FINISH);
+			return "32647-16.html";
+		}
+		return "32647-15.html";
 	}
 	
 	@Override
@@ -279,67 +333,6 @@ public class Q00309_ForAGoodCause extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if ((st != null) && (st.getInt("cond") == 1))
-		{
-			if (Util.contains(MUCROKIANS, npc.getNpcId()))
-			{
-				if (getRandom(100) < MUCROKIAN_HIDE_CHANCE)
-				{
-					st.giveItems(MUCROKIAN_HIDE, 1);
-					st.playSound("ItemSound.quest_itemget");
-				}
-				else if ((npc.getNpcId() == CHANGED_MUCROKIAN) && (getRandom(100) < FALLEN_HIDE_CHANCE))
-				{
-					st.giveItems(FALLEN_MUCROKIAN_HIDE, 1);
-					st.playSound("ItemSound.quest_itemget");
-				}
-				else if ((npc.getNpcId() == CONTAMINATED_MUCROKIAN) && (getRandom(100) < 10))
-				{
-					st.giveItems(MUCROKIAN_HIDE, 1);
-					st.playSound("ItemSound.quest_itemget");
-				}
-			}
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	private String onPiecesExchangeRequest(QuestState st, int pieces, int event)
-	{
-		if (st.getQuestItemsCount(MUCROKIAN_HIDE) >= event)
-		{
-			st.giveItems(pieces, getRandom(1, 4));
-			st.takeItems(MUCROKIAN_HIDE, event);
-			st.playSound("ItemSound.quest_finish");
-			return "32647-16.html";
-		}
-		return "32647-15.html";
-	}
-	
-	private String onRecipeExchangeRequest(QuestState st, int recipe, int takeid, int quanty)
-	{
-		if (st.getQuestItemsCount(takeid) >= quanty)
-		{
-			st.giveItems(recipe, 1);
-			st.takeItems(takeid, quanty);
-			st.playSound("ItemSound.quest_finish");
-			return "32647-16.html";
-		}
-		return "32647-15.html";
-	}
-	
-	public Q00309_ForAGoodCause(int id, String name, String descr)
-	{
-		super(id, name, descr);
-		
-		addStartNpc(ATRA);
-		addTalkId(ATRA);
-		addKillId(MUCROKIANS);
 	}
 	
 	public static void main(String[] args)

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.instancemanager;
 
@@ -93,8 +97,7 @@ public class RaidBossSpawnManager
 					spawnDat.setLocz(rset.getInt("loc_z"));
 					spawnDat.setAmount(rset.getInt("amount"));
 					spawnDat.setHeading(rset.getInt("heading"));
-					spawnDat.setRespawnMinDelay(rset.getInt("respawn_min_delay"));
-					spawnDat.setRespawnMaxDelay(rset.getInt("respawn_max_delay"));
+					spawnDat.setRespawnDelay(rset.getInt("respawn_delay"), rset.getInt("respawn_random"));
 					respawnTime = rset.getLong("respawn_time");
 					
 					addNewSpawn(spawnDat, respawnTime, rset.getDouble("currentHP"), rset.getDouble("currentMP"), false);
@@ -185,9 +188,9 @@ public class RaidBossSpawnManager
 		{
 			boss.setRaidStatus(StatusEnum.DEAD);
 			
-			final int respawnMinDelay = boss.getSpawn().getRespawnMinDelay();
-			final int respawnMaxDelay = boss.getSpawn().getRespawnMaxDelay();
-			final long respawnDelay = Rnd.get((int) (respawnMinDelay * 1000 * Config.RAID_MIN_RESPAWN_MULTIPLIER), (int) (respawnMaxDelay * 1000 * Config.RAID_MAX_RESPAWN_MULTIPLIER));
+			final int respawnMinDelay = (int) (boss.getSpawn().getRespawnMinDelay() * Config.RAID_MIN_RESPAWN_MULTIPLIER);
+			final int respawnMaxDelay = (int) (boss.getSpawn().getRespawnMaxDelay() * Config.RAID_MAX_RESPAWN_MULTIPLIER);
+			final int respawnDelay = Rnd.get(respawnMinDelay, respawnMaxDelay);
 			final long respawnTime = Calendar.getInstance().getTimeInMillis() + respawnDelay;
 			
 			info.set("currentHP", boss.getMaxHp());

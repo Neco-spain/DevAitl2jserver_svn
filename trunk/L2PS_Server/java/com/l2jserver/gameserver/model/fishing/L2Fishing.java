@@ -1,26 +1,28 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.fishing;
 
 import java.util.concurrent.Future;
 
-import com.l2jserver.Config;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.datatables.FishingMonstersData;
 import com.l2jserver.gameserver.datatables.NpcTable;
-import com.l2jserver.gameserver.eventsmanager.LeaderboardFisherman;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PenaltyMonsterInstance;
@@ -164,13 +166,7 @@ public class L2Fishing implements Runnable
 			{
 				_fisher.sendPacket(SystemMessageId.YOU_CAUGHT_SOMETHING);
 				_fisher.addItem("Fishing", _fishId, 1, null, true);
-				if (Config.RANK_FISHERMAN_ENABLED)
-					LeaderboardFisherman.getInstance().onCatch(_fisher.getObjectId(), _fisher.getName());
 			}
-		}
-		else if (Config.RANK_FISHERMAN_ENABLED)
-		{
-			LeaderboardFisherman.getInstance().onEscape(_fisher.getObjectId(), _fisher.getName());
 		}
 		_fisher.endFishing(win);
 		_fisher = null;

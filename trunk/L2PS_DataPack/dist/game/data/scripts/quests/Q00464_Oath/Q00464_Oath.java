@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00464_Oath;
 
@@ -52,6 +56,8 @@ public class Q00464_Oath extends Quest
 	private static final int STRONGBOX = 15537;
 	private static final int BOOK = 15538;
 	private static final int BOOK2 = 15539;
+	// Misc
+	private static final int MIN_LEVEL = 82;
 	
 	// Monsters
 	private static final Map<Integer, Integer> MOBS = new HashMap<>();
@@ -72,13 +78,24 @@ public class Q00464_Oath extends Quest
 		MOBS.put(22793, 5);
 	}
 	
+	public Q00464_Oath(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		for (int[] npc : NPC)
+		{
+			addTalkId(npc[0]);
+		}
+		addKillId(MOBS.keySet());
+		registerQuestItems(BOOK, BOOK2);
+	}
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
-		QuestState st = player.getQuestState(getName());
+		final QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
-			return getNoQuestMsg(player);
+			return null;
 		}
 		
 		String htmltext = event;
@@ -146,10 +163,70 @@ public class Q00464_Oath extends Quest
 	}
 	
 	@Override
+	public String onItemTalk(L2ItemInstance item, L2PcInstance player)
+	{
+		String htmltext = getNoQuestMsg(player);
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		boolean startQuest = false;
+		switch (st.getState())
+		{
+			case State.CREATED:
+				startQuest = true;
+				break;
+			case State.STARTED:
+				htmltext = "strongbox-02.html";
+				break;
+			case State.COMPLETED:
+				if (st.isNowAvailable())
+				{
+					st.setState(State.CREATED);
+					startQuest = true;
+				}
+				else
+				{
+					htmltext = "strongbox-03.html";
+				}
+				break;
+		}
+		
+		if (startQuest)
+		{
+			if (player.getLevel() >= MIN_LEVEL)
+			{
+				st.startQuest();
+				st.takeItems(STRONGBOX, 1);
+				st.giveItems(BOOK, 1);
+				htmltext = "strongbox-01.htm";
+			}
+			else
+			{
+				htmltext = "strongbox-00.htm";
+			}
+		}
+		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	{
+		if (getRandom(1000) < MOBS.get(npc.getNpcId()))
+		{
+			((L2MonsterInstance) npc).dropItem(killer, STRONGBOX, 1);
+		}
+		
+		return super.onKill(npc, killer, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(getName());
+		final QuestState st = player.getQuestState(getName());
 		
 		if ((st != null) && st.isStarted())
 		{
@@ -194,78 +271,6 @@ public class Q00464_Oath extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onItemTalk(L2ItemInstance item, L2PcInstance player)
-	{
-		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		boolean startQuest = false;
-		switch (st.getState())
-		{
-			case State.CREATED:
-				startQuest = true;
-				break;
-			case State.STARTED:
-				htmltext = "strongbox-02.html";
-				break;
-			case State.COMPLETED:
-				if (st.isNowAvailable())
-				{
-					st.setState(State.CREATED);
-					startQuest = true;
-				}
-				else
-				{
-					htmltext = "strongbox-03.html";
-				}
-				break;
-		}
-		
-		if (startQuest)
-		{
-			if (player.getLevel() >= 82)
-			{
-				st.startQuest();
-				st.takeItems(STRONGBOX, 1);
-				st.giveItems(BOOK, 1);
-				htmltext = "strongbox-01.htm";
-			}
-			else
-			{
-				htmltext = "strongbox-00.htm";
-			}
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isPet)
-	{
-		if (getRandom(1000) < MOBS.get(npc.getNpcId()))
-		{
-			((L2MonsterInstance) npc).dropItem(killer, STRONGBOX, 1);
-		}
-		
-		return super.onKill(npc, killer, isPet);
-	}
-	
-	public Q00464_Oath(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		for (int[] npc : NPC)
-		{
-			addTalkId(npc[0]);
-		}
-		addKillId(MOBS.keySet());
-		
-		registerQuestItems(BOOK, BOOK2);
 	}
 	
 	public static void main(String[] args)

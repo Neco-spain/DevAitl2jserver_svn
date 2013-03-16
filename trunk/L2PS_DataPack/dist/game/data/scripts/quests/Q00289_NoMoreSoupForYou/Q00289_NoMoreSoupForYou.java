@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00289_NoMoreSoupForYou;
 
@@ -29,9 +33,12 @@ import com.l2jserver.gameserver.util.Util;
  */
 public class Q00289_NoMoreSoupForYou extends Quest
 {
+	// NPC
 	public static final int STAN = 30200;
-	public static final int RATE = 5;
+	// Item
 	public static final int SOUP = 15712;
+	// Misc
+	public static final int RATE = 5;
 	
 	private static final int[] MOBS =
 	{
@@ -153,19 +160,9 @@ public class Q00289_NoMoreSoupForYou extends Quest
 	public Q00289_NoMoreSoupForYou(int id, String name, String descr)
 	{
 		super(id, name, descr);
-		
 		addStartNpc(STAN);
 		addTalkId(STAN);
-		
-		for (int i : MOBS)
-		{
-			addKillId(i);
-		}
-	}
-	
-	public static void main(String[] args)
-	{
-		new Q00289_NoMoreSoupForYou(289, Q00289_NoMoreSoupForYou.class.getSimpleName(), "No More Soup For You");
+		addKillId(MOBS);
 	}
 	
 	@Override
@@ -184,9 +181,7 @@ public class Q00289_NoMoreSoupForYou extends Quest
 		{
 			if (event.equalsIgnoreCase("30200-03.htm"))
 			{
-				st.set("cond", "1");
-				st.setState(State.STARTED);
-				st.playSound("ItemSound.quest_accept");
+				st.startQuest();
 			}
 			else if (event.equalsIgnoreCase("30200-05.htm"))
 			{
@@ -194,7 +189,7 @@ public class Q00289_NoMoreSoupForYou extends Quest
 				{
 					st.giveItems(WEAPONS[c][0], WEAPONS[c][1]);
 					st.takeItems(SOUP, 500);
-					st.playSound("ItemSound.quest_accept");
+					st.playSound(QuestSound.ITEMSOUND_QUEST_MIDDLE);
 					htmltext = "30200-04.htm";
 				}
 				else
@@ -208,7 +203,7 @@ public class Q00289_NoMoreSoupForYou extends Quest
 				{
 					st.giveItems(ARMORS[b][0], ARMORS[b][1]);
 					st.takeItems(SOUP, 100);
-					st.playSound("ItemSound.quest_accept");
+					st.playSound(QuestSound.ITEMSOUND_QUEST_MIDDLE);
 					htmltext = "30200-04.htm";
 				}
 				else
@@ -218,6 +213,23 @@ public class Q00289_NoMoreSoupForYou extends Quest
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		QuestState st = player.getQuestState(getName());
+		int npcId = npc.getNpcId();
+		if ((st == null) || (st.getState() != State.STARTED))
+		{
+			return null;
+		}
+		if (Util.contains(MOBS, npcId))
+		{
+			st.giveItems(SOUP, 1 * RATE);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -236,26 +248,12 @@ public class Q00289_NoMoreSoupForYou extends Quest
 			{
 				case State.CREATED:
 					QuestState _prev = player.getQuestState(Q00252_ItSmellsDelicious.class.getSimpleName());
-					if ((_prev != null) && _prev.isCompleted() && (player.getLevel() >= 82))
-					{
-						htmltext = "30200-01.htm";
-					}
-					else
-					{
-						htmltext = "30200-00.htm";
-					}
+					htmltext = ((_prev != null) && _prev.isCompleted() && (player.getLevel() >= 82)) ? "30200-01.htm" : "30200-00.htm";
 					break;
 				case State.STARTED:
-					if (st.getInt("cond") == 1)
+					if (st.isCond(1))
 					{
-						if (st.getQuestItemsCount(SOUP) >= 100)
-						{
-							htmltext = "30200-04.htm";
-						}
-						else
-						{
-							htmltext = "30200-03.htm";
-						}
+						htmltext = (st.getQuestItemsCount(SOUP) >= 100) ? "30200-04.htm" : "30200-03.htm";
 					}
 					break;
 			}
@@ -263,20 +261,8 @@ public class Q00289_NoMoreSoupForYou extends Quest
 		return htmltext;
 	}
 	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
+	public static void main(String[] args)
 	{
-		QuestState st = player.getQuestState(getName());
-		int npcId = npc.getNpcId();
-		if ((st == null) || (st.getState() != State.STARTED))
-		{
-			return null;
-		}
-		if (Util.contains(MOBS, npcId))
-		{
-			st.giveItems(SOUP, 1 * RATE);
-			st.playSound("ItemSound.quest_itemget");
-		}
-		return super.onKill(npc, player, isPet);
+		new Q00289_NoMoreSoupForYou(289, Q00289_NoMoreSoupForYou.class.getSimpleName(), "No More Soup For You");
 	}
 }

@@ -1,68 +1,79 @@
+/*
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00009_IntoTheCityOfHumans;
 
-import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.base.Race;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 
 /**
- * Author: RobikBobik L2PS Team
+ * Into the City of Humans (9)
+ * @author malyelfik
  */
 public class Q00009_IntoTheCityOfHumans extends Quest
 {
-	private final static int QUEST_NPC[] =
-	{
-		30583,
-		30571,
-		30576
-	};
-	private final static int QUEST_REWARD[] =
-	{
-		7559,
-		7570
-	};
+	// NPCs
+	private static final int PETUKAI = 30583;
+	private static final int TANAPI = 30571;
+	private static final int TAMIL = 30576;
+	// Items
+	private static final int SCROLL_OF_ESCAPE_GIRAN = 7559;
+	private static final int MARK_OF_TRAVELER = 7570;
+	// Misc
+	private static final int MIN_LEVEL = 3;
 	
-	public Q00009_IntoTheCityOfHumans(int questId, String name, String descr)
+	private Q00009_IntoTheCityOfHumans(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		addStartNpc(QUEST_NPC[0]);
-		for (int npcId : QUEST_NPC)
-		{
-			addTalkId(npcId);
-		}
+		addStartNpc(PETUKAI);
+		addTalkId(PETUKAI, TANAPI, TAMIL);
 	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		
 		String htmltext = event;
-		
-		QuestState qs = player.getQuestState(getName());
-		if (qs == null)
+		switch (event)
 		{
-			return htmltext;
-		}
-		
-		if (event.equalsIgnoreCase("30583-03.htm"))
-		{
-			qs.set("cond", "1");
-			qs.setState(State.STARTED);
-			qs.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("30571-02.htm"))
-		{
-			qs.set("cond", "2");
-			qs.playSound("ItemSound.quest_middle");
-		}
-		else if (event.equalsIgnoreCase("30576-02.htm"))
-		{
-			qs.giveItems(QUEST_REWARD[0], (long) Config.RATE_QUEST_REWARD);
-			qs.giveItems(QUEST_REWARD[1], 1);
-			qs.unset("cond");
-			qs.exitQuest(false);
-			qs.playSound("ItemSound.quest_finish");
+			case "30583-04.htm":
+				st.startQuest();
+				break;
+			case "30576-02.html":
+				st.giveItems(MARK_OF_TRAVELER, 1);
+				st.giveItems(SCROLL_OF_ESCAPE_GIRAN, 1);
+				st.exitQuest(false, true);
+				break;
+			case "30571-02.html":
+				st.setCond(2, true);
+				break;
+			default:
+				htmltext = null;
+				break;
 		}
 		return htmltext;
 	}
@@ -70,57 +81,42 @@ public class Q00009_IntoTheCityOfHumans extends Quest
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
-		QuestState qs = player.getQuestState(getName());
-		if (qs == null)
-		{
-			qs = newQuestState(player);
-		}
 		String htmltext = getNoQuestMsg(player);
-		final int cond = qs.getInt("cond");
-		final int npcId = npc.getNpcId();
-		
-		switch (qs.getState())
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
 		{
-			case State.COMPLETED:
-				htmltext = getAlreadyCompletedMsg(player);
-				break;
-			case State.CREATED:
-				if (npcId == QUEST_NPC[0])
+			return htmltext;
+		}
+		
+		switch (npc.getNpcId())
+		{
+			case PETUKAI:
+				switch (st.getState())
 				{
-					if ((player.getRace().ordinal() == 3) && (player.getLevel() >= 3))
-					{
-						htmltext = "30583-02.htm";
-					}
-					else
-					{
-						htmltext = "30583-01.htm";
-						qs.exitQuest(true);
-					}
+					case State.CREATED:
+						htmltext = (player.getLevel() >= MIN_LEVEL) ? (player.getRace() == Race.Orc) ? "30583-01.htm" : "30583-02.html" : "30583-03.html";
+						break;
+					case State.STARTED:
+						if (st.isCond(1))
+						{
+							htmltext = "30583-05.html";
+						}
+						break;
+					case State.COMPLETED:
+						htmltext = getAlreadyCompletedMsg(player);
+						break;
 				}
 				break;
-			case State.STARTED:
-				switch (cond)
+			case TANAPI:
+				if (st.isStarted())
 				{
-					case 1:
-						if (npcId == QUEST_NPC[0])
-						{
-							htmltext = "30583-04.htm";
-						}
-						else if (npcId == QUEST_NPC[1])
-						{
-							htmltext = "30571-01.htm";
-						}
-						break;
-					case 2:
-						if (npcId == QUEST_NPC[1])
-						{
-							htmltext = "30571-03.htm";
-						}
-						else if (npcId == QUEST_NPC[2])
-						{
-							htmltext = "30576-01.htm";
-						}
-						break;
+					htmltext = (st.isCond(1)) ? "30571-01.html" : "30571-03.html";
+				}
+				break;
+			case TAMIL:
+				if (st.isStarted() && st.isCond(2))
+				{
+					htmltext = "30576-01.html";
 				}
 				break;
 		}
@@ -129,6 +125,6 @@ public class Q00009_IntoTheCityOfHumans extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00009_IntoTheCityOfHumans(9, Q00009_IntoTheCityOfHumans.class.getSimpleName(), "");
+		new Q00009_IntoTheCityOfHumans(9, Q00009_IntoTheCityOfHumans.class.getSimpleName(), "Into the City of Humans");
 	}
 }

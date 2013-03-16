@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00401_PathToWarrior;
 
@@ -29,7 +33,7 @@ import com.l2jserver.gameserver.network.serverpackets.SocialAction;
  */
 public class Q00401_PathToWarrior extends Quest
 {
-	// Item
+	// Items
 	private static final int AURONSLETTER = 1138;
 	private static final int WARRIORGUILDMARK = 1139;
 	private static final int RUSTEDBRONZESWORD1 = 1140;
@@ -38,8 +42,7 @@ public class Q00401_PathToWarrior extends Quest
 	private static final int SIMPLONSLETTER = 1143;
 	private static final int POISONSPIDERLEG = 1144;
 	private static final int MEDALLIONOFWARRIOR = 1145;
-	
-	// Npc
+	// NPCs
 	private static final int AURON = 30010;
 	private static final int SIMPLON = 30253;
 	private static final int[] MONSTERS =
@@ -50,12 +53,20 @@ public class Q00401_PathToWarrior extends Quest
 		20043
 	};
 	
+	public Q00401_PathToWarrior(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(AURON);
+		addTalkId(AURON, SIMPLON);
+		addKillId(MONSTERS);
+		registerQuestItems(AURONSLETTER, WARRIORGUILDMARK, RUSTEDBRONZESWORD1, RUSTEDBRONZESWORD2, RUSTEDBRONZESWORD3, SIMPLONSLETTER, POISONSPIDERLEG);
+	}
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
 		QuestState st = player.getQuestState(getName());
-		
 		if (st == null)
 		{
 			return htmltext;
@@ -121,6 +132,57 @@ public class Q00401_PathToWarrior extends Quest
 			htmltext = "30010-11.html";
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	{
+		QuestState st = killer.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		
+		switch (st.getCond())
+		{
+			case 2:
+			{
+				if ((npc.getNpcId() == MONSTERS[0]) || (npc.getNpcId() == MONSTERS[2]))
+				{
+					if (st.getQuestItemsCount(RUSTEDBRONZESWORD1) < 10)
+					{
+						if (getRandom(10) < 4)
+						{
+							st.giveItems(RUSTEDBRONZESWORD1, 1);
+							st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+						}
+					}
+					if (st.getQuestItemsCount(RUSTEDBRONZESWORD1) == 10)
+					{
+						st.setCond(3, true);
+					}
+				}
+				break;
+			}
+			case 5:
+			{
+				if (((st.getItemEquipped(Inventory.PAPERDOLL_RHAND) == RUSTEDBRONZESWORD3) && (npc.getNpcId() == MONSTERS[1])) || (npc.getNpcId() == MONSTERS[3]))
+				{
+					if (st.getQuestItemsCount(POISONSPIDERLEG) < 20)
+					{
+						st.giveItems(POISONSPIDERLEG, 1);
+						st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+					}
+					
+					if (st.getQuestItemsCount(POISONSPIDERLEG) == 20)
+					{
+						st.setCond(6, true);
+					}
+				}
+			}
+		}
+		
+		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -228,78 +290,6 @@ public class Q00401_PathToWarrior extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isPet)
-	{
-		QuestState st = killer.getQuestState(getName());
-		if (st == null)
-		{
-			return null;
-		}
-		
-		switch (st.getCond())
-		{
-			case 2:
-			{
-				if ((npc.getNpcId() == MONSTERS[0]) || (npc.getNpcId() == MONSTERS[2]))
-				{
-					if (st.getQuestItemsCount(RUSTEDBRONZESWORD1) < 10)
-					{
-						if (getRandom(10) < 4)
-						{
-							st.giveItems(RUSTEDBRONZESWORD1, 1);
-							st.playSound("ItemSound.quest_itemget");
-						}
-					}
-					if (st.getQuestItemsCount(RUSTEDBRONZESWORD1) == 10)
-					{
-						st.setCond(3, true);
-					}
-				}
-				break;
-			}
-			case 5:
-			{
-				if ((st.getItemEquipped(Inventory.PAPERDOLL_RHAND) == RUSTEDBRONZESWORD3) && (npc.getNpcId() == MONSTERS[1]) || (npc.getNpcId() == MONSTERS[3]))
-				{
-					if (st.getQuestItemsCount(POISONSPIDERLEG) < 20)
-					{
-						st.giveItems(POISONSPIDERLEG, 1);
-						st.playSound("ItemSound.quest_itemget");
-					}
-					
-					if (st.getQuestItemsCount(POISONSPIDERLEG) == 20)
-					{
-						st.setCond(6, true);
-					}
-				}
-			}
-		}
-		
-		return super.onKill(npc, killer, isPet);
-	}
-	
-	public Q00401_PathToWarrior(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(AURON);
-		addTalkId(AURON);
-		addTalkId(SIMPLON);
-		addKillId(MONSTERS);
-		
-		questItemIds = new int[]
-		{
-			AURONSLETTER,
-			WARRIORGUILDMARK,
-			RUSTEDBRONZESWORD1,
-			RUSTEDBRONZESWORD2,
-			RUSTEDBRONZESWORD3,
-			SIMPLONSLETTER,
-			POISONSPIDERLEG
-		};
 	}
 	
 	public static void main(String[] args)

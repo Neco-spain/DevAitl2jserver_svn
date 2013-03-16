@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q10288_SecretMission;
 
@@ -30,9 +34,17 @@ public class Q10288_SecretMission extends Quest
 	private static final int DOMINIC = 31350;
 	private static final int AQUILANI = 32780;
 	private static final int GREYMORE = 32757;
-	
-	// Items
+	// Item
 	private static final int LETTER = 15529;
+	
+	public Q10288_SecretMission(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(AQUILANI, DOMINIC);
+		addFirstTalkId(AQUILANI);
+		addTalkId(DOMINIC, GREYMORE, AQUILANI);
+		registerQuestItems(LETTER);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -82,6 +94,18 @@ public class Q10288_SecretMission extends Quest
 	}
 	
 	@Override
+	public String onFirstTalk(L2Npc npc, L2PcInstance player)
+	{
+		QuestState st = player.getQuestState(getName());
+		// dialog only changes when you talk to Aquilani after quest completion
+		if ((st != null) && st.isCompleted())
+		{
+			return "32780-05.html";
+		}
+		return "data/html/default/32780.htm";
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
@@ -91,7 +115,6 @@ public class Q10288_SecretMission extends Quest
 			return htmltext;
 		}
 		
-		final int cond = st.getCond();
 		switch (npc.getNpcId())
 		{
 			case DOMINIC:
@@ -114,11 +137,11 @@ public class Q10288_SecretMission extends Quest
 			case AQUILANI:
 				if (st.isStarted())
 				{
-					if ((cond == 1) && st.hasQuestItems(LETTER))
+					if (st.isCond(1) && st.hasQuestItems(LETTER))
 					{
 						htmltext = "32780-01.html";
 					}
-					else if (cond == 2)
+					else if (st.isCond(2))
 					{
 						htmltext = "32780-04.html";
 					}
@@ -132,31 +155,6 @@ public class Q10288_SecretMission extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onFirstTalk(L2Npc npc, L2PcInstance player)
-	{
-		QuestState st = player.getQuestState(getName());
-		// dialog only changes when you talk to Aquilani after quest completion
-		if ((st != null) && st.isCompleted())
-		{
-			return "32780-05.html";
-		}
-		
-		return "data/html/default/32780.htm";
-	}
-	
-	public Q10288_SecretMission(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(AQUILANI, DOMINIC);
-		addFirstTalkId(AQUILANI);
-		addTalkId(DOMINIC, GREYMORE, AQUILANI);
-		questItemIds = new int[]
-		{
-			LETTER
-		};
 	}
 	
 	public static void main(String[] args)

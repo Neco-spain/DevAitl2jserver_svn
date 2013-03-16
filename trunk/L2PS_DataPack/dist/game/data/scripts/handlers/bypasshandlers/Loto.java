@@ -21,9 +21,9 @@ package handlers.bypasshandlers;
 import java.text.DateFormat;
 
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.eventsmanager.Lottery;
 import com.l2jserver.gameserver.handler.IBypassHandler;
 import com.l2jserver.gameserver.idfactory.IdFactory;
+import com.l2jserver.gameserver.instancemanager.games.Lottery;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
@@ -77,7 +81,7 @@ public final class L2CubicInstance
 	protected L2Character _target;
 	
 	protected int _id;
-	protected int _matk;
+	protected int _cubicPower;
 	protected int _cubicDuration;
 	protected int _cubicDelay;
 	protected int _cubicSkillChance;
@@ -91,11 +95,11 @@ public final class L2CubicInstance
 	private Future<?> _disappearTask;
 	private Future<?> _actionTask;
 	
-	public L2CubicInstance(L2PcInstance owner, int id, int level, int mAtk, int cubicDelay, int cubicSkillChance, int cubicMaxCount, int cubicDuration, boolean givenByOther)
+	public L2CubicInstance(L2PcInstance owner, int id, int level, int cubicPower, int cubicDelay, int cubicSkillChance, int cubicMaxCount, int cubicDuration, boolean givenByOther)
 	{
 		_owner = owner;
 		_id = id;
-		_matk = mAtk;
+		_cubicPower = cubicPower;
 		_cubicDuration = cubicDuration * 1000;
 		_cubicDelay = cubicDelay * 1000;
 		_cubicSkillChance = cubicSkillChance;
@@ -268,9 +272,9 @@ public final class L2CubicInstance
 		return (int) (BaseStats.WIT.calcBonus(_owner) * 10);
 	}
 	
-	public int getMAtk()
+	public int getCubicPower()
 	{
-		return _matk;
+		return _cubicPower;
 	}
 	
 	public void stopAction()

@@ -1,20 +1,23 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00504_CompetitionfortheBanditStronghold;
 
-import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.instancemanager.CHSiegeManager;
 import com.l2jserver.gameserver.model.L2Clan;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -58,10 +61,42 @@ public final class Q00504_CompetitionfortheBanditStronghold extends Quest
 		super(questId, name, descr);
 		addStartNpc(MESSENGER);
 		addTalkId(MESSENGER);
-		for (int mob : MOBS)
+		addKillId(MOBS);
+	}
+	
+	@Override
+	public final String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	{
+		if (!BANDIT_STRONGHOLD.isInSiege())
 		{
-			addKillId(mob);
+			return null;
 		}
+		
+		QuestState st = killer.getQuestState(getName());
+		
+		if (st == null)
+		{
+			return null;
+		}
+		
+		if (!Util.contains(MOBS, npc.getNpcId()))
+		{
+			return null;
+		}
+		
+		if (st.isStarted() && st.isCond(1))
+		{
+			st.giveItems(TARLK_AMULET, 1);
+			if (st.getQuestItemsCount(TARLK_AMULET) < 30)
+			{
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			}
+			else
+			{
+				st.setCond(2, true);
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -105,7 +140,7 @@ public final class Q00504_CompetitionfortheBanditStronghold extends Quest
 					{
 						result = "azit_messenger_q0504_02.htm";
 						st.setState(State.STARTED);
-						st.set("cond", "1");
+						st.setCond(1);
 					}
 					break;
 				case State.STARTED:
@@ -129,44 +164,9 @@ public final class Q00504_CompetitionfortheBanditStronghold extends Quest
 		return result;
 	}
 	
-	@Override
-	public final String onKill(L2Npc npc, L2PcInstance killer, boolean isPet)
-	{
-		if (!BANDIT_STRONGHOLD.isInSiege())
-		{
-			return null;
-		}
-		
-		QuestState st = killer.getQuestState(getName());
-		
-		if (st == null)
-		{
-			return null;
-		}
-		
-		if (!Util.contains(MOBS, npc.getNpcId()))
-		{
-			return null;
-		}
-		
-		if (st.isStarted() && (st.getInt("cond") == 1))
-		{
-			st.giveItems(TARLK_AMULET, 1);
-			if (st.getQuestItemsCount(TARLK_AMULET) < 30)
-			{
-				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
-			}
-			else
-			{
-				st.setCond(2, true);
-			}
-		}
-		return null;
-	}
-	
 	private final void sendDatePage(final String page, final L2PcInstance player, final L2Npc npc)
 	{
-		String result = HtmCache.getInstance().getHtm(null, "data/scripts/quests/Q504_CompetitionfortheBanditStronghold/" + page + ".htm");
+		String result = getHtm(player.getHtmlPrefix(), page + ".htm");
 		if (result != null)
 		{
 			NpcHtmlMessage msg = new NpcHtmlMessage(npc.getObjectId());

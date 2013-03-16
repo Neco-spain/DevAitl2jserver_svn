@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.stats;
 
@@ -983,10 +987,10 @@ public final class Formulas
 	
 	public static final double calcMagicDam(L2Character attacker, L2Character target, L2Skill skill, byte shld, boolean ss, boolean bss, boolean mcrit)
 	{
+		int mAtk = attacker.getMAtk(target, skill);
+		int mDef = target.getMDef(attacker, skill);
 		final boolean isPvP = attacker.isPlayable() && target.isPlayable();
 		final boolean isPvE = attacker.isPlayable() && target.isL2Attackable();
-		double mAtk = attacker.getMAtk(target, skill);
-		double mDef = target.getMDef(attacker, skill);
 		// --------------------------------
 		// Pvp bonuses for def
 		if (isPvP)
@@ -1018,7 +1022,7 @@ public final class Formulas
 		{
 			mAtk *= 2;
 		}
-		
+		// MDAM Formula.
 		double damage = ((91 * Math.sqrt(mAtk)) / mDef) * skill.getPower(attacker, target, isPvP, isPvE);
 		
 		// Failure calculation
@@ -1122,11 +1126,10 @@ public final class Formulas
 	
 	public static final double calcMagicDam(L2CubicInstance attacker, L2Character target, L2Skill skill, boolean mcrit, byte shld)
 	{
-		// Current info include mAtk in the skill power.
-		// double mAtk = attacker.getMAtk();
+		int mAtk = attacker.getCubicPower();
+		int mDef = target.getMDef(attacker.getOwner(), skill);
 		final boolean isPvP = target.isPlayable();
 		final boolean isPvE = target.isL2Attackable();
-		double mDef = target.getMDef(attacker.getOwner(), skill);
 		
 		switch (shld)
 		{
@@ -1136,10 +1139,11 @@ public final class Formulas
 			case SHIELD_DEFENSE_PERFECT_BLOCK: // perfect block
 				return 1;
 		}
+		// Cubics MDAM Formula (similar to PDAM formula, but using 91 instead of 70, also resisted by mDef).
+		double damage = 91 * ((mAtk + skill.getPower(isPvP, isPvE)) / mDef);
 		
-		double damage = (91 /* * Math.sqrt(mAtk) *// mDef) * skill.getPower(isPvP, isPvE);
-		L2PcInstance owner = attacker.getOwner();
 		// Failure calculation
+		L2PcInstance owner = attacker.getOwner();
 		if (Config.ALT_GAME_MAGICFAILURES && !calcMagicSuccess(owner, target, skill))
 		{
 			if (calcMagicSuccess(owner, target, skill) && ((target.getLevel() - skill.getMagicLevel()) <= 9))
@@ -1810,10 +1814,6 @@ public final class Formulas
 			{
 				multiplier = target.calcStat(Stats.DEBUFF_VULN, multiplier, target, null);
 			}
-			else if (type == L2SkillType.STEAL_BUFF)
-			{
-				multiplier = target.calcStat(Stats.CANCEL_VULN, multiplier, target, null);
-			}
 		}
 		return multiplier;
 	}
@@ -1884,10 +1884,6 @@ public final class Formulas
 			if ((type == L2SkillType.DEBUFF) || (skill.isDebuff()))
 			{
 				multiplier = target.calcStat(Stats.DEBUFF_PROF, multiplier, target, null);
-			}
-			else if ((type == L2SkillType.CANCEL) || (type == L2SkillType.STEAL_BUFF))
-			{
-				multiplier = attacker.calcStat(Stats.CANCEL_PROF, multiplier, target, null);
 			}
 		}
 		return multiplier;
@@ -2244,7 +2240,7 @@ public final class Formulas
 				mAtkModifier += target.getShldDef();
 			}
 			
-			mAtkModifier = Math.pow(attacker.getMAtk() / mAtkModifier, 0.2);
+			mAtkModifier = Math.pow(attacker.getCubicPower() / mAtkModifier, 0.2);
 			
 			rate += (int) (mAtkModifier * 100) - 100;
 		}

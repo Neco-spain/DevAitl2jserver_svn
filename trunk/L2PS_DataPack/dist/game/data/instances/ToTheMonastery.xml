@@ -28,8 +28,8 @@
 		<door doorId="21100104" />
 	</doorlist>
 	<spawnlist>
-		<!-- ================     Seven Sign, To The Monastery        ===============  -->
-	    	<spawn npcId="32813" x="37623" y="-50882" z="-1157" heading="33304" respawn="0" />
+		<group name="general">
+	    <spawn npcId="32813" x="37623" y="-50882" z="-1157" heading="33304" respawn="0" />
 		<spawn npcId="32792" x="120928" y="-86462" z="-3397" heading="0" respawn="0" />
 		<spawn npcId="32803" x="85792" y="-249628" z="-8296" heading="49152" respawn="0" />
 		<spawn npcId="32804" x="82524" y="-249625" z="-8296" heading="0" respawn="0" />
@@ -106,7 +106,7 @@
 		<spawn npcId="18957" x="55464" y="-252776" z="-6760" heading="0" respawn="0" />
 		<spawn npcId="18958" x="55496" y="-252168" z="-6760" heading="0" respawn="0" />
 		<spawn npcId="18959" x="56680" y="-252168" z="-6760" heading="32768" respawn="0" />
-		<!-- ================    Seven Signs Power of the Seal	      ===============  -->
 		<spawn npcId="18949" x="76280" y="-241224" z="-10832" heading="0" respawn="0" />
+		</group>
 	</spawnlist>
 </instance>

@@ -16,7 +16,6 @@ package com.l2jserver;
 
 import info.tak11.subnet.Subnet;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,18 +51,11 @@ import javolution.util.FastMap;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.engines.DocumentParser;
-import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.itemcontainer.PcInventory;
-import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.gameserver.util.FloodProtectorConfig;
-import com.l2jserver.gameserver.util.Util;
 import com.l2jserver.util.L2Properties;
 import com.l2jserver.util.StringUtil;
-
-import gnu.trove.list.array.TIntArrayList;
 
 public final class Config
 {
@@ -86,6 +77,7 @@ public final class Config
 	public static final String QUEEN_ANT_CONFIG = "./config/Bosses/QueenAnt.properties";
 	public static final String SAILREN_CONFIG = "./config/Bosses/Sailren.properties";
 	public static final String ZAKEN_CONFIG = "./config/Bosses/Zaken.properties";
+	public static final String DESTRUCTION_BOSSES_CONFIG = "./config/Bosses/DestructionBosses.properties";
 	// Events/
 	public static final String CH_SIEGE_FILE = "./config/Events/ConquerableHallSiege.properties";
 	public static final String EVENT_MODS = "./config/Events/EventMods.properties";
@@ -116,13 +108,10 @@ public final class Config
 	public static final String RATES_CONFIG_FILE = "./config/InGame/GameRates.properties";
 	public static final String VOICED_COMMANDS = "./config/InGame/VoicedCommands.properties";
 	// PremiumAccount/
-	public static final String PREMIUM_RATES = "./config/PremiumAccounts/PremiumBaseRates.properties";
-	public static final String PREMIUM_PRICES = "./config/PremiumAccounts/PremiumServicePrices.properties";
 	public static final String PREMIUM_SYSTEM = "./config/PremiumAccounts/PremiumSystemOptions.properties";
 	// Server/
 	public static final String AUTO_RESTART = "./config/Server/AutoRestartGameServer.properties";
 	public static final String COMMUNITY_CONFIGURATION_FILE = "./config/Server/CommunityServer.properties";
-	public static final String COMMUNITY_PVP = "./config/Server/CommunityPvP.properties";
 	public static final String FLOOD_PROTECTOR_FILE = "./config/Server/FloodProtector.properties";
 	public static final String CHAT_FILTER_FILE = "./config/Server/chatfilter.txt";
 	public static final String ID_CONFIG_FILE = "./config/Server/IdFactory.properties";
@@ -136,11 +125,44 @@ public final class Config
 	public static final String MMO_CONFIG_FILE = "./config/MMO.properties";
 	public static final String TELNET_FILE = "./config/Telnet.properties";
 	public static final String EMAIL_CONFIG_FILE = "./config/Email.properties";
-	
+	//
+	public static int CHANGE_STATUS;
+	public static int CHANCE_SPAWN;
+	public static int RESPAWN_TIME;
+	//
+	public static boolean USE_PREMIUMSERVICE;
+	public static float PREMIUM_RATE_XP;
+	public static float PREMIUM_RATE_SP;
+	public static float PREMIUM_RATE_DROP_SPOIL;
+	public static float PREMIUM_RATE_DROP_ITEMS;
+	public static float PREMIUM_RATE_DROP_ITEMS_BY_RAID;
+	public static Map<Integer, Float> PREMIUM_RATE_DROP_ITEMS_ID;
+	//
 	public static boolean SPAWN_CHAR;
 	public static int SPAWN_X;
 	public static int SPAWN_Y;
 	public static int SPAWN_Z;
+	//
+	public static boolean ALLOW_VOICED_1;
+	public static boolean ALLOW_VOICED_2;
+	public static boolean ALLOW_VOICED_3;
+	public static boolean ALLOW_VOICED_4;
+	public static boolean ALLOW_VOICED_5;
+	public static boolean ALLOW_VOICED_6;
+	public static boolean ALLOW_VOICED_7;
+	public static boolean ALLOW_VOICED_8;
+	public static boolean ALLOW_VOICED_9;
+	public static boolean ALLOW_VOICED_10;
+	public static boolean ALLOW_VOICED_11;
+	public static boolean ALLOW_VOICED_12;
+	public static boolean ALLOW_VOICED_13;
+	public static boolean ALLOW_VOICED_14;
+	public static boolean ALLOW_VOICED_15;
+	public static boolean ALLOW_VOICED_16;
+	public static boolean ALLOW_VOICED_17;
+	//
+	public static int EJECT_DEAD_PLAYER_TIME;
+	//
 	public static int EROSION_ATTACK_MIN_PLAYERS;
 	public static int EROSION_ATTACK_MAX_PLAYERS;
 	public static int EROSION_DEFENCE_MIN_PLAYERS;
@@ -154,6 +176,7 @@ public final class Config
 	public static int MAX_TIAT_PLAYERS;
 	public static int SOD_TIAT_KILL_COUNT;
 	public static long SOD_STAGE_2_LENGTH;
+	//
 	public static String VOTE_LINK_HOPZONE;
 	public static String VOTE_LINK_TOPZONE;
 	public static int VOTE_REWARD_ID1;
@@ -167,41 +190,51 @@ public final class Config
 	public static int SECS_TO_VOTE;
 	public static int EXTRA_REW_VOTE_AM;
 	public static int POINT_FOR_LV_HUNB;
+	//
 	public static int MIN_PLAYER_TO_FE;
 	public static int MAX_PLAYER_TO_FE;
 	public static int MIN_LEVEL_TO_FE;
+	//
 	public static boolean MOBS_STATS_BONUS;
+	//
 	public static boolean ALLOW_PVP_REWARD;
 	public static int GIVE_ITEM_FOR_PVP_KILL;
 	public static long GIVE_ITEM__COUNT_FOR_PVP_KILL;
+	//
 	public static boolean ENABLE_MANA_POTIONS_IN_PVP;
 	public static boolean CHAR_TITLE;
 	public static String ADD_CHAR_TITLE;
+	//
 	public static boolean ANNOUNCE_HERO_LOGIN;
 	public static boolean ANNOUNCE_CASTLE_LORDS;
+	//
 	public static boolean ENTER_HELLBOUND_WITHOUT_QUEST;
+	//
 	public static int MIN_PLAYERS_TO_HARD;
 	public static int MAX_PLAYERS_TO_HARD;
 	public static int MIN_PLAYERS_TO_EASY;
 	public static int MAX_PLAYERS_TO_EASY;
 	public static int MIN_PLAYER_LEVEL_TO_HARD;
 	public static int MIN_PLAYER_LEVEL_TO_EASY;
+	//
 	public static boolean ENABLE_EVENT_ENGINE;
-	public static boolean ENABLE_TELEPORT_TO_CL;
+	//
 	public static int VOTE_ITEM_ID;
 	public static int VOTE_ITEM_A;
 	public static int VOTE_BUFF_ID;
 	public static int VOTE_BUFF_LVL;
-	public static boolean VOTE_BUFF_ENABLED;
 	public static String VOTE_ITEM_NAME;
-	public static boolean FENCE_MOVIE_BUILDER;
+	//
 	public static boolean ENABLE_CUSTOM_PERIOD;
 	public static int[] ALT_OLY_END_DATE;
 	public static int[] ALT_OLY_END_HOUR = new int[3];
+	//
 	public static boolean PVP_SYSTEM_QUAKE;
 	public static boolean PK_SYSTEM_QUAKE;
+	//
 	public static boolean ALLOW_PVP_SKILLS;
 	public static Map<Integer, Integer> PVP_SKILLS_LIST = new FastMap<>();
+	//
 	public static boolean ALLOW_HOPZONE_VOTE_REWARD;
 	public static String HOPZONE_SERVER_LINK;
 	public static String HOPZONE_FIRST_PAGE_LINK;
@@ -222,47 +255,7 @@ public final class Config
 	public static Map<Integer, Integer> TOPZONE_BIG_REWARD = new FastMap<>();
 	public static int TOPZONE_DUALBOXES_ALLOWED;
 	public static boolean ALLOW_TOPZONE_GAME_SERVER_REPORT;
-	public static boolean BANKING_SYSTEM_ENABLED;
-	public static boolean BINDING_IP;
-	public static boolean CASTLE_SIEGE_INFO;
-	public static boolean DEBUG_VOICE_COMMAND;
-	public static boolean EVENLY_DISTRIBUTED_ITEMS;
-	public static boolean ENABLE_BLOCK_EXP;
-	public static boolean HELLBOUND_STATUS;
-	public static boolean ALLOW_CHANGE_PASSWORD;
-	public static boolean CHAT_ADMIN;
-	public static boolean MULTILANG_VOICED_ALLOW;
-	public static boolean PREMIUM_SERVICE_ENABLED;
-	public static boolean ALLOW_WEDDING;
-	public static boolean ALLOW_COMMUNITY_MULTISELL;
-	public static boolean ALLOW_COMMUNITY_CLASS;
-	public static boolean ALLOW_COMMUNITY_ENCHANT;
-	public static boolean ALLOW_COMMUNITY_BUFF;
-	public static boolean ALLOW_COMMUNITY_TELEPORT;
-	public static boolean ALLOW_COMMUNITY_STATS;
-	public static String ALLOW_CLASS_MASTERSCB;
-	public static String CLASS_MASTERS_PRICECB;
-	public static int[] CLASS_MASTERS_PRICE_LISTCB = new int[4];
-	public static int CLASS_MASTERS_PRICE_ITEMCB;
-	public static ArrayList<Integer> ALLOW_CLASS_MASTERS_LISTCB = new ArrayList<>();
-	public static int ENCHANT_ITEM;
-	public static boolean BUFF_PEACE_ZONE;
-	public static boolean BUFF_COST;
-	public static boolean ALLOW_COMMUNITY_SERVICES;
-	public static int DelevelItemId;
-	public static int DelevelItemCount;
-	public static int NoblItemId;
-	public static int NoblItemCount;
-	public static int GenderItemId;
-	public static int GenderItemCount;
-	public static int HeroItemId;
-	public static int HeroItemCount;
-	public static int RecoveryPKItemId;
-	public static int RecoveryPKItemCount;
-	public static int RecoveryVitalityItemId;
-	public static int RecoveryVitalityItemCount;
-	public static int SPItemId;
-	public static int SPItemCount;
+	//
 	public static boolean NpcBuffer_SmartWindow;
 	public static boolean NpcBuffer_VIP;
 	public static int NpcBuffer_VIP_ALV;
@@ -298,24 +291,13 @@ public final class Config
 	public static int NpcBuffer_PriceScheme;
 	public static int NpcBuffer_MaxScheme;
 	public static int NpcBuffer_consumableID;
+	//
 	public static boolean NEWBIE_WELCOME_ENABLE;
+	//
 	public static boolean AUTO_RESTART_ENABLE;
 	public static int AUTO_RESTART_TIME;
 	public static String[] AUTO_RESTART_INTERVAL;
 	public static long EXPIRATION_CHECK_INTERVAL;
-	public static boolean PREMIUM_ALLOW_VOICED;
-	public static boolean PREMIUM_PARTY_DROPSPOIL;
-	public static Map<String, ItemHolder> PREMIUM_PRICE;
-	public static boolean PREMIUM_SMART_PRICING;
-	public static boolean SHOW_PREMIUM_STATUS;
-	public static int NEWBIES_PREMIUM_PERIOD;
-	public static boolean NOTIFY_PREMIUM_EXPIRATION;
-	public static float PREMIUM_RATE_XP;
-	public static float PREMIUM_RATE_SP;
-	public static float PREMIUM_RATE_SPOIL;
-	public static float PREMIUM_RATE_DROP_ITEMS;
-	public static float PREMIUM_RATE_DROP_ITEMS_BY_RAID;
-	public static Map<Integer, Float> PREMIUM_RATE_DROP_ITEMS_ID;
 	public static int MIN_ZAKEN_DAY_PLAYERS;
 	public static int MAX_ZAKEN_DAY_PLAYERS;
 	public static int MIN_ZAKEN_NIGHT_PLAYERS;
@@ -323,11 +305,6 @@ public final class Config
 	public static boolean LIMIT_SUMMONS_PAILAKA;
 	public static int INTERVAL_OF_SAILREN_SPAWN;
 	public static int RANDOM_OF_SAILREN_SPAWN;
-	public static boolean EVENLY_DISTRIBUTED_ITEMS_SEND_LIST;
-	public static NpcHtmlMessage EVENLY_DISTRIBUTED_ITEMS_CACHED_HTML = null;
-	public static boolean EVENLY_DISTRIBUTED_ITEMS_FORCED;
-	public static boolean EVENLY_DISTRIBUTED_ITEMS_FOR_SPOIL_ENABLED;
-	public static TIntArrayList EVENLY_DISTRIBUTED_ITEMS_LIST;
 	public static boolean PVP_TITLE_AND_COLOR_SYSTEM_ENABLED;
 	public static int PVP_AMOUNT1;
 	public static int TITLE_COLOR_FOR_PVP_AMOUNT1;
@@ -957,6 +934,7 @@ public final class Config
 	public static int CHAMPION_REWARD_QTY;
 	public static boolean CHAMPION_ENABLE_VITALITY;
 	public static boolean CHAMPION_ENABLE_IN_INSTANCES;
+	public static boolean ALLOW_WEDDING;
 	public static int WEDDING_PRICE;
 	public static boolean WEDDING_PUNISH_INFIDELITY;
 	public static boolean WEDDING_TELEPORT;
@@ -980,7 +958,6 @@ public final class Config
 	public static int OFFLINE_NAME_COLOR;
 	public static boolean OFFLINE_FAME;
 	public static boolean ENABLE_MANA_POTIONS_SUPPORT;
-	public static boolean DISPLAY_SERVER_TIME;
 	public static boolean WELCOME_MESSAGE_ENABLED;
 	public static String WELCOME_MESSAGE_TEXT;
 	public static int WELCOME_MESSAGE_TIME;
@@ -1617,7 +1594,7 @@ public final class Config
 			{
 				_log.log(Level.SEVERE, "Error while loading Characters settings!", e);
 			}
-			
+			EJECT_DEAD_PLAYER_TIME = 1000 * Integer.parseInt(Character.getProperty("EjectDeadPlayerTime", "60"));
 			ALT_GAME_DELEVEL = Boolean.parseBoolean(Character.getProperty("Delevel", "true"));
 			DECREASE_SKILL_LEVEL = Boolean.parseBoolean(Character.getProperty("DecreaseSkillOnDelevel", "true"));
 			ALT_WEIGHT_LIMIT = Double.parseDouble(Character.getProperty("AltWeightLimit", "1"));
@@ -1876,6 +1853,7 @@ public final class Config
 			MAX_OFFSET_ON_TELEPORT = Integer.parseInt(Character.getProperty("MaxOffsetOnTeleport", "50"));
 			RESTORE_PLAYER_INSTANCE = Boolean.parseBoolean(Character.getProperty("RestorePlayerInstance", "False"));
 			ALLOW_SUMMON_TO_INSTANCE = Boolean.parseBoolean(Character.getProperty("AllowSummonToInstance", "True"));
+			EJECT_DEAD_PLAYER_TIME = 1000 * Integer.parseInt(Character.getProperty("EjectDeadPlayerTime", "60"));
 			PETITIONING_ALLOWED = Boolean.parseBoolean(Character.getProperty("PetitioningAllowed", "True"));
 			MAX_PETITIONS_PER_PLAYER = Integer.parseInt(Character.getProperty("MaxPetitionsPerPlayer", "5"));
 			MAX_PETITIONS_PENDING = Integer.parseInt(Character.getProperty("MaxPetitionsPending", "25"));
@@ -1910,94 +1888,29 @@ public final class Config
 			SILENCE_MODE_EXCLUDE = Boolean.parseBoolean(Character.getProperty("SilenceModeExclude", "False"));
 			PLAYER_MOVEMENT_BLOCK_TIME = Integer.parseInt(Character.getProperty("NpcTalkBlockingTime", "0")) * 1000;
 			
-			// Load loot mods L2Properties file (if exists)
-			final File loots = new File(LOOT_MODS);
-			try (InputStream is = new FileInputStream(loots))
-			{
-				L2Properties loot_mods = new L2Properties();
-				loot_mods.load(is);
-				EVENLY_DISTRIBUTED_ITEMS_SEND_LIST = Boolean.parseBoolean(loot_mods.getProperty("SendEvenlyDistributionList", "True"));
-				EVENLY_DISTRIBUTED_ITEMS_FORCED = Boolean.parseBoolean(loot_mods.getProperty("ForceEvenlyDistribution", "False"));
-				EVENLY_DISTRIBUTED_ITEMS_FOR_SPOIL_ENABLED = Boolean.parseBoolean(loot_mods.getProperty("EnableEvenlyDistributionForSpoil", "False"));
-				if (EVENLY_DISTRIBUTED_ITEMS)
-				{
-					String[] itemIds = loot_mods.getProperty("ItemsToEvenlyDistribute", "").split(";");
-					EVENLY_DISTRIBUTED_ITEMS_LIST = new TIntArrayList(itemIds.length);
-					for (String itemId : itemIds)
-					{
-						try
-						{
-							EVENLY_DISTRIBUTED_ITEMS_LIST.add(Integer.parseInt(itemId.trim()));
-						}
-						catch (NumberFormatException e)
-						{
-							_log.info("Loot Mod: Error parsing item id. Skiping " + itemId + ".");
-						}
-					}
-					
-					if (Config.EVENLY_DISTRIBUTED_ITEMS_SEND_LIST)
-					{
-						final StringBuilder sb = StringUtil.startAppend(1000, "<table>");
-						final ItemTable itemTable = ItemTable.getInstance();
-						L2Item template;
-						for (int itemId : Config.EVENLY_DISTRIBUTED_ITEMS_LIST.toArray())
-						{
-							template = itemTable.getTemplate(itemId);
-							StringUtil.append(sb, "<tr><td>", "<img src=\"" + template.getIcon() + "\" height=\"32\" width=\"32\" /></td><td>", template.getName(), "</td></tr>");
-						}
-						StringUtil.append(sb, "</table>");
-						final File htmlFile = new File(Config.DATAPACK_ROOT, "data/html/mods/EvenlyDistributeItems.html");
-						String html = null;
-						try (FileInputStream fis = new FileInputStream(htmlFile);
-							BufferedInputStream bis = new BufferedInputStream(fis);)
-						{
-							final int bytes = bis.available();
-							final byte[] raw = new byte[bytes];
-							
-							bis.read(raw);
-							html = new String(raw, "UTF-8");
-							html = html.replaceAll("\r\n", "\n");
-						}
-						catch (Exception e)
-						{
-							_log.warning("L2JMOD: Evenly distributed error: " + e.getMessage());
-						}
-						if (html != null)
-						{
-							EVENLY_DISTRIBUTED_ITEMS_CACHED_HTML = new NpcHtmlMessage(5);
-							EVENLY_DISTRIBUTED_ITEMS_CACHED_HTML.setHtml(html);
-							EVENLY_DISTRIBUTED_ITEMS_CACHED_HTML.replace("%list%", sb.toString());
-						}
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				_log.warning("Config: " + e.getMessage());
-				throw new Error("Failed to Load " + LOOT_MODS + " File.");
-			}
-			
 			// Load Voiced L2Properties file (if exists)
 			final File voiced = new File(VOICED_COMMANDS);
 			try (InputStream is = new FileInputStream(voiced))
 			{
 				L2Properties voiced_c = new L2Properties();
 				voiced_c.load(is);
-				BANKING_SYSTEM_ENABLED = Boolean.parseBoolean(voiced_c.getProperty("AllowBanking", "False"));
-				BINDING_IP = Boolean.parseBoolean(voiced_c.getProperty("AllowBindingIp", "False"));
-				CASTLE_SIEGE_INFO = Boolean.parseBoolean(voiced_c.getProperty("AllowSiegeInfo", "False"));
-				DEBUG_VOICE_COMMAND = Boolean.parseBoolean(voiced_c.getProperty("AllowDebug", "False"));
-				EVENLY_DISTRIBUTED_ITEMS = Boolean.parseBoolean(voiced_c.getProperty("AllowEvenly", "False"));
-				ENABLE_BLOCK_EXP = Boolean.parseBoolean(voiced_c.getProperty("AllowBlockXPSP", "False"));
-				HELLBOUND_STATUS = Boolean.parseBoolean(voiced_c.getProperty("AllowHellbound", "False"));
-				ALLOW_CHANGE_PASSWORD = Boolean.parseBoolean(voiced_c.getProperty("AllowChangePW", "False"));
-				CHAT_ADMIN = Boolean.parseBoolean(voiced_c.getProperty("AllowAdminChat", "False"));
-				MULTILANG_VOICED_ALLOW = Boolean.parseBoolean(voiced_c.getProperty("AllowMultiLang", "False"));
-				PREMIUM_SERVICE_ENABLED = Boolean.parseBoolean(voiced_c.getProperty("AllowPremiumCom", "False"));
-				ALLOW_WEDDING = Boolean.parseBoolean(voiced_c.getProperty("AllowWedding", "False"));
-				DISPLAY_SERVER_TIME = Boolean.parseBoolean(voiced_c.getProperty("DisplayServerTime", "false"));
-				VOTE_BUFF_ENABLED = Boolean.parseBoolean(voiced_c.getProperty("VoteBuffCmdEnabled", "false"));
-				ENABLE_TELEPORT_TO_CL = Boolean.parseBoolean(voiced_c.getProperty("TeleportToCl", "false"));
+				ALLOW_VOICED_1 = Boolean.parseBoolean(voiced_c.getProperty("AllowBanking", "False"));
+				ALLOW_VOICED_2 = Boolean.parseBoolean(voiced_c.getProperty("AllowBindingIp", "False"));
+				ALLOW_VOICED_3 = Boolean.parseBoolean(voiced_c.getProperty("AllowSiegeInfo", "False"));
+				ALLOW_VOICED_4 = Boolean.parseBoolean(voiced_c.getProperty("AllowCastleVCmd", "False"));
+				ALLOW_VOICED_5 = Boolean.parseBoolean(voiced_c.getProperty("AllowDebug", "False"));
+				ALLOW_VOICED_6 = Boolean.parseBoolean(voiced_c.getProperty("AllowBlockXPSP", "False"));
+				ALLOW_VOICED_7 = Boolean.parseBoolean(voiced_c.getProperty("AllowHellbound", "False"));
+				ALLOW_VOICED_8 = Boolean.parseBoolean(voiced_c.getProperty("AllowChangePW", "False"));
+				ALLOW_VOICED_9 = Boolean.parseBoolean(voiced_c.getProperty("AllowAdminChat", "False"));
+				ALLOW_VOICED_10 = Boolean.parseBoolean(voiced_c.getProperty("AllowMultiLang", "False"));
+				ALLOW_VOICED_11 = Boolean.parseBoolean(voiced_c.getProperty("AllowOpenatod", "False"));
+				ALLOW_VOICED_12 = Boolean.parseBoolean(voiced_c.getProperty("AllowRepair", "False"));
+				ALLOW_VOICED_13 = Boolean.parseBoolean(voiced_c.getProperty("AllowSetVCmd", "False"));
+				ALLOW_VOICED_14 = Boolean.parseBoolean(voiced_c.getProperty("AllowStatsVCmd", "False"));
+				ALLOW_VOICED_15 = Boolean.parseBoolean(voiced_c.getProperty("TeleportToCl", "False"));
+				ALLOW_VOICED_16 = Boolean.parseBoolean(voiced_c.getProperty("VoteBuffCmdEnabled", "False"));
+				ALLOW_VOICED_17 = Boolean.parseBoolean(voiced_c.getProperty("AllowWedding", "False"));
 			}
 			catch (Exception e)
 			{
@@ -2116,6 +2029,7 @@ public final class Config
 			{
 				L2Properties wedding = new L2Properties();
 				wedding.load(is);
+				ALLOW_WEDDING = Boolean.parseBoolean(wedding.getProperty("AllowWedding", "True"));
 				WEDDING_PRICE = Integer.parseInt(wedding.getProperty("WeddingPrice", "250000000"));
 				WEDDING_PUNISH_INFIDELITY = Boolean.parseBoolean(wedding.getProperty("WeddingPunishInfidelity", "True"));
 				WEDDING_TELEPORT = Boolean.parseBoolean(wedding.getProperty("WeddingTeleport", "True"));
@@ -2323,62 +2237,6 @@ public final class Config
 			{
 				_log.warning("Config: " + e.getMessage());
 				throw new Error("Failed to Load " + NPC_BUFFER + " File.");
-			}
-			
-			// Load PVP COmmunity L2Properties file (if exists)
-			final File pvpcom = new File(COMMUNITY_PVP);
-			try (InputStream is = new FileInputStream(pvpcom))
-			{
-				L2Properties pvp_com = new L2Properties();
-				pvp_com.load(is);
-				ALLOW_CLASS_MASTERSCB = pvp_com.getProperty("AllowClassMastersCB", "0");
-				if ((ALLOW_CLASS_MASTERSCB.length() != 0) && !ALLOW_CLASS_MASTERSCB.equals("0"))
-				{
-					for (final String id : ALLOW_CLASS_MASTERSCB.split(","))
-					{
-						ALLOW_CLASS_MASTERS_LISTCB.add(Integer.parseInt(id));
-					}
-				}
-				CLASS_MASTERS_PRICECB = pvp_com.getProperty("ClassMastersPriceCB", "0,0,0");
-				if (CLASS_MASTERS_PRICECB.length() >= 5)
-				{
-					int level = 0;
-					for (final String id : CLASS_MASTERS_PRICECB.split(","))
-					{
-						CLASS_MASTERS_PRICE_LISTCB[level] = Integer.parseInt(id);
-						level++;
-					}
-				}
-				CLASS_MASTERS_PRICE_ITEMCB = Integer.parseInt(pvp_com.getProperty("ClassMastersPriceItemCB", "57"));
-				
-				ALLOW_COMMUNITY_MULTISELL = Boolean.parseBoolean(pvp_com.getProperty("AllowCommunityMultisell", "false"));
-				ALLOW_COMMUNITY_STATS = Boolean.parseBoolean(pvp_com.getProperty("AllowCommunityStats", "false"));
-				ALLOW_COMMUNITY_TELEPORT = Boolean.parseBoolean(pvp_com.getProperty("AllowCommunityTeleport", "false"));
-				ALLOW_COMMUNITY_BUFF = Boolean.parseBoolean(pvp_com.getProperty("AllowCommunityBuff", "false"));
-				ALLOW_COMMUNITY_ENCHANT = Boolean.parseBoolean(pvp_com.getProperty("AllowCommunityEnchant", "false"));
-				ALLOW_COMMUNITY_CLASS = Boolean.parseBoolean(pvp_com.getProperty("AllowCommunityClass", "false"));
-				ENCHANT_ITEM = Integer.parseInt(pvp_com.getProperty("EnchantItem", "4037"));
-				BUFF_COST = Boolean.parseBoolean(pvp_com.getProperty("BuffCost", "true"));
-				ALLOW_COMMUNITY_SERVICES = Boolean.parseBoolean(pvp_com.getProperty("AllowCommunityServices", "false"));
-				DelevelItemId = Integer.parseInt(pvp_com.getProperty("DelevelItemId", "4037"));
-				DelevelItemCount = Integer.parseInt(pvp_com.getProperty("DelevelItemCount", "10"));
-				NoblItemId = Integer.parseInt(pvp_com.getProperty("NoblItemId", "4037"));
-				NoblItemCount = Integer.parseInt(pvp_com.getProperty("NoblItemCount", "50"));
-				GenderItemId = Integer.parseInt(pvp_com.getProperty("GenderItemId", "4037"));
-				GenderItemCount = Integer.parseInt(pvp_com.getProperty("GenderItemCount", "30"));
-				HeroItemId = Integer.parseInt(pvp_com.getProperty("HeroItemId", "4037"));
-				HeroItemCount = Integer.parseInt(pvp_com.getProperty("HeroItemCount", "100"));
-				RecoveryPKItemId = Integer.parseInt(pvp_com.getProperty("RecoveryPKItemId", "4037"));
-				RecoveryPKItemCount = Integer.parseInt(pvp_com.getProperty("RecoveryPKItemCount", "10"));
-				RecoveryVitalityItemId = Integer.parseInt(pvp_com.getProperty("RecoveryVitalityItemId", "4037"));
-				RecoveryVitalityItemCount = Integer.parseInt(pvp_com.getProperty("RecoveryVitalityItemCount", "10"));
-				SPItemId = Integer.parseInt(pvp_com.getProperty("SPItemId", "4037"));
-				SPItemCount = Integer.parseInt(pvp_com.getProperty("SPItemCount", "10"));
-			}
-			catch (Exception e)
-			{
-				_log.warning("Config: " + e.getMessage());
-				throw new Error("Failed to Load " + COMMUNITY_PVP + " File.");
 			}
 			
 			// Load PVP_COLOR_SYSTEM L2Properties file (if exists)
@@ -2702,6 +2560,23 @@ public final class Config
 				_log.warning("Config: " + e.getMessage());
 				throw new Error("Failed to Load " + ZAKEN_CONFIG + " File.");
 			}
+			
+			// Load DESTRUCTION_BOSSES_CONFIG L2Properties file (if exists)
+			final File destr = new File(DESTRUCTION_BOSSES_CONFIG);
+			try (InputStream is = new FileInputStream(destr))
+			{
+				L2Properties destr_load = new L2Properties();
+				destr_load.load(is);
+				CHANGE_STATUS = Integer.parseInt(destr_load.getProperty("ChangeStatus", "30"));
+				CHANCE_SPAWN = Integer.parseInt(destr_load.getProperty("ChanceSpawn", "50"));
+				RESPAWN_TIME = Integer.parseInt(destr_load.getProperty("RespawnTime", "720"));
+			}
+			catch (Exception e)
+			{
+				_log.warning("Config: " + e.getMessage());
+				throw new Error("Failed to Load " + DESTRUCTION_BOSSES_CONFIG + " File.");
+			}
+			
 			// Load TIAT_CONFIG L2Properties file (if exists)
 			final File sod = new File(TIAT_CONFIG);
 			try (InputStream is = new FileInputStream(sod))
@@ -3368,7 +3243,6 @@ public final class Config
 			VOTE_BUFF_ID = Integer.parseInt(L2PsMods.getProperty("VoteBuffId", "3132"));
 			VOTE_BUFF_LVL = Integer.parseInt(L2PsMods.getProperty("VoteBuffLevel", "10"));
 			VOTE_ITEM_NAME = L2PsMods.getProperty("VoteItemName", "Vote Item");
-			FENCE_MOVIE_BUILDER = Boolean.parseBoolean(L2PsMods.getProperty("AllowFenceBuild", "false"));
 			PK_SYSTEM_QUAKE = Boolean.parseBoolean(L2PsMods.getProperty("AllowKillingPkSystem", "false"));
 			PVP_SYSTEM_QUAKE = Boolean.parseBoolean(L2PsMods.getProperty("AllowKillingPvPSystem", "false"));
 			ALLOW_PVP_SKILLS = Boolean.parseBoolean(L2PsMods.getProperty("AllowPvPSkills", "false"));
@@ -3612,7 +3486,6 @@ public final class Config
 			{
 				_log.log(Level.WARNING, "Error while loading chat filter words!", e);
 			}
-			
 			// PremiumSystemOptions
 			L2Properties PremiumSystemOptions = new L2Properties();
 			final File services = new File(PREMIUM_SYSTEM);
@@ -3624,34 +3497,18 @@ public final class Config
 			{
 				_log.log(Level.SEVERE, "Error while loading PremiumSystemOptions settings!", e);
 			}
-			PREMIUM_ALLOW_VOICED = Boolean.parseBoolean(PremiumSystemOptions.getProperty("PremiumAllowVoiced", "false"));
-			PREMIUM_PARTY_DROPSPOIL = Boolean.parseBoolean(PremiumSystemOptions.getProperty("PremiumPartyDropSpoil", "false"));
-			SHOW_PREMIUM_STATUS = Boolean.parseBoolean(PremiumSystemOptions.getProperty("ShowPremiumStatus", "true"));
-			NEWBIES_PREMIUM_PERIOD = Integer.parseInt(PremiumSystemOptions.getProperty("NewbiesPremiumPeriod", "0"));
-			NOTIFY_PREMIUM_EXPIRATION = Boolean.parseBoolean(PremiumSystemOptions.getProperty("NotifyPremiumExpiration", "True"));
+			USE_PREMIUMSERVICE = Boolean.parseBoolean(PremiumSystemOptions.getProperty("UsePremiumServices", "False"));
+			PREMIUM_RATE_XP = Float.parseFloat(PremiumSystemOptions.getProperty("PremiumRateXp", "2"));
+			PREMIUM_RATE_SP = Float.parseFloat(PremiumSystemOptions.getProperty("PremiumRateSp", "2"));
+			PREMIUM_RATE_DROP_SPOIL = Float.parseFloat(PremiumSystemOptions.getProperty("PremiumRateDropSpoil", "2"));
+			PREMIUM_RATE_DROP_ITEMS = Float.parseFloat(PremiumSystemOptions.getProperty("PremiumRateDropItems", "2"));
+			PREMIUM_RATE_DROP_ITEMS_BY_RAID = Float.parseFloat(PremiumSystemOptions.getProperty("PremiumRateRaidDropItems", "2"));
 			
-			// PremiumBaseRates
-			L2Properties PremiumBaseRates = new L2Properties();
-			final File services2 = new File(PREMIUM_RATES);
-			try (InputStream is = new FileInputStream(services2))
+			String[] PremiumRateDropItemsById = PremiumSystemOptions.getProperty("PremiumRateDropItemsById", "").split(";");
+			PREMIUM_RATE_DROP_ITEMS_ID = new HashMap<>(PremiumRateDropItemsById.length);
+			if (!PremiumRateDropItemsById[0].isEmpty())
 			{
-				PremiumBaseRates.load(is);
-			}
-			catch (Exception e)
-			{
-				_log.log(Level.SEVERE, "Error while loading Services settings!", e);
-			}
-			PREMIUM_RATE_XP = Float.parseFloat(PremiumBaseRates.getProperty("PremiumRateXp", "1."));
-			PREMIUM_RATE_SP = Float.parseFloat(PremiumBaseRates.getProperty("PremiumRateSp", "1."));
-			PREMIUM_RATE_DROP_ITEMS = Float.parseFloat(PremiumBaseRates.getProperty("PremiumRateDropItems", "1."));
-			PREMIUM_RATE_DROP_ITEMS_BY_RAID = Float.parseFloat(PremiumBaseRates.getProperty("PremiumRateRaidDropItems", "1."));
-			PREMIUM_RATE_SPOIL = Float.parseFloat(PremiumBaseRates.getProperty("PremiumRateSpoil", "1."));
-			
-			propertySplit = PremiumBaseRates.getProperty("PremiumRateDropItemsById", "").split(";");
-			PREMIUM_RATE_DROP_ITEMS_ID = new HashMap<>(propertySplit.length);
-			if (!propertySplit[0].isEmpty())
-			{
-				for (String item : propertySplit)
+				for (String item : PremiumRateDropItemsById)
 				{
 					String[] itemSplit = item.split(",");
 					if (itemSplit.length != 2)
@@ -3662,7 +3519,7 @@ public final class Config
 					{
 						try
 						{
-							PREMIUM_RATE_DROP_ITEMS_ID.put(Integer.parseInt(itemSplit[0]), Float.parseFloat(itemSplit[1]));
+							PREMIUM_RATE_DROP_ITEMS_ID.put(Integer.valueOf(itemSplit[0]), Float.valueOf(itemSplit[1]));
 						}
 						catch (NumberFormatException nfe)
 						{
@@ -3674,64 +3531,9 @@ public final class Config
 					}
 				}
 			}
-			if (PREMIUM_RATE_DROP_ITEMS_ID.get(PcInventory.ADENA_ID) == 0f)
+			if (!PREMIUM_RATE_DROP_ITEMS_ID.containsKey(PcInventory.ADENA_ID))
 			{
 				PREMIUM_RATE_DROP_ITEMS_ID.put(PcInventory.ADENA_ID, PREMIUM_RATE_DROP_ITEMS); // for Adena rate if not defined
-			}
-			
-			// PremiumServicePrices
-			L2Properties PremiumServicePrices = new L2Properties();
-			final File services3 = new File(PREMIUM_PRICES);
-			try (InputStream is = new FileInputStream(services3))
-			{
-				PremiumServicePrices.load(is);
-			}
-			catch (Exception e)
-			{
-				_log.log(Level.SEVERE, "Error while loading Services settings!", e);
-			}
-			PREMIUM_SMART_PRICING = Boolean.parseBoolean(PremiumServicePrices.getProperty("AllowPremiumSmartPricing", "true"));
-			propertySplit = PremiumServicePrices.getProperty("PremiumPrice", "").split(";");
-			if (!propertySplit[0].isEmpty())
-			{
-				PREMIUM_PRICE = new TreeMap<>();
-				for (String item : propertySplit)
-				{
-					String[] itemSplit = item.split(",");
-					if (itemSplit.length != 3)
-					{
-						_log.warning(StringUtil.concat("Config.load(): invalid config property -> PremiumPrice \"", item, "\""));
-					}
-					else
-					{
-						if (Util.toMillis(itemSplit[0]) <= 0) // check for correct time period
-						{
-							_log.warning(StringUtil.concat("Config.load(): invalid time period -> PremiumPrice \"", itemSplit[0], "\""));
-						}
-						else
-						{
-							int itemId;
-							long itemCount;
-							try
-							{
-								itemId = Integer.parseInt(itemSplit[1]);
-								itemCount = Long.parseLong(itemSplit[2]);
-								if ((itemCount > 0) && (ItemTable.getInstance().getTemplate(itemId) == null)) // Check for existing item, if count is greater, than 0
-								{
-									_log.warning(StringUtil.concat("Config.load(): invalid item id -> PremiumPrice \"", itemSplit[1], "\""));
-								}
-								else
-								{
-									PREMIUM_PRICE.put(itemSplit[0], new ItemHolder(itemId, itemCount));
-								}
-							}
-							catch (NumberFormatException nfe)
-							{
-								_log.warning(StringUtil.concat("Config.load(): invalid item parameters -> PremiumPrice \"", itemSplit[1] + ";" + itemSplit[2], "\""));
-							}
-						}
-					}
-				}
 			}
 			
 			// Security
@@ -3903,9 +3705,25 @@ public final class Config
 	{
 		switch (pName.trim().toLowerCase())
 		{
-		/*
-		 * case "PremiumRateXp": PREMIUM_RATE_XP = Float.parseFloat(pValue); break; case "PremiumRateSp": PREMIUM_RATE_SP = Float.parseFloat(pValue); break;
-		 */
+		
+			case "premiumratexp":
+				PREMIUM_RATE_XP = Float.parseFloat(pValue);
+				break;
+			case "premiumratesp":
+				PREMIUM_RATE_XP = Float.parseFloat(pValue);
+				break;
+			case "premiumratesspoil":
+				PREMIUM_RATE_DROP_SPOIL = Float.parseFloat(pValue);
+				break;
+			case "premiumratesdrop":
+				PREMIUM_RATE_DROP_ITEMS = Float.parseFloat(pValue);
+				break;
+			case "premiumratesdropbyraid":
+				PREMIUM_RATE_DROP_ITEMS_BY_RAID = Float.parseFloat(pValue);
+				break;
+			case "premiumratedropadena":
+				PREMIUM_RATE_DROP_ITEMS_ID.put(PcInventory.ADENA_ID, Float.parseFloat(pValue));
+				break;
 			case "ratexp":
 				RATE_XP = Float.parseFloat(pValue);
 				break;
@@ -4662,9 +4480,6 @@ public final class Config
 			case "enablemanapotionsupport":
 				ENABLE_MANA_POTIONS_SUPPORT = Boolean.parseBoolean(pValue);
 				break;
-			case "displayservertime":
-				DISPLAY_SERVER_TIME = Boolean.parseBoolean(pValue);
-				break;
 			case "antifeedenable":
 				ANTIFEED_ENABLE = Boolean.parseBoolean(pValue);
 				break;
@@ -5155,7 +4970,7 @@ public final class Config
 						continue;
 					}
 					
-					if (!ni.isLoopback() && (ni.getHardwareAddress().length != 6))
+					if (!ni.isLoopback() && ((ni.getHardwareAddress() == null) || (ni.getHardwareAddress().length != 6)))
 					{
 						continue;
 					}

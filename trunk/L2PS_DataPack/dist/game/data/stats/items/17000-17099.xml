@@ -1422,7 +1422,6 @@
 		<set name="is_stackable" val="true" />
 		<set name="handler" val="ItemSkills" />
 		<set name="item_skill" val="9115-1" />
-		<set name="handler" val="NevitHourglass" />
 		<cond msgId="1902">
 			<player levelRange="1;19" />
 		</cond>
@@ -1440,7 +1439,6 @@
 		<set name="is_stackable" val="true" />
 		<set name="handler" val="ItemSkills" />
 		<set name="item_skill" val="9116-1" />
-		<set name="handler" val="NevitHourglass" />
 		<cond msgId="1902">
 			<player levelRange="1;19" />
 		</cond>
@@ -1458,7 +1456,6 @@
 		<set name="is_stackable" val="true" />
 		<set name="handler" val="ItemSkills" />
 		<set name="item_skill" val="9117-1" />
-		<set name="handler" val="NevitHourglass" />
 		<cond msgId="1902">
 			<player levelRange="1;19" />
 		</cond>
@@ -1476,7 +1473,6 @@
 		<set name="is_stackable" val="true" />
 		<set name="handler" val="ItemSkills" />
 		<set name="item_skill" val="9118-1" />
-		<set name="handler" val="NevitHourglass" />
 		<cond msgId="1902">
 			<player levelRange="1;19" />
 		</cond>
@@ -1494,7 +1490,6 @@
 		<set name="is_stackable" val="true" />
 		<set name="handler" val="ItemSkills" />
 		<set name="item_skill" val="9119-1" />
-		<set name="handler" val="NevitHourglass" />
 		<cond msgId="1902">
 			<player levelRange="1;19" />
 		</cond>

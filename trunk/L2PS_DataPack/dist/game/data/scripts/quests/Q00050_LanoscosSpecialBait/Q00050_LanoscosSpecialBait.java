@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00050_LanoscosSpecialBait;
 
@@ -28,10 +32,21 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00050_LanoscosSpecialBait extends Quest
 {
+	// NPCs
 	private static final int LANOSCO = 31570;
 	private static final int SINGING_WIND = 21026;
+	// Items
 	private static final int ESSENCE_OF_WIND = 7621;
 	private static final int WIND_FISHING_LURE = 7610;
+	
+	public Q00050_LanoscosSpecialBait(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(LANOSCO);
+		addTalkId(LANOSCO);
+		addKillId(SINGING_WIND);
+		registerQuestItems(ESSENCE_OF_WIND);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -62,6 +77,36 @@ public class Q00050_LanoscosSpecialBait extends Quest
 	}
 	
 	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
+		if (partyMember == null)
+		{
+			return null;
+		}
+		
+		final QuestState st = partyMember.getQuestState(getName());
+		
+		if (st.getQuestItemsCount(ESSENCE_OF_WIND) < 100)
+		{
+			float chance = 33 * Config.RATE_QUEST_DROP;
+			if (getRandom(100) < chance)
+			{
+				st.rewardItems(ESSENCE_OF_WIND, 1);
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			}
+		}
+		
+		if (st.getQuestItemsCount(ESSENCE_OF_WIND) >= 100)
+		{
+			st.setCond(2, true);
+			
+		}
+		
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
@@ -84,49 +129,6 @@ public class Q00050_LanoscosSpecialBait extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		
-		final QuestState st = partyMember.getQuestState(getName());
-		
-		if (st.getQuestItemsCount(ESSENCE_OF_WIND) < 100)
-		{
-			float chance = 33 * Config.RATE_QUEST_DROP;
-			if (getRandom(100) < chance)
-			{
-				st.rewardItems(ESSENCE_OF_WIND, 1);
-				st.playSound("ItemSound.quest_itemget");
-			}
-		}
-		
-		if (st.getQuestItemsCount(ESSENCE_OF_WIND) >= 100)
-		{
-			st.setCond(2, true);
-			
-		}
-		
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00050_LanoscosSpecialBait(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(LANOSCO);
-		addTalkId(LANOSCO);
-		addKillId(SINGING_WIND);
-		questItemIds = new int[]
-		{
-			ESSENCE_OF_WIND
-		};
 	}
 	
 	public static void main(String[] args)

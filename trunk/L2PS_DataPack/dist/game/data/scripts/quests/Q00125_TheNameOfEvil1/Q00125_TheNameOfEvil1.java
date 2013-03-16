@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00125_TheNameOfEvil1;
 
@@ -33,7 +37,7 @@ import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
  */
 public class Q00125_TheNameOfEvil1 extends Quest
 {
-	// NPC
+	// NPCs
 	private static final int MUSHIKA = 32114;
 	private static final int KARAKAWEI = 32117;
 	private static final int ULU_KAIMU = 32119;
@@ -60,6 +64,16 @@ public class Q00125_TheNameOfEvil1 extends Quest
 		DEINONYCHUS.put(22205, 651);
 		DEINONYCHUS.put(22220, 319);
 		DEINONYCHUS.put(22225, 319);
+	}
+	
+	public Q00125_TheNameOfEvil1(int id, String name, String descr)
+	{
+		super(id, name, descr);
+		addStartNpc(MUSHIKA);
+		addTalkId(MUSHIKA, KARAKAWEI, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU);
+		addKillId(ORNITHOMIMUS.keySet());
+		addKillId(DEINONYCHUS.keySet());
+		registerQuestItems(ORNITHOMIMUS_CLAW, DEINONYCHUS_BONE, EPITAPH_OF_WISDOM, GAZKH_FRAGMENT);
 	}
 	
 	@Override
@@ -231,6 +245,49 @@ public class Q00125_TheNameOfEvil1 extends Quest
 	}
 	
 	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(player, 3);
+		if (partyMember == null)
+		{
+			return null;
+		}
+		
+		final QuestState st = partyMember.getQuestState(getName());
+		int npcId = npc.getNpcId();
+		if (ORNITHOMIMUS.containsKey(npcId))
+		{
+			if (st.getQuestItemsCount(ORNITHOMIMUS_CLAW) < 2)
+			{
+				float chance = ORNITHOMIMUS.get(npcId) * Config.RATE_QUEST_DROP;
+				if (getRandom(1000) < chance)
+				{
+					st.giveItems(ORNITHOMIMUS_CLAW, 1);
+					st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				}
+			}
+		}
+		else if (DEINONYCHUS.containsKey(npcId))
+		{
+			if (st.getQuestItemsCount(DEINONYCHUS_BONE) < 2)
+			{
+				float chance = DEINONYCHUS.get(npcId) * Config.RATE_QUEST_DROP;
+				if (getRandom(1000) < chance)
+				{
+					st.giveItems(DEINONYCHUS_BONE, 1);
+					st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				}
+			}
+		}
+		
+		if ((st.getQuestItemsCount(ORNITHOMIMUS_CLAW) == 2) && (st.getQuestItemsCount(DEINONYCHUS_BONE) == 2))
+		{
+			st.setCond(4, true);
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
@@ -257,7 +314,7 @@ public class Q00125_TheNameOfEvil1 extends Quest
 						}
 						break;
 					case State.STARTED:
-						switch (st.getInt("cond"))
+						switch (st.getCond())
 						{
 							case 1:
 								htmltext = "32114-09.html";
@@ -290,7 +347,7 @@ public class Q00125_TheNameOfEvil1 extends Quest
 			case KARAKAWEI:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 							htmltext = "32117-01.html";
@@ -325,7 +382,7 @@ public class Q00125_TheNameOfEvil1 extends Quest
 			case ULU_KAIMU:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 						case 2:
@@ -360,7 +417,7 @@ public class Q00125_TheNameOfEvil1 extends Quest
 			case BALU_KAIMU:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 						case 2:
@@ -396,7 +453,7 @@ public class Q00125_TheNameOfEvil1 extends Quest
 			case CHUTA_KAIMU:
 				if (st.isStarted())
 				{
-					switch (st.getInt("cond"))
+					switch (st.getCond())
 					{
 						case 1:
 						case 2:
@@ -436,60 +493,6 @@ public class Q00125_TheNameOfEvil1 extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "3");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		
-		final QuestState st = partyMember.getQuestState(getName());
-		int npcId = npc.getNpcId();
-		if (ORNITHOMIMUS.containsKey(npcId))
-		{
-			if (st.getQuestItemsCount(ORNITHOMIMUS_CLAW) < 2)
-			{
-				float chance = ORNITHOMIMUS.get(npcId) * Config.RATE_QUEST_DROP;
-				if (getRandom(1000) < chance)
-				{
-					st.giveItems(ORNITHOMIMUS_CLAW, 1);
-					st.playSound("ItemSound.quest_itemget");
-				}
-			}
-		}
-		else if (DEINONYCHUS.containsKey(npcId))
-		{
-			if (st.getQuestItemsCount(DEINONYCHUS_BONE) < 2)
-			{
-				float chance = DEINONYCHUS.get(npcId) * Config.RATE_QUEST_DROP;
-				if (getRandom(1000) < chance)
-				{
-					st.giveItems(DEINONYCHUS_BONE, 1);
-					st.playSound("ItemSound.quest_itemget");
-				}
-			}
-		}
-		
-		if ((st.getQuestItemsCount(ORNITHOMIMUS_CLAW) == 2) && (st.getQuestItemsCount(DEINONYCHUS_BONE) == 2))
-		{
-			st.setCond(4, true);
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00125_TheNameOfEvil1(int id, String name, String descr)
-	{
-		super(id, name, descr);
-		
-		addStartNpc(MUSHIKA);
-		addTalkId(MUSHIKA, KARAKAWEI, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU);
-		addKillId(ORNITHOMIMUS.keySet());
-		addKillId(DEINONYCHUS.keySet());
-		registerQuestItems(ORNITHOMIMUS_CLAW, DEINONYCHUS_BONE, EPITAPH_OF_WISDOM, GAZKH_FRAGMENT);
 	}
 	
 	public static void main(String[] args)

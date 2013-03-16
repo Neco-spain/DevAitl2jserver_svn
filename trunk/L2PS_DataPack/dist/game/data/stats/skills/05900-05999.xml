@@ -741,84 +741,44 @@
 		<set name="coolTime" val="440" />
 	</skill>
 	<skill id="5970" levels="1" name="Seduced Knight's Help">
-		<!-- Update by LordWinter -->
-		<set name="isMagic" val="1" />
-		<set name="aggroPoints" val="646" />
-		<set name="castRange" val="75" />
-		<set name="effectRange" val="100" />
-		<set name="hitTime" val="4000" />
-		<set name="magicLvl" val="85" />
-		<set name="mpInitialConsume" val="14" />
-		<set name="mpConsume" val="54" />
+		<set name="abnormalLvl" val="1" />
+		<set name="abnormalType" val="public_slot" />
+		<set name="isMagic" val="1" /> <!-- Magic Skill -->
+		<set name="target" val="TARGET_NONE" />
+		<set name="skillType" val="NOTDONE" />
 		<set name="operateType" val="A2" />
 		<set name="reuseDelay" val="6000" />
-		<set name="skillType" val="BUFF" />
-		<set name="target" val="TARGET_ONE" />
-		<for>
-			<effect name="Buff" abnormalTime="1200" val="0" abnormalLvl="1" abnormalType="public_slot">
-				<mul order="0x30" stat="maxHp" val="1.35" />
-			</effect>
-		</for>
+		<set name="hitTime" val="4000" />
 	</skill>
 	<skill id="5971" levels="1" name="Seduced Ranger's Help">
-		<!-- Update by LordWinter -->
-		<set name="isMagic" val="1" />
-		<set name="aggroPoints" val="689" />
-		<set name="castRange" val="75" />
-		<set name="effectRange" val="100" />
-		<set name="hitTime" val="4000" />
-		<set name="magicLvl" val="85" />
-		<set name="mpInitialConsume" val="14" />
-		<set name="mpConsume" val="54" />
+		<set name="abnormalLvl" val="1" />
+		<set name="abnormalType" val="public_slot" />
+		<set name="isMagic" val="1" /> <!-- Magic Skill -->
+		<set name="target" val="TARGET_NONE" />
+		<set name="skillType" val="NOTDONE" />
 		<set name="operateType" val="A2" />
 		<set name="reuseDelay" val="6000" />
-		<set name="skillType" val="BUFF" />
-		<set name="target" val="TARGET_ONE" />
-		<for>
-			<effect name="Buff" abnormalTime="1200" val="0" abnormalLvl="1" abnormalType="public_slot">
-				<mul order="0x30" stat="regHp" val="1.2" />
-			</effect>
-		</for>
+		<set name="hitTime" val="4000" />
 	</skill>
 	<skill id="5972" levels="1" name="Seduced Wizard's Help">
-		<!-- Update by LordWinter -->
-		<set name="isMagic" val="1" />
-		<set name="aggroPoints" val="635" />
-		<set name="castRange" val="75" />
-		<set name="effectRange" val="100" />
-		<set name="hitTime" val="4000" />
-		<set name="magicLvl" val="85" />
-		<set name="mpInitialConsume" val="14" />
-		<set name="mpConsume" val="54" />
+		<set name="abnormalLvl" val="1" />
+		<set name="abnormalType" val="public_slot" />
+		<set name="isMagic" val="1" /> <!-- Magic Skill -->
+		<set name="target" val="TARGET_NONE" />
+		<set name="skillType" val="NOTDONE" />
 		<set name="operateType" val="A2" />
 		<set name="reuseDelay" val="6000" />
-		<set name="skillType" val="BUFF" />
-		<set name="target" val="TARGET_ONE" />
-		<for>
-			<effect name="Buff" abnormalTime="1200" val="0" abnormalLvl="1" abnormalType="public_slot">
-				<mul order="0x30" stat="maxMp" val="1.2" />
-			</effect>
-		</for>
+		<set name="hitTime" val="4000" />
 	</skill>
 	<skill id="5973" levels="1" name="Seduced Warrior's Help">
-		<!-- Update by LordWinter -->
-		<set name="isMagic" val="1" />
-		<set name="aggroPoints" val="635" />
-		<set name="castRange" val="75" />
-		<set name="effectRange" val="100" />
-		<set name="hitTime" val="4000" />
-		<set name="magicLvl" val="85" />
-		<set name="mpInitialConsume" val="14" />
-		<set name="mpConsume" val="54" />
+		<set name="abnormalLvl" val="1" />
+		<set name="abnormalType" val="public_slot" />
+		<set name="isMagic" val="1" /> <!-- Magic Skill -->
+		<set name="target" val="TARGET_NONE" />
+		<set name="skillType" val="NOTDONE" />
 		<set name="operateType" val="A2" />
 		<set name="reuseDelay" val="6000" />
-		<set name="skillType" val="BUFF" />
-		<set name="target" val="TARGET_ONE" />
-		<for>
-			<effect name="Buff" abnormalTime="1200" val="0" abnormalLvl="1" abnormalType="public_slot">
-				<add order="0x40" stat="regMp" val="3.09" />
-			</effect>
-		</for>
+		<set name="hitTime" val="4000" />
 	</skill>
 	<skill id="5974" levels="1" name="Tiat Transformation">
 		<set name="abnormalLvl" val="1" />

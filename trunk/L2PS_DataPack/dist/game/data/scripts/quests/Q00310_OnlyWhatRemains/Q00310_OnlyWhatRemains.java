@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00310_OnlyWhatRemains;
 
@@ -34,12 +38,10 @@ public class Q00310_OnlyWhatRemains extends Quest
 {
 	// NPC
 	private static final int KINTAIJIN = 32640;
-	
 	// Items
 	private static final int GROW_ACCELERATOR = 14832;
 	private static final int MULTI_COLORED_JEWEL = 14835;
 	private static final int DIRTY_BEAD = 14880;
-	
 	// Monsters
 	private static final Map<Integer, Integer> MOBS = new HashMap<>();
 	
@@ -62,6 +64,15 @@ public class Q00310_OnlyWhatRemains extends Quest
 		MOBS.put(22631, 880);
 		MOBS.put(22632, 722);
 		MOBS.put(22633, 638);
+	}
+	
+	public Q00310_OnlyWhatRemains(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(KINTAIJIN);
+		addTalkId(KINTAIJIN);
+		addKillId(MOBS.keySet());
+		registerQuestItems(DIRTY_BEAD);
 	}
 	
 	@Override
@@ -94,6 +105,26 @@ public class Q00310_OnlyWhatRemains extends Quest
 				break;
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
+		
+		if (partyMember == null)
+		{
+			return super.onKill(npc, player, isSummon);
+		}
+		
+		final QuestState st = partyMember.getQuestState(getName());
+		
+		if (getRandom(1000) < MOBS.get(npc.getNpcId()))
+		{
+			st.giveItems(DIRTY_BEAD, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -132,36 +163,6 @@ public class Q00310_OnlyWhatRemains extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		
-		if (partyMember == null)
-		{
-			return super.onKill(npc, player, isPet);
-		}
-		
-		final QuestState st = partyMember.getQuestState(getName());
-		
-		if (getRandom(1000) < MOBS.get(npc.getNpcId()))
-		{
-			st.giveItems(DIRTY_BEAD, 1);
-			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00310_OnlyWhatRemains(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(KINTAIJIN);
-		addTalkId(KINTAIJIN);
-		addKillId(MOBS.keySet());
-		
-		registerQuestItems(DIRTY_BEAD);
 	}
 	
 	public static void main(String[] args)
