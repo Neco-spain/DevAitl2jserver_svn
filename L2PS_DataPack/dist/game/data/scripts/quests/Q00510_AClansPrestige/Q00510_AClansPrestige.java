@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00510_AClansPrestige;
 
@@ -30,10 +34,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  */
 public class Q00510_AClansPrestige extends Quest
 {
-	
 	// NPC
 	private static final int VALDIS = 31331;
-	
 	// Quest Item
 	private static final int TYRANNOSAURUS_CLAW = 8767;
 	
@@ -43,6 +45,14 @@ public class Q00510_AClansPrestige extends Quest
 		22216,
 		22217
 	};
+	
+	public Q00510_AClansPrestige(int id, String name, String descr)
+	{
+		super(id, name, descr);
+		addStartNpc(VALDIS);
+		addTalkId(VALDIS);
+		addKillId(MOBS);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -63,6 +73,36 @@ public class Q00510_AClansPrestige extends Quest
 				break;
 		}
 		return event;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		if (player.getClan() == null)
+		{
+			return null;
+		}
+		
+		QuestState st = null;
+		if (player.isClanLeader())
+		{
+			st = player.getQuestState(getName());
+		}
+		else
+		{
+			L2PcInstance pleader = player.getClan().getLeader().getPlayerInstance();
+			if ((pleader != null) && player.isInsideRadius(pleader, 1500, true, false))
+			{
+				st = pleader.getQuestState(getName());
+			}
+		}
+		
+		if ((st != null) && st.isStarted())
+		{
+			st.rewardItems(TYRANNOSAURUS_CLAW, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		return null;
 	}
 	
 	@Override
@@ -96,7 +136,7 @@ public class Q00510_AClansPrestige extends Quest
 				{
 					int count = (int) st.getQuestItemsCount(TYRANNOSAURUS_CLAW);
 					int reward = (count < 10) ? (30 * count) : (59 + (30 * count));
-					st.playSound("ItemSound.quest_fanfare_1");
+					st.playSound(QuestSound.ITEMSOUND_QUEST_FANFARE_1);
 					st.takeItems(TYRANNOSAURUS_CLAW, -1);
 					clan.addReputationScore(reward, true);
 					player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.CLAN_QUEST_COMPLETED_AND_S1_POINTS_GAINED).addNumber(reward));
@@ -108,45 +148,6 @@ public class Q00510_AClansPrestige extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		if (player.getClan() == null)
-		{
-			return null;
-		}
-		
-		QuestState st = null;
-		if (player.isClanLeader())
-		{
-			st = player.getQuestState(getName());
-		}
-		else
-		{
-			L2PcInstance pleader = player.getClan().getLeader().getPlayerInstance();
-			if ((pleader != null) && player.isInsideRadius(pleader, 1500, true, false))
-			{
-				st = pleader.getQuestState(getName());
-			}
-		}
-		
-		if ((st != null) && st.isStarted())
-		{
-			st.rewardItems(TYRANNOSAURUS_CLAW, 1);
-			st.playSound("ItemSound.quest_itemget");
-		}
-		return null;
-	}
-	
-	public Q00510_AClansPrestige(int id, String name, String descr)
-	{
-		super(id, name, descr);
-		
-		addStartNpc(VALDIS);
-		addTalkId(VALDIS);
-		addKillId(MOBS);
 	}
 	
 	public static void main(String[] args)

@@ -181,53 +181,12 @@ public class Q00643_RiseAndFallOfTheElrokiTribe extends Quest
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
 	{
-		QuestState st = player.getQuestState(getName());
-		String htmltext = getNoQuestMsg(player);
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		switch (st.getState())
-		{
-			case State.CREATED:
-			{
-				htmltext = (player.getLevel() >= MIN_LEVEL) ? "32106-01.htm" : "32106-06.html";
-				break;
-			}
-			case State.STARTED:
-			{
-				if (npc.getNpcId() == SINGSING)
-				{
-					htmltext = (st.hasQuestItems(BONES_OF_A_PLAINS_DINOSAUR)) ? "32106-08.html" : "32106-14.html";
-				}
-				else if (npc.getNpcId() == KARAKAWEI)
-				{
-					if (isFirstTalk)
-					{
-						isFirstTalk = false;
-						htmltext = "32117-01.html";
-					}
-					else
-					{
-						htmltext = "32117-03.html";
-					}
-				}
-				break;
-			}
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "1");
+		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
 		if (partyMember == null)
 		{
-			return super.onKill(npc, player, isPet);
+			return super.onKill(npc, player, isSummon);
 		}
 		
 		final QuestState st = partyMember.getQuestState(getName());
@@ -266,7 +225,48 @@ public class Q00643_RiseAndFallOfTheElrokiTribe extends Quest
 				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, player, isPet);
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
+	public String onTalk(L2Npc npc, L2PcInstance player)
+	{
+		QuestState st = player.getQuestState(getName());
+		String htmltext = getNoQuestMsg(player);
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		switch (st.getState())
+		{
+			case State.CREATED:
+			{
+				htmltext = (player.getLevel() >= MIN_LEVEL) ? "32106-01.htm" : "32106-06.html";
+				break;
+			}
+			case State.STARTED:
+			{
+				if (npc.getNpcId() == SINGSING)
+				{
+					htmltext = (st.hasQuestItems(BONES_OF_A_PLAINS_DINOSAUR)) ? "32106-08.html" : "32106-14.html";
+				}
+				else if (npc.getNpcId() == KARAKAWEI)
+				{
+					if (isFirstTalk)
+					{
+						isFirstTalk = false;
+						htmltext = "32117-01.html";
+					}
+					else
+					{
+						htmltext = "32117-03.html";
+					}
+				}
+				break;
+			}
+		}
+		return htmltext;
 	}
 	
 	public static void main(String[] args)

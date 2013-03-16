@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver;
 
@@ -22,9 +26,6 @@ import com.l2jserver.L2DatabaseFactory;
 import com.l2jserver.gameserver.datatables.ClanTable;
 import com.l2jserver.gameserver.datatables.OfflineTradersTable;
 import com.l2jserver.gameserver.eventengine.Interface;
-import com.l2jserver.gameserver.eventsmanager.LeaderboardArena;
-import com.l2jserver.gameserver.eventsmanager.LeaderboardCraft;
-import com.l2jserver.gameserver.eventsmanager.LeaderboardFisherman;
 import com.l2jserver.gameserver.instancemanager.CHSiegeManager;
 import com.l2jserver.gameserver.instancemanager.CastleManorManager;
 import com.l2jserver.gameserver.instancemanager.CursedWeaponsManager;
@@ -101,33 +102,22 @@ public class Shutdown extends Thread
 		{
 			switch (seconds)
 			{
-			case 540:
-			case 480:
-			case 420:
-			case 360:
-			case 300:
-			case 240:
-			case 180:
-			case 120:
-			case 60:
-			case 30:
-			case 25:
-			case 20:
-			case 15:
-			case 14:
-			case 13:
-			case 12:
-			case 11:
-			case 10:
-			case 9:
-			case 8:
-			case 7:
-			case 6:
-			case 5:
-			case 4:
-			case 3:
-			case 2:
-			case 1:
+				case 540:
+				case 480:
+				case 420:
+				case 360:
+				case 300:
+				case 240:
+				case 180:
+				case 120:
+				case 60:
+				case 30:
+				case 10:
+				case 5:
+				case 4:
+				case 3:
+				case 2:
+				case 1:
 					break;
 				default:
 					SendServerQuit(seconds);
@@ -357,18 +347,7 @@ public class Shutdown extends Thread
 				case 120:
 				case 60:
 				case 30:
-				case 25:
-				case 20:
-				case 15:
-				case 14:
-				case 13:
-				case 12:
-				case 11:
 				case 10:
-				case 9:
-				case 8:
-				case 7:
-				case 6:
 				case 5:
 				case 4:
 				case 3:
@@ -460,47 +439,14 @@ public class Shutdown extends Thread
 						SendServerQuit(120);
 						break;
 					case 60:
-						LoginServerThread.getInstance().setServerStatus(ServerStatus.STATUS_DOWN); //avoids new players from logging in
+						LoginServerThread.getInstance().setServerStatus(ServerStatus.STATUS_DOWN); // avoids new players from logging in
 						SendServerQuit(60);
 						break;
 					case 30:
 						SendServerQuit(30);
 						break;
-					case 25:
-						SendServerQuit(25);
-						break;
-					case 20:
-						SendServerQuit(20);
-						break;
-					case 15:
-						SendServerQuit(15);
-						break;
-					case 14:
-						SendServerQuit(14);
-						break;
-					case 13:
-						SendServerQuit(13);
-						break;
-					case 12:
-						SendServerQuit(12);
-						break;
-					case 11:
-						SendServerQuit(11);
-						break;
 					case 10:
 						SendServerQuit(10);
-						break;
-					case 9:
-						SendServerQuit(9);
-						break;
-					case 8:
-						SendServerQuit(8);
-						break;
-					case 7:
-						SendServerQuit(7);
-						break;
-					case 6:
-						SendServerQuit(6);
 						break;
 					case 5:
 						SendServerQuit(5);
@@ -552,33 +498,27 @@ public class Shutdown extends Thread
 			case GM_RESTART:
 				_log.info("GM restart received. Restarting NOW!");
 				break;
+		
 		}
 		
-		if (Config.RANK_ARENA_ENABLED)
-		{
-			LeaderboardArena.getInstance().stopTask();
-		}
-		
-		if (Config.RANK_FISHERMAN_ENABLED)
-		{
-			LeaderboardFisherman.getInstance().stopTask();
-		}
-		
-		if (Config.RANK_CRAFT_ENABLED)
-		{
-			LeaderboardCraft.getInstance().stopTask();
-		}
-		
+		/*
+		 * if (Config.ACTIVATE_POSITION_RECORDER) Universe.getInstance().implode(true);
+		 */
 		TimeCounter tc = new TimeCounter();
+		// Seven Signs data is now saved along with Festival data.
 		if (!SevenSigns.getInstance().isSealValidationPeriod())
 		{
 			SevenSignsFestival.getInstance().saveFestivalData(false);
 			_log.info("SevenSignsFestival: Festival data saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
 		}
+		
+		// Save Seven Signs data before closing. :)
 		SevenSigns.getInstance().saveSevenSignsData();
 		_log.info("SevenSigns: Seven Signs data saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
 		SevenSigns.getInstance().saveSevenSignsStatus();
 		_log.info("SevenSigns: Seven Signs status saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
+		
+		// Save all raidboss and GrandBoss status ^_^
 		RaidBossSpawnManager.getInstance().cleanUp();
 		_log.info("RaidBossSpawnManager: All raidboss info saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
 		GrandBossManager.getInstance().cleanUp();
@@ -596,17 +536,27 @@ public class Shutdown extends Thread
 		_log.info("Hero System: Data saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
 		ClanTable.getInstance().storeClanScore();
 		_log.info("Clan System: Data saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
+		Interface.shutdown();
+		// Save Cursed Weapons data before closing.
 		CursedWeaponsManager.getInstance().saveData();
 		_log.info("Cursed Weapons Manager: Data saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
+		
+		// Save all manor data
 		CastleManorManager.getInstance().save();
 		_log.info("Castle Manor Manager: Data saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
+		
 		CHSiegeManager.getInstance().onServerShutDown();
 		_log.info("CHSiegeManager: Siegable hall attacker lists saved!");
+		
+		// Save all global (non-player specific) Quest data that needs to persist after reboot
 		QuestManager.getInstance().save();
 		_log.info("Quest Manager: Data saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
+		
+		// Save all global variables data
 		GlobalVariablesManager.getInstance().saveVars();
 		_log.info("Global Variables Manager: Variables saved(" + tc.getEstimatedTimeAndRestartCounter() + "ms).");
-		Interface.shutdown();
+		
+		// Save items on ground before closing
 		if (Config.SAVE_DROPPED_ITEM)
 		{
 			ItemsOnGroundManager.getInstance().saveInDb();
@@ -708,12 +658,12 @@ public class Shutdown extends Thread
 	{
 		protected static final Shutdown _instance = new Shutdown();
 	}
-
-    public void autoRestart(int time)
-    {
-        _secondsShut = time;
-            countdown();
-           _shutdownMode = GM_RESTART;
-               System.exit(2);
-    }
+	
+	public void autoRestart(int time)
+	{
+		_secondsShut = time;
+		countdown();
+		_shutdownMode = GM_RESTART;
+		System.exit(2);
+	}
 }

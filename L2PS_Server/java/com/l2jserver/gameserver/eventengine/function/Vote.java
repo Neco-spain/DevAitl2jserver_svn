@@ -157,12 +157,9 @@ public class Vote
 			Out.sendMessage(player, "You already voted for an event!");
 			return false;
 		}
-		else
-		{
-			Out.sendMessage(player, "You succesfully voted for the event");
-			votes.put(player, eventId);
-			return true;
-		}
+		Out.sendMessage(player, "You succesfully voted for the event");
+		votes.put(player, eventId);
+		return true;
 	}
 	
 	// REMOVE

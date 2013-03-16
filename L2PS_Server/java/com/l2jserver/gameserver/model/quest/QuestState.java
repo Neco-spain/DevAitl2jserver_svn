@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.quest;
 
@@ -27,13 +31,12 @@ import com.l2jserver.Config;
 import com.l2jserver.L2DatabaseFactory;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.datatables.ItemTable;
-import com.l2jserver.gameserver.eventsmanager.PcCafePointsManager;
 import com.l2jserver.gameserver.instancemanager.QuestManager;
-import com.l2jserver.gameserver.model.L2DropData;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.itemcontainer.PcInventory;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -247,9 +250,7 @@ public final class QuestState
 			val = "";
 		}
 		
-		// FastMap.put() returns previous value associated with specified key, or null if there was no mapping for key.
 		String old = _vars.put(var, val);
-		
 		if (old != null)
 		{
 			Quest.updateQuestVarInDb(this, var, val);
@@ -629,6 +630,15 @@ public final class QuestState
 	}
 	
 	/**
+	 * @param itemIds list of items that are required
+	 * @return true if all items exists in player's inventory, false - if not
+	 */
+	public boolean hasQuestItems(int... itemIds)
+	{
+		return getQuest().hasQuestItems(getPlayer(), itemIds);
+	}
+	
+	/**
 	 * Return the level of enchantment on the weapon of the player(Done specifically for weapon SA's)
 	 * @param itemId Id of the item to check enchantment
 	 * @return int
@@ -668,6 +678,11 @@ public final class QuestState
 		giveItems(itemId, count, 0);
 	}
 	
+	public void giveItems(ItemHolder holder)
+	{
+		giveItems(holder.getId(), holder.getCount(), 0);
+	}
+	
 	public void giveItems(int itemId, long count, int enchantlevel)
 	{
 		getQuest().giveItems(getPlayer(), itemId, count, enchantlevel);
@@ -676,25 +691,6 @@ public final class QuestState
 	public void giveItems(int itemId, long count, byte attributeId, int attributeLevel)
 	{
 		getQuest().giveItems(getPlayer(), itemId, count, attributeId, attributeLevel);
-	}
-	
-	/**
-	 * Drop Quest item using Config.RATE_QUEST_DROP
-	 * @param itemId int Item Identifier of the item to be dropped
-	 * @param count (minCount, maxCount) long Quantity of items to be dropped
-	 * @param neededCount Quantity of items needed for quest
-	 * @param dropChance int Base chance of drop, same as in droplist
-	 * @param sound boolean indicating whether to play sound
-	 * @return boolean indicating whether player has requested number of items
-	 */
-	public boolean dropQuestItems(int itemId, int count, long neededCount, int dropChance, boolean sound)
-	{
-		return dropQuestItems(itemId, count, count, neededCount, dropChance, sound);
-	}
-	
-	public boolean dropQuestItems(int itemId, int minCount, int maxCount, long neededCount, int dropChance, boolean sound)
-	{
-		return getQuest().dropQuestItems(getPlayer(), itemId, minCount, maxCount, neededCount, dropChance, sound);
 	}
 	
 	// TODO: More radar functions need to be added when the radar class is complete.
@@ -757,7 +753,6 @@ public final class QuestState
 	public void addExpAndSp(int exp, int sp)
 	{
 		getQuest().addExpAndSp(getPlayer(), exp, sp);
-		PcCafePointsManager.getInstance().givePcCafePoint(getPlayer(), (long) (exp * Config.RATE_QUEST_REWARD_XP));
 	}
 	
 	/**
@@ -1180,126 +1175,6 @@ public final class QuestState
 		return ((val == null) || !Util.isDigit(val)) || (Long.parseLong(val) <= System.currentTimeMillis());
 	}
 	
-	public String set(String paramString, int paramInt)
-	{
-		if (paramString.equalsIgnoreCase("cond"))
-		{
-			return set("cond", (paramInt));
-		}
-		return set(paramString, String.valueOf(paramInt));
-	}
-	
-	public boolean hasQuestItem(int itemId, int count)
-	{
-		if (getQuestItemsCount(itemId) >= count)
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public int getRandom(int max)
-	{
-		return Rnd.get(max);
-	}
-	
-	public void giveItems(int itemId, long count, boolean ignored)
-	{
-		giveItems(itemId, count, 0);
-	}
-	
-	public boolean dropQuestItems(int itemId, int count, int dropChance)
-	{
-		return dropQuestItems(itemId, count, count, -1, (dropChance * L2DropData.MAX_CHANCE) / 100, true);
-	}
-	
-	public boolean dropQuestItems(final int itemId, final int minCount, final int maxCount, final long neededCount, final boolean infiniteCount, final float dropChance, final boolean sound)
-	{
-		final long currentCount = getQuestItemsCount(itemId);
-		
-		if (!infiniteCount && (neededCount > 0) && (currentCount >= neededCount))
-		{
-			return true;
-		}
-		
-		final int MAX_CHANCE = 1000;
-		final int adjDropChance = (int) (dropChance * (MAX_CHANCE / 100) * Config.RATE_QUEST_DROP);
-		int curDropChance = adjDropChance;
-		final int adjMaxCount = (int) (maxCount * Config.RATE_QUEST_DROP);
-		long itemCount = 0;
-		
-		if ((curDropChance > MAX_CHANCE) && !Config.PRECISE_DROP_CALCULATION)
-		{
-			int multiplier = curDropChance / MAX_CHANCE;
-			
-			if (minCount < maxCount)
-			{
-				itemCount += Rnd.get(minCount * multiplier, maxCount * multiplier);
-			}
-			else if (minCount == maxCount)
-			{
-				itemCount += minCount * multiplier;
-			}
-			else
-			{
-				itemCount += multiplier;
-			}
-			
-			curDropChance %= MAX_CHANCE;
-		}
-		
-		final int random = Rnd.get(MAX_CHANCE);
-		
-		while (random < curDropChance)
-		{
-			if (minCount < maxCount)
-			{
-				itemCount += Rnd.get(minCount, maxCount);
-			}
-			else if (minCount == maxCount)
-			{
-				itemCount += minCount;
-			}
-			else
-			{
-				itemCount++;
-			}
-			curDropChance -= MAX_CHANCE;
-		}
-		
-		if (itemCount > 0)
-		{
-			if (itemCount > adjMaxCount)
-			{
-				itemCount = adjMaxCount;
-			}
-			itemCount *= 1;
-			if (!infiniteCount && (neededCount > 0) && ((currentCount + itemCount) > neededCount))
-			{
-				itemCount = neededCount - currentCount;
-			}
-			if (!getPlayer().getInventory().validateCapacityByItemId(itemId))
-			{
-				return false;
-			}
-			getPlayer().addItem("Quest", itemId, itemCount, getPlayer().getTarget(), true);
-			
-			if (sound)
-			{
-				if (neededCount == 0)
-				{
-					playSound("ItemSound.quest_middle");
-				}
-				else
-				{
-					playSound(((currentCount % neededCount) + itemCount) < neededCount ? "ItemSound.quest_middle" : "ItemSound.quest_middle");
-				}
-			}
-		}
-		
-		return (!infiniteCount && (neededCount > 0) && ((currentCount + itemCount) >= neededCount));
-	}
-	
 	public void giveReward(final int itemId, final long amount)
 	{
 		final long finalAmount;
@@ -1398,6 +1273,16 @@ public final class QuestState
 		}
 	}
 	
+	public int getRandom(int max)
+	{
+		return Rnd.get(max);
+	}
+	
+	public void giveItems(int itemId, long count, boolean ignored)
+	{
+		giveItems(itemId, count, 0);
+	}
+	
 	public boolean dropItemsAlways(int itemId, int count, long neededCount)
 	{
 		return dropItems(itemId, count, neededCount, 1000000, (byte) 1);
@@ -1447,6 +1332,7 @@ public final class QuestState
 				}
 				break;
 		}
+		
 		boolean reached = false;
 		if (amount > 0)
 		{
@@ -1469,5 +1355,116 @@ public final class QuestState
 	public void giveItems(int itemId, double count)
 	{
 		giveItems(itemId, (long) count, 0);
+	}
+	
+	public String set(String paramString, int paramInt)
+	{
+		if (paramString.equalsIgnoreCase("cond"))
+		{
+			return set("cond", (paramInt));
+		}
+		return set(paramString, String.valueOf(paramInt));
+	}
+	
+	public boolean dropQuestItems(int itemId, int count, long neededCount, int dropChance, boolean sound)
+	{
+		return dropQuestItems(itemId, count, count, neededCount, dropChance, sound);
+	}
+	
+	public boolean dropQuestItems(int itemId, int minCount, int maxCount, long neededCount, int dropChance, boolean sound)
+	{
+		return getQuest().dropQuestItems(getPlayer(), itemId, minCount, maxCount, neededCount, dropChance, sound);
+	}
+	
+	public boolean dropQuestItems(final int itemId, final int minCount, final int maxCount, final long neededCount, final boolean infiniteCount, final float dropChance, final boolean sound)
+	{
+		final long currentCount = getQuestItemsCount(itemId);
+		
+		if (!infiniteCount && (neededCount > 0) && (currentCount >= neededCount))
+		{
+			return true;
+		}
+		
+		final int MAX_CHANCE = 1000;
+		final int adjDropChance = (int) (dropChance * (MAX_CHANCE / 100) * Config.RATE_QUEST_DROP);
+		int curDropChance = adjDropChance;
+		
+		final int adjMaxCount = (int) (maxCount * Config.RATE_QUEST_DROP);
+		
+		long itemCount = 0;
+		
+		if ((curDropChance > MAX_CHANCE) && !Config.PRECISE_DROP_CALCULATION)
+		{
+			int multiplier = curDropChance / MAX_CHANCE;
+			
+			if (minCount < maxCount)
+			{
+				itemCount += Rnd.get(minCount * multiplier, maxCount * multiplier);
+			}
+			else if (minCount == maxCount)
+			{
+				itemCount += minCount * multiplier;
+			}
+			else
+			{
+				itemCount += multiplier;
+			}
+			
+			curDropChance %= MAX_CHANCE;
+		}
+		
+		final int random = Rnd.get(MAX_CHANCE);
+		
+		while (random < curDropChance)
+		{
+			if (minCount < maxCount)
+			{
+				itemCount += Rnd.get(minCount, maxCount);
+			}
+			else if (minCount == maxCount)
+			{
+				itemCount += minCount;
+			}
+			else
+			{
+				itemCount++;
+			}
+			curDropChance -= MAX_CHANCE;
+		}
+		
+		if (itemCount > 0)
+		{
+			if (itemCount > adjMaxCount)
+			{
+				itemCount = adjMaxCount;
+			}
+			
+			itemCount *= 1; // Config.RATE_DROP_QUEST_ITEM_AMOUNT - Don't Support in core
+			
+			if (!infiniteCount && (neededCount > 0) && ((currentCount + itemCount) > neededCount))
+			{
+				itemCount = neededCount - currentCount;
+			}
+			
+			if (!getPlayer().getInventory().validateCapacityByItemId(itemId))
+			{
+				return false;
+			}
+			
+			getPlayer().addItem("Quest", itemId, itemCount, getPlayer().getTarget(), true);
+			
+			if (sound)
+			{
+				if (neededCount == 0)
+				{
+					playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				}
+				else
+				{
+					playSound(((currentCount % neededCount) + itemCount) < neededCount ? QuestSound.ITEMSOUND_QUEST_ITEMGET : QuestSound.ITEMSOUND_QUEST_MIDDLE);
+				}
+			}
+		}
+		return (!infiniteCount && (neededCount > 0) && ((currentCount + itemCount) >= neededCount));
 	}
 }

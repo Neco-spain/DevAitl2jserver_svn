@@ -25,6 +25,7 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2OlympiadManagerInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.olympiad.Olympiad;
 import com.l2jserver.gameserver.model.olympiad.OlympiadGameManager;
 import com.l2jserver.gameserver.model.olympiad.OlympiadGameTask;
 import com.l2jserver.gameserver.model.olympiad.OlympiadManager;
@@ -68,6 +69,12 @@ public class OlympiadObservation implements IBypassHandler
 				if (OlympiadManager.getInstance().isRegisteredInComp(activeChar))
 				{
 					activeChar.sendPacket(SystemMessageId.WHILE_YOU_ARE_ON_THE_WAITING_LIST_YOU_ARE_NOT_ALLOWED_TO_WATCH_THE_GAME);
+					return false;
+				}
+				
+				if (!Olympiad.getInstance().inCompPeriod())
+				{
+					activeChar.sendPacket(SystemMessageId.THE_OLYMPIAD_GAME_IS_NOT_CURRENTLY_IN_PROGRESS);
 					return false;
 				}
 				

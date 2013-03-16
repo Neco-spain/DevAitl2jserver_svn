@@ -1,22 +1,27 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
 import java.util.concurrent.ScheduledFuture;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.knownlist.MonsterKnownList;
@@ -35,15 +40,15 @@ import com.l2jserver.util.Rnd;
 public class L2MonsterInstance extends L2Attackable
 {
 	protected boolean _enableMinions = true;
-	protected int _aggroRangeOverride = 0;
-	private boolean _canAgroWhileMoving = false;
+	private boolean _isPassive = false;
 	private L2MonsterInstance _master = null;
 	private MinionList _minionList = null;
-	private boolean _isPassive = false;
-	
+	protected ScheduledFuture<?> _returnToSpawnTask = null;
 	protected ScheduledFuture<?> _maintenanceTask = null;
-	
+	private boolean _isMoveToSpawn = false;
 	private static final int MONSTER_MAINTENANCE_INTERVAL = 1000;
+	private boolean _canAgroWhileMoving = false;
+	protected int _aggroRangeOverride = 0;
 	
 	/**
 	 * Constructor of L2MonsterInstance (use L2Character and L2NpcInstance constructor).<br>
@@ -81,16 +86,16 @@ public class L2MonsterInstance extends L2Attackable
 	@Override
 	public boolean isAutoAttackable(L2Character attacker)
 	{
-		return super.isAutoAttackable(attacker) && !isEventMob;
+		return super.isAutoAttackable(attacker) && !isEventMob();
 	}
 	
 	/**
-	 * Return True if the L2MonsterInstance is Agressive (aggroRange > 0).
+	 * Return True if the L2MonsterInstance is Aggressive (aggroRange > 0).
 	 */
 	@Override
 	public boolean isAggressive()
 	{
-		return (getAggroRange() > 0) && !isEventMob;
+		return (getAggroRange() > 0) && !isEventMob();
 	}
 	
 	@Override
@@ -169,6 +174,11 @@ public class L2MonsterInstance extends L2Attackable
 			return false;
 		}
 		
+		if (_returnToSpawnTask != null)
+		{
+			_returnToSpawnTask.cancel(true);
+		}
+		
 		if (_maintenanceTask != null)
 		{
 			_maintenanceTask.cancel(false); // doesn't do it?
@@ -181,6 +191,11 @@ public class L2MonsterInstance extends L2Attackable
 	@Override
 	public void deleteMe()
 	{
+		if (_returnToSpawnTask != null)
+		{
+			_returnToSpawnTask.cancel(true);
+		}
+		
 		if (_maintenanceTask != null)
 		{
 			_maintenanceTask.cancel(false);
@@ -246,25 +261,9 @@ public class L2MonsterInstance extends L2Attackable
 		return ((getLeader() == null) ? super.isWalker() : getLeader().isWalker());
 	}
 	
-	public void setIsAggresiveOverride(int aggroR)
-	{
-		_aggroRangeOverride = aggroR;
-	}
-	
-	public void setClanOverride(String newClan)
-	{
-	}
-	
-	public final boolean canAgroWhileMoving()
-	{
-		return _canAgroWhileMoving;
-	}
-	
-	public final void setCanAgroWhileMoving()
-	{
-		_canAgroWhileMoving = true;
-	}
-	
+	/**
+	 * @return {@code true} if this L2MonsterInstance is not raid minion, master state otherwise.
+	 */
 	@Override
 	public boolean giveRaidCurse()
 	{
@@ -279,5 +278,61 @@ public class L2MonsterInstance extends L2Attackable
 	public boolean isPassive()
 	{
 		return _isPassive;
+	}
+	
+	public final boolean isMoveToSpawn()
+	{
+		return _isMoveToSpawn;
+	}
+	
+	public final void setIsMoveToSpawn(boolean value)
+	{
+		_isMoveToSpawn = value;
+	}
+	
+	public void returnToSpawn()
+	{
+		setIsMoveToSpawn(true);
+		final L2Spawn spawn = getSpawn();
+		if (spawn == null)
+		{
+			return;
+		}
+		
+		final int spawnX = spawn.getLocx();
+		final int spawnY = spawn.getLocy();
+		final int spawnZ = spawn.getLocz();
+		_returnToSpawnTask = ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (!isInCombat() && !isAlikeDead() && !isDead())
+				{
+					clearAggroList();
+					moveToLocation(spawnX, spawnY, spawnZ, 0);
+				}
+				setIsMoveToSpawn(false);
+			}
+		}, 15000);
+	}
+	
+	public final boolean canAgroWhileMoving()
+	{
+		return _canAgroWhileMoving;
+	}
+	
+	public final void setCanAgroWhileMoving()
+	{
+		_canAgroWhileMoving = true;
+	}
+	
+	public void setClanOverride(String newClan)
+	{
+	}
+	
+	public void setIsAggresiveOverride(int aggroR)
+	{
+		_aggroRangeOverride = aggroR;
 	}
 }

@@ -1,6 +1,7 @@
 package com.l2jserver.gameserver.eventengine.events;
 
 import javolution.util.FastList;
+
 import com.l2jserver.gameserver.eventengine.AbstractEvent;
 import com.l2jserver.gameserver.eventengine.Configuration;
 import com.l2jserver.gameserver.eventengine.container.NpcContainer;
@@ -15,8 +16,8 @@ public class Bomb extends AbstractEvent
 	
 	private class BombTask implements Runnable
 	{
-		private EventPlayer owner;
-		private EventNpc bomb;
+		private final EventPlayer owner;
+		private final EventNpc bomb;
 		private FastList<EventPlayer> victims;
 		
 		private BombTask(EventPlayer p)
@@ -73,7 +74,10 @@ public class Bomb extends AbstractEvent
 	private class Core implements Runnable
 	{
 		
-		@SuppressWarnings({"synthetic-access"})
+		@SuppressWarnings(
+		{
+			"synthetic-access"
+		})
 		@Override
 		public void run()
 		{
@@ -114,8 +118,8 @@ public class Bomb extends AbstractEvent
 						announce("Congratulation! The " + teams.get(winnerTeam).getName() + " team won the event with " + teams.get(winnerTeam).getScore() + " kills!");
 						eventEnded();
 						break;
-				default:
-					break;
+					default:
+						break;
 				}
 			}
 			catch (Throwable e)
@@ -129,12 +133,16 @@ public class Bomb extends AbstractEvent
 	
 	private enum EventState
 	{
-		START, FIGHT, END, TELEPORT, INACTIVE
+		START,
+		FIGHT,
+		END,
+		TELEPORT,
+		INACTIVE
 	}
 	
 	private EventState eventState;
 	
-	private Core task;
+	private final Core task;
 	
 	@SuppressWarnings("synthetic-access")
 	public Bomb(Integer containerId)
@@ -194,10 +202,7 @@ public class Bomb extends AbstractEvent
 			{
 				return 1;
 			}
-			else
-			{
-				return 2;
-			}
+			return 2;
 		}
 		
 		return 1;
@@ -211,7 +216,8 @@ public class Bomb extends AbstractEvent
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.l2jserver.gameserver.eventengine.AbstractEvent#onClockZero()
 	 */
 	@Override
@@ -264,14 +270,13 @@ public class Bomb extends AbstractEvent
 	{
 		eventState = s;
 	}
-		
+	
 	@Override
 	public void start()
 	{
 		setStatus(EventState.START);
 		schedule(1);
 	}
-
 	
 	@Override
 	public void createStatus()

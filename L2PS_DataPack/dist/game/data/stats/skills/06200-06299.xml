@@ -89,7 +89,7 @@
 		<set name="negateAbnormals" val="improve_speed_avoid_up;speed_up" />
 		<set name="operateType" val="A2" />
 		<set name="skillType" val="BUFF" />
-		<set name="target" val="TARGET_SELF" />
+		<set name="target" val="TARGET_ONE" />
 		<set name="transformId" val="113" />
 		<for>
 			<effect name="Transformation" abnormalTime="-1" val="0" abnormalLvl="99" abnormalType="transform">

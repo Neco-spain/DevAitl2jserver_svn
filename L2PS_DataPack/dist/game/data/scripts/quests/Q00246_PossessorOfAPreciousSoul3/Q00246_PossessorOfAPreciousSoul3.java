@@ -1,18 +1,24 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00246_PossessorOfAPreciousSoul3;
+
+import quests.Q00242_PossessorOfAPreciousSoul2.Q00242_PossessorOfAPreciousSoul2;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -32,7 +38,6 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest
 	private static final int LADD = 30721;
 	private static final int CARADINE = 31740;
 	private static final int OSSIAN = 31741;
-	
 	private static final int PILGRIM_OF_SPLENDOR = 21541;
 	private static final int JUDGE_OF_SPLENDOR = 21544;
 	private static final int BARAKIEL = 25325;
@@ -45,7 +50,6 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest
 		21539, // Wailing of Splendor
 		21540, // Wailing of Splendor
 	};
-	
 	// Items
 	private static final int CARADINE_LETTER = 7678;
 	private static final int CARADINE_LETTER_LAST = 7679;
@@ -54,10 +58,19 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest
 	private static final int RAIN_SONG = 7593;
 	private static final int RELIC_BOX = 7594;
 	private static final int FRAGMENTS = 21725;
-	
 	// Rewards
 	private static final int CHANCE_FOR_DROP = 30;
 	private static final int CHANCE_FOR_DROP_FRAGMENTS = 60;
+	
+	public Q00246_PossessorOfAPreciousSoul3(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(CARADINE);
+		addTalkId(LADD, CARADINE, OSSIAN);
+		addKillId(PILGRIM_OF_SPLENDOR, JUDGE_OF_SPLENDOR, BARAKIEL);
+		addKillId(MOBS);
+		registerQuestItems(WATERBINDER, EVERGREEN, FRAGMENTS, RAIN_SONG, RELIC_BOX);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -77,15 +90,12 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest
 			case "31740-4.html":
 				if (st.isCreated())
 				{
-					if (st.hasQuestItems(CARADINE_LETTER))
-					{
-						st.takeItems(CARADINE_LETTER, -1);
-						st.startQuest();
-					}
+					st.takeItems(CARADINE_LETTER, -1);
+					st.startQuest();
 				}
 				break;
 			case "31741-2.html":
-				if (st.isStarted())
+				if (st.isStarted() && st.isCond(1))
 				{
 					st.set("awaitsWaterbinder", "1");
 					st.set("awaitsEvergreen", "1");
@@ -127,6 +137,119 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest
 	}
 	
 	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember;
+		final QuestState st;
+		switch (npc.getNpcId())
+		{
+			case PILGRIM_OF_SPLENDOR:
+				partyMember = getRandomPartyMember(player, "awaitsWaterbinder", "1");
+				if (partyMember != null)
+				{
+					st = partyMember.getQuestState(getName());
+					final int chance = getRandom(100);
+					if (st.isCond(2) && !st.hasQuestItems(WATERBINDER))
+					{
+						if (chance < CHANCE_FOR_DROP)
+						{
+							st.giveItems(WATERBINDER, 1);
+							st.unset("awaitsWaterbinder");
+							if (st.hasQuestItems(EVERGREEN))
+							{
+								st.setCond(3, true);
+								
+							}
+							else
+							{
+								st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+							}
+						}
+					}
+				}
+				break;
+			case JUDGE_OF_SPLENDOR:
+				partyMember = getRandomPartyMember(player, "awaitsEvergreen", "1");
+				if (partyMember != null)
+				{
+					st = partyMember.getQuestState(getName());
+					final long chance = getRandom(100);
+					if (st.isCond(2) && !st.hasQuestItems(EVERGREEN))
+					{
+						if (chance < CHANCE_FOR_DROP)
+						{
+							st.giveItems(EVERGREEN, 1);
+							st.unset("awaitsEvergreen");
+							if (st.hasQuestItems(WATERBINDER))
+							{
+								st.setCond(3, true);
+							}
+							else
+							{
+								st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+							}
+						}
+					}
+				}
+				break;
+			case BARAKIEL:
+				QuestState pst;
+				if ((player.getParty() != null) && !player.getParty().getMembers().isEmpty())
+				{
+					for (L2PcInstance member : player.getParty().getMembers())
+					{
+						pst = member.getQuestState(getName());
+						if (pst != null)
+						{
+							if (pst.isCond(4) && !pst.hasQuestItems(RAIN_SONG))
+							{
+								pst.giveItems(RAIN_SONG, 1);
+								pst.setCond(5, true);
+							}
+						}
+					}
+				}
+				else
+				{
+					pst = player.getQuestState(getName());
+					if (pst != null)
+					{
+						if (pst.isCond(4) && !pst.hasQuestItems(RAIN_SONG))
+						{
+							pst.giveItems(RAIN_SONG, 1);
+							pst.setCond(5, true);
+						}
+					}
+				}
+				break;
+			default:
+				st = player.getQuestState(getName());
+				if ((st == null))
+				{
+					return super.onKill(npc, player, isSummon);
+				}
+				
+				if (Util.contains(MOBS, npc.getNpcId()) && (st.getQuestItemsCount(FRAGMENTS) < 100) && (st.isCond(4)))
+				{
+					if (getRandom(100) < CHANCE_FOR_DROP_FRAGMENTS)
+					{
+						st.giveItems(FRAGMENTS, 1);
+						if (st.getQuestItemsCount(FRAGMENTS) < 100)
+						{
+							st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+						}
+						else
+						{
+							st.setCond(5, true);
+						}
+					}
+				}
+				break;
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
@@ -146,7 +269,8 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest
 				switch (st.getState())
 				{
 					case State.CREATED:
-						htmltext = (player.getLevel() >= 65) ? "31740-1.htm" : "31740-2.html";
+						final QuestState qs = player.getQuestState(Q00242_PossessorOfAPreciousSoul2.class.getSimpleName());
+						htmltext = ((player.getLevel() >= 65) && (qs != null) && qs.isCompleted()) ? "31740-1.htm" : "31740-2.html";
 						break;
 					case State.STARTED:
 						htmltext = "31740-5.html";
@@ -208,136 +332,6 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest
 				}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember;
-		final QuestState st;
-		switch (npc.getNpcId())
-		{
-			case PILGRIM_OF_SPLENDOR:
-				partyMember = getRandomPartyMember(player, "awaitsWaterbinder", "1");
-				if (partyMember != null)
-				{
-					st = partyMember.getQuestState(getName());
-					final int chance = getRandom(100);
-					if (st.isCond(2) && !st.hasQuestItems(WATERBINDER))
-					{
-						if (chance < CHANCE_FOR_DROP)
-						{
-							st.giveItems(WATERBINDER, 1);
-							st.unset("awaitsWaterbinder");
-							if (st.hasQuestItems(EVERGREEN))
-							{
-								st.setCond(3, true);
-								
-							}
-							else
-							{
-								st.playSound("ItemSound.quest_itemget");
-							}
-						}
-					}
-				}
-				break;
-			case JUDGE_OF_SPLENDOR:
-				partyMember = getRandomPartyMember(player, "awaitsEvergreen", "1");
-				if (partyMember != null)
-				{
-					st = partyMember.getQuestState(getName());
-					final long chance = getRandom(100);
-					if (st.isCond(2) && !st.hasQuestItems(EVERGREEN))
-					{
-						if (chance < CHANCE_FOR_DROP)
-						{
-							st.giveItems(EVERGREEN, 1);
-							st.unset("awaitsEvergreen");
-							if (st.hasQuestItems(WATERBINDER))
-							{
-								st.setCond(3, true);
-							}
-							else
-							{
-								st.playSound("ItemSound.quest_itemget");
-							}
-						}
-					}
-				}
-				break;
-			case BARAKIEL:
-				QuestState pst;
-				if ((player.getParty() != null) && !player.getParty().getMembers().isEmpty())
-				{
-					for (L2PcInstance member : player.getParty().getMembers())
-					{
-						pst = member.getQuestState(getName());
-						if (pst != null)
-						{
-							if (pst.isCond(4) && !pst.hasQuestItems(RAIN_SONG))
-							{
-								pst.giveItems(RAIN_SONG, 1);
-								pst.setCond(5, true);
-							}
-						}
-					}
-				}
-				else
-				{
-					pst = player.getQuestState(getName());
-					if (pst != null)
-					{
-						if (pst.isCond(4) && !pst.hasQuestItems(RAIN_SONG))
-						{
-							pst.giveItems(RAIN_SONG, 1);
-							pst.setCond(5, true);
-						}
-					}
-				}
-				break;
-			default:
-				st = player.getQuestState(getName());
-				if ((st == null))
-				{
-					return super.onKill(npc, player, isPet);
-				}
-				
-				if (Util.contains(MOBS, npc.getNpcId()) && (st.getQuestItemsCount(FRAGMENTS) < 100) && (st.isCond(4)))
-				{
-					if (getRandom(100) < CHANCE_FOR_DROP_FRAGMENTS)
-					{
-						st.giveItems(FRAGMENTS, 1);
-						if (st.getQuestItemsCount(FRAGMENTS) < 100)
-						{
-							st.playSound("ItemSound.quest_itemget");
-						}
-						else
-						{
-							st.setCond(5, true);
-						}
-					}
-				}
-				break;
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00246_PossessorOfAPreciousSoul3(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(CARADINE);
-		addTalkId(LADD, CARADINE, OSSIAN);
-		addKillId(PILGRIM_OF_SPLENDOR, JUDGE_OF_SPLENDOR, BARAKIEL);
-		addKillId(MOBS);
-		questItemIds = new int[]
-		{
-			WATERBINDER,
-			EVERGREEN,
-			FRAGMENTS,
-			RAIN_SONG,
-			RELIC_BOX
-		};
 	}
 	
 	public static void main(String[] args)

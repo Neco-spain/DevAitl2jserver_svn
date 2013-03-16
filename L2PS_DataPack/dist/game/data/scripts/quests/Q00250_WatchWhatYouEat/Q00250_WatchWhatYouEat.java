@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00250_WatchWhatYouEat;
 
@@ -28,9 +32,9 @@ import com.l2jserver.gameserver.model.quest.State;
 public class Q00250_WatchWhatYouEat extends Quest
 {
 	// NPCs
-	private static final int _sally = 32743;
+	private static final int SALLY = 32743;
 	// Mobs - Items
-	private static final int[][] _mobs =
+	private static final int[][] MOBS =
 	{
 		{
 			18864,
@@ -46,6 +50,19 @@ public class Q00250_WatchWhatYouEat extends Quest
 		}
 	};
 	
+	public Q00250_WatchWhatYouEat(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(SALLY);
+		addFirstTalkId(SALLY);
+		addTalkId(SALLY);
+		for (int[] mob : MOBS)
+		{
+			addKillId(mob[0]);
+		}
+		registerQuestItems(15493, 15494, 15495);
+	}
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
@@ -57,20 +74,17 @@ public class Q00250_WatchWhatYouEat extends Quest
 			return htmltext;
 		}
 		
-		if (npc.getNpcId() == _sally)
+		if (npc.getNpcId() == SALLY)
 		{
 			if (event.equalsIgnoreCase("32743-03.htm"))
 			{
-				st.setState(State.STARTED);
-				st.set("cond", "1");
-				st.playSound("ItemSound.quest_accept");
+				st.startQuest();
 			}
 			else if (event.equalsIgnoreCase("32743-end.htm"))
 			{
 				st.giveAdena(135661, true);
 				st.addExpAndSp(698334, 76369);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(false);
+				st.exitQuest(false, true);
 			}
 			else if (event.equalsIgnoreCase("32743-22.html") && st.isCompleted())
 			{
@@ -78,6 +92,52 @@ public class Q00250_WatchWhatYouEat extends Quest
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onFirstTalk(L2Npc npc, L2PcInstance player)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			newQuestState(player);
+		}
+		
+		if (npc.getNpcId() == SALLY)
+		{
+			return "32743-20.html";
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		if (st.isStarted() && st.isCond(1))
+		{
+			for (int[] mob : MOBS)
+			{
+				if (npc.getNpcId() == mob[0])
+				{
+					if (!st.hasQuestItems(mob[1]))
+					{
+						st.giveItems(mob[1], 1);
+						st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+					}
+				}
+			}
+			if (st.hasQuestItems(MOBS[0][1]) && st.hasQuestItems(MOBS[1][1]) && st.hasQuestItems(MOBS[2][1]))
+			{
+				st.setCond(2, true);
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -90,31 +150,24 @@ public class Q00250_WatchWhatYouEat extends Quest
 			return htmltext;
 		}
 		
-		if (npc.getNpcId() == _sally)
+		if (npc.getNpcId() == SALLY)
 		{
 			switch (st.getState())
 			{
 				case State.CREATED:
-					if (player.getLevel() >= 82)
-					{
-						htmltext = "32743-01.htm";
-					}
-					else
-					{
-						htmltext = "32743-00.htm";
-					}
+					htmltext = (player.getLevel() >= 82) ? "32743-01.htm" : "32743-00.htm";
 					break;
 				case State.STARTED:
-					if (st.getInt("cond") == 1)
+					if (st.isCond(1))
 					{
 						htmltext = "32743-04.htm";
 					}
-					else if (st.getInt("cond") == 2)
+					else if (st.isCond(2))
 					{
-						if (st.hasQuestItems(_mobs[0][1]) && st.hasQuestItems(_mobs[1][1]) && st.hasQuestItems(_mobs[2][1]))
+						if (st.hasQuestItems(MOBS[0][1]) && st.hasQuestItems(MOBS[1][1]) && st.hasQuestItems(MOBS[2][1]))
 						{
 							htmltext = "32743-05.htm";
-							for (int items[] : _mobs)
+							for (int items[] : MOBS)
 							{
 								st.takeItems(items[1], -1);
 							}
@@ -131,74 +184,6 @@ public class Q00250_WatchWhatYouEat extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return null;
-		}
-		if (st.isStarted() && (st.getInt("cond") == 1))
-		{
-			for (int mob[] : _mobs)
-			{
-				if (npc.getNpcId() == mob[0])
-				{
-					if (!st.hasQuestItems(mob[1]))
-					{
-						st.giveItems(mob[1], 1);
-						st.playSound("ItemSound.quest_itemget");
-					}
-				}
-			}
-			if (st.hasQuestItems(_mobs[0][1]) && st.hasQuestItems(_mobs[1][1]) && st.hasQuestItems(_mobs[2][1]))
-			{
-				st.set("cond", "2");
-				st.playSound("ItemSound.quest_middle");
-			}
-		}
-		return null;
-	}
-	
-	@Override
-	public String onFirstTalk(L2Npc npc, L2PcInstance player)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			newQuestState(player);
-		}
-		
-		if (npc.getNpcId() == _sally)
-		{
-			return "32743-20.html";
-		}
-		
-		return null;
-	}
-	
-	public Q00250_WatchWhatYouEat(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		questItemIds = new int[]
-		{
-			15493,
-			15494,
-			15495
-		};
-		
-		addStartNpc(_sally);
-		addFirstTalkId(_sally);
-		addTalkId(_sally);
-		
-		for (int i[] : _mobs)
-		{
-			addKillId(i[0]);
-		}
 	}
 	
 	public static void main(String[] args)

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00252_ItSmellsDelicious;
 
@@ -27,8 +31,7 @@ import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.util.Util;
 
 /**
- * It Smells Delicious! (252)
- * Updated by corbin12, thanks VLight for help.
+ * It Smells Delicious! (252) Updated by corbin12, thanks VLight for help.
  * @author Dumpster
  */
 public class Q00252_ItSmellsDelicious extends Quest
@@ -49,14 +52,11 @@ public class Q00252_ItSmellsDelicious extends Quest
 	public Q00252_ItSmellsDelicious(int id, String name, String descr)
 	{
 		super(id, name, descr);
-		
 		addStartNpc(STAN);
 		addTalkId(STAN);
 		addKillId(CHEF);
-		for (final int i : MOBS)
-		{
-			addKillId(i);
-		}
+		addKillId(MOBS);
+		registerQuestItems(MAHUM_DIARY, MAHUM_COOKBOOK);
 	}
 	
 	@Override
@@ -73,21 +73,52 @@ public class Q00252_ItSmellsDelicious extends Quest
 		{
 			if (event.equalsIgnoreCase("30200-05.htm"))
 			{
-				st.set("cond", "1");
-				st.setState(State.STARTED);
-				st.playSound("ItemSound.quest_accept");
+				st.startQuest();
 			}
 			else if (event.equalsIgnoreCase("30200-08.htm"))
 			{
-				st.takeItems(MAHUM_DIARY, -1);
-				st.takeItems(MAHUM_COOKBOOK, -1);
-				st.giveItems(57, 147656);
+				st.giveAdena(147656, true);
 				st.addExpAndSp(716238, 78324);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(false);
+				st.exitQuest(false, true);
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final int npcId = npc.getNpcId();
+		QuestState st;
+		if (Util.contains(MOBS, npcId) && (getRandom(1000) < 599))
+		{
+			st = getRandomPartyMemberQuestState(player, getName());
+			if (st != null)
+			{
+				st.giveItems(MAHUM_DIARY, 1);
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				
+				if ((st.getQuestItemsCount(MAHUM_DIARY) >= 10) && (st.getQuestItemsCount(MAHUM_COOKBOOK) >= 5))
+				{
+					st.setCond(2, true);
+				}
+			}
+		}
+		else if (npcId == CHEF)
+		{
+			st = player.getQuestState(getName());
+			if ((st != null) && st.isStarted() && (st.isCond(1)) && (st.getQuestItemsCount(MAHUM_COOKBOOK) < 5) && (getRandom(1000) < 360))
+			{
+				st.giveItems(MAHUM_COOKBOOK, 1);
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+				
+				if ((st.getQuestItemsCount(MAHUM_DIARY) >= 10) && (st.getQuestItemsCount(MAHUM_COOKBOOK) >= 5))
+				{
+					st.setCond(2, true);
+				}
+			}
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -105,21 +136,14 @@ public class Q00252_ItSmellsDelicious extends Quest
 			switch (st.getState())
 			{
 				case State.CREATED:
-					if (player.getLevel() >= 82)
-					{
-						htmltext = "30200-01.htm";
-					}
-					else
-					{
-						htmltext = "30200-02.htm";
-					}
+					htmltext = (player.getLevel() >= 82) ? "30200-01.htm" : "30200-02.htm";
 					break;
 				case State.STARTED:
-					if (st.getInt("cond") == 1)
+					if (st.isCond(1))
 					{
 						htmltext = "30200-06.htm";
 					}
-					else if (st.getInt("cond") == 2)
+					else if (st.isCond(2))
 					{
 						if ((st.getQuestItemsCount(MAHUM_DIARY) >= 10) && (st.getQuestItemsCount(MAHUM_COOKBOOK) >= 5))
 						{
@@ -134,45 +158,7 @@ public class Q00252_ItSmellsDelicious extends Quest
 		return htmltext;
 	}
 	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final int npcId = npc.getNpcId();
-		QuestState st;
-		if (Util.contains(MOBS, npcId) && (getRandom(1000) < 599))
-		{
-			st = getRandomPartyMemberQuestState(player);
-			if (st != null)
-			{
-				st.giveItems(MAHUM_DIARY, 1);
-				st.playSound("ItemSound.quest_itemget");
-				
-				if ((st.getQuestItemsCount(MAHUM_DIARY) >= 10) && (st.getQuestItemsCount(MAHUM_COOKBOOK) >= 5))
-				{
-					st.set("cond", "2");
-					st.playSound("ItemSound.quest_middle");
-				}
-			}
-		}
-		else if (npcId == CHEF)
-		{
-			st = player.getQuestState(getName());
-			if ((st != null) && st.isStarted() && (st.getInt("cond") == 1) && (st.getQuestItemsCount(MAHUM_COOKBOOK) < 5) && (getRandom(1000) < 360))
-			{
-				st.giveItems(MAHUM_COOKBOOK, 1);
-				st.playSound("ItemSound.quest_itemget");
-				
-				if ((st.getQuestItemsCount(MAHUM_DIARY) >= 10) && (st.getQuestItemsCount(MAHUM_COOKBOOK) >= 5))
-				{
-					st.set("cond", "2");
-					st.playSound("ItemSound.quest_middle");
-				}
-			}
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	private QuestState getRandomPartyMemberQuestState(L2PcInstance player)
+	private static QuestState getRandomPartyMemberQuestState(L2PcInstance player, String questName)
 	{
 		if (player == null)
 		{
@@ -184,8 +170,8 @@ public class Q00252_ItSmellsDelicious extends Quest
 		
 		if ((party == null) || party.getMembers().isEmpty())
 		{
-			st = player.getQuestState(getName());
-			if ((st == null) || st.isStarted() || (st.getInt("cond") != 1) || (st.getQuestItemsCount(MAHUM_DIARY) >= 10))
+			st = player.getQuestState(questName);
+			if ((st == null) || st.isStarted() || (!st.isCond(1)) || (st.getQuestItemsCount(MAHUM_DIARY) >= 10))
 			{
 				return null;
 			}
@@ -208,8 +194,8 @@ public class Q00252_ItSmellsDelicious extends Quest
 				continue;
 			}
 			
-			st = partyMember.getQuestState(getName());
-			if ((st == null) || (st.getState() != State.STARTED) || (st.getInt("cond") != 1) || (st.getQuestItemsCount(MAHUM_DIARY) >= 10))
+			st = partyMember.getQuestState(questName);
+			if ((st == null) || (st.getState() != State.STARTED) || (!st.isCond(1)) || (st.getQuestItemsCount(MAHUM_DIARY) >= 10))
 			{
 				continue;
 			}

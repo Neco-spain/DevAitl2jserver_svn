@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
@@ -18,7 +22,6 @@ import javolution.util.FastList;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.Announcements;
-import com.l2jserver.gameserver.GameServerRestart;
 import com.l2jserver.gameserver.LoginServerThread;
 import com.l2jserver.gameserver.SevenSigns;
 import com.l2jserver.gameserver.TaskPriority;
@@ -45,6 +48,7 @@ import com.l2jserver.gameserver.instancemanager.TerritoryWarManager;
 import com.l2jserver.gameserver.model.L2Clan;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2World;
+import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.instance.L2ClassMasterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Castle;
@@ -66,6 +70,7 @@ import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.gameserver.network.serverpackets.Die;
 import com.l2jserver.gameserver.network.serverpackets.EtcStatusUpdate;
 import com.l2jserver.gameserver.network.serverpackets.ExBasicActionList;
+import com.l2jserver.gameserver.network.serverpackets.ExBrPremiumState;
 import com.l2jserver.gameserver.network.serverpackets.ExGetBookMarkInfoPacket;
 import com.l2jserver.gameserver.network.serverpackets.ExNevitAdventEffect;
 import com.l2jserver.gameserver.network.serverpackets.ExNevitAdventPointInfoPacket;
@@ -85,6 +90,7 @@ import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListAll;
 import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListUpdate;
 import com.l2jserver.gameserver.network.serverpackets.PledgeSkillList;
 import com.l2jserver.gameserver.network.serverpackets.PledgeStatusChanged;
+import com.l2jserver.gameserver.network.serverpackets.PremiumState;
 import com.l2jserver.gameserver.network.serverpackets.QuestList;
 import com.l2jserver.gameserver.network.serverpackets.ShortCutInit;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
@@ -404,11 +410,6 @@ public class EnterWorld extends L2GameClientPacket
 		}
 		activeChar.sendPacket(new QuestList());
 		
-		if ((activeChar.getPvpKills() >= (Config.PVP_AMOUNT1)) && (Config.PVP_TITLE_AND_COLOR_SYSTEM_ENABLED))
-		{
-			activeChar.updatePvPTitleColor(activeChar.getPvpKills());
-		}
-		
 		if (Config.PLAYER_SPAWN_PROTECTION > 0)
 		{
 			activeChar.setProtection(true);
@@ -437,18 +438,6 @@ public class EnterWorld extends L2GameClientPacket
 		
 		activeChar.updateEffectIcons();
 		
-		if (Config.PC_BANG_ENABLED)
-		{
-			if (activeChar.getPcBangPoints() > 0)
-			{
-				activeChar.sendPacket(new ExPCCafePointInfo(activeChar.getPcBangPoints(), 0, false, false, 1));
-			}
-			else
-			{
-				activeChar.sendPacket(new ExPCCafePointInfo());
-			}
-		}
-		
 		activeChar.sendPacket(new EtcStatusUpdate(activeChar));
 		
 		// Expand Skill
@@ -468,16 +457,12 @@ public class EnterWorld extends L2GameClientPacket
 		}
 		
 		activeChar.sendPacket(SystemMessageId.WELCOME_TO_LINEAGE);
-		
+		// TODO:
 		SevenSigns.getInstance().sendCurrentPeriodMsg(activeChar);
 		Announcements.getInstance().showAnnouncements(activeChar);
-		
-		if (Config.AUTO_RESTART_ENABLE)
-		{
-			CreatureSay msg3 = new CreatureSay(2, Say2.BATTLEFIELD, "[SERVER]", "Next Restart at " + GameServerRestart.getInstance().getRestartNextTime() + " hs.");
-			activeChar.sendPacket(msg3);
-		}
-		
+		/*
+		 * if (Config.AUTO_RESTART_ENABLE) { CreatureSay msg3 = new CreatureSay(2, Say2.BATTLEFIELD, "[SERVER]", "Next Restart at " + GameServerRestart.getInstance().getRestartNextTime() + " hs."); activeChar.sendPacket(msg3); }
+		 */
 		activeChar.sendMessage("L2PS: http://l2jpsproject.eu");
 		
 		if (Config.NEWBIE_WELCOME_ENABLE && (activeChar.getLevel() == 1))
@@ -524,12 +509,29 @@ public class EnterWorld extends L2GameClientPacket
 			notifyCastleOwner(activeChar);
 		}
 		
+		if ((activeChar.getPvpKills() >= (Config.PVP_AMOUNT1)) && (Config.PVP_TITLE_AND_COLOR_SYSTEM_ENABLED))
+		{
+			activeChar.updatePvPTitleColor(activeChar.getPvpKills());
+		}
+		
+		if (Config.PC_BANG_ENABLED)
+		{
+			if (activeChar.getPcBangPoints() > 0)
+			{
+				activeChar.sendPacket(new ExPCCafePointInfo(activeChar.getPcBangPoints(), 0, false, false, 1));
+			}
+			else
+			{
+				activeChar.sendPacket(new ExPCCafePointInfo());
+			}
+		}
+		
 		if (showClanNotice)
 		{
 			NpcHtmlMessage notice = new NpcHtmlMessage(1);
 			notice.setFile(activeChar.getHtmlPrefix(), "data/html/clanNotice.htm");
 			notice.replace("%clan_name%", activeChar.getClan().getName());
-			notice.replace("%notice_text%", activeChar.getClan().getNotice().replaceAll("\r\n", "<br>"));
+			notice.replace("%notice_text%", activeChar.getClan().getNotice());
 			notice.disableValidation();
 			sendPacket(notice);
 		}
@@ -553,6 +555,16 @@ public class EnterWorld extends L2GameClientPacket
 			sendPacket(new Die(activeChar));
 		}
 		
+		if (activeChar.getPremiumService() == 1)
+		{
+			activeChar.sendPacket(new ExBrPremiumState(activeChar.getObjectId(), 1));
+			activeChar.sendMessage("Premium account: now active");
+		}
+		else
+		{
+			activeChar.sendPacket(new ExBrPremiumState(activeChar.getObjectId(), 0));
+			activeChar.sendMessage("Premium account: now inactive");
+		}
 		activeChar.onPlayerEnter();
 		
 		sendPacket(new SkillCoolTime(activeChar));
@@ -560,7 +572,6 @@ public class EnterWorld extends L2GameClientPacket
 		sendPacket(new ExNevitAdventEffect(0));
 		sendPacket(new ExNevitAdventPointInfoPacket(activeChar));
 		sendPacket(new ExNevitAdventTimeChange(activeChar.getAdventTime(), false));
-		
 		sendPacket(new ExShowContactList(activeChar));
 		
 		for (L2ItemInstance i : activeChar.getInventory().getItems())
@@ -610,12 +621,9 @@ public class EnterWorld extends L2GameClientPacket
 			}
 		}
 		
-		// Attacker or spectator logging in to a siege zone. Actually should be checked for inside castle only?
-		if (!activeChar.isGM()
-		// inside siege zone
-		&& activeChar.isInsideZone(ZoneId.SIEGE)
-		// but non-participant or attacker
-		&& (!activeChar.isInSiege() || (activeChar.getSiegeState() < 2)))
+		// Attacker or spectator logging in to a siege zone.
+		// Actually should be checked for inside castle only?
+		if (!activeChar.canOverrideCond(PcCondOverride.ZONE_CONDITIONS) && activeChar.isInsideZone(ZoneId.SIEGE) && (!activeChar.isInSiege() || (activeChar.getSiegeState() < 2)))
 		{
 			activeChar.teleToLocation(MapRegionManager.TeleportWhereType.Town);
 		}
@@ -810,6 +818,15 @@ public class EnterWorld extends L2GameClientPacket
 	public static void removeSpawnListener(PlayerSpawnListener listener)
 	{
 		listeners.remove(listener);
+	}
+	
+	protected void PremiumServiceIcon(L2PcInstance activeChar)
+	{
+		if (activeChar.getPremiumService() == 1)
+		{
+			activeChar.sendPacket(new PremiumState(activeChar.getObjectId(), 1));
+			activeChar.sendMessage("Premium account: now active");
+		}
 	}
 	
 	private void notifyCastleOwner(L2PcInstance activeChar)

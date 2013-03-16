@@ -26,6 +26,10 @@ import com.l2jserver.gameserver.model.quest.QuestState.QuestType;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.util.Util;
 
+/**
+ * The Call of Valakas (906)
+ * @author Zoey76
+ */
 public class Q00906_TheCallOfValakas extends Quest
 {
 	// NPC
@@ -46,6 +50,18 @@ public class Q00906_TheCallOfValakas extends Quest
 		addTalkId(KLEIN);
 		addKillId(LAVASAURUS_ALPHA);
 		registerQuestItems(LAVASAURUS_ALPHA_FRAGMENT);
+	}
+	
+	@Override
+	public void actionForEachPlayer(L2PcInstance player, L2Npc npc, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if ((st != null) && Util.checkIfInRange(1500, npc, player, false))
+		{
+			st.giveItems(LAVASAURUS_ALPHA_FRAGMENT, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			st.setCond(2, true);
+		}
 	}
 	
 	@Override
@@ -76,6 +92,13 @@ public class Q00906_TheCallOfValakas extends Quest
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	{
+		executeForEachPlayer(killer, npc, isSummon, true, false);
+		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -152,25 +175,6 @@ public class Q00906_TheCallOfValakas extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isPet)
-	{
-		executeForEachPlayer(killer, npc, isPet, true, false);
-		return super.onKill(npc, killer, isPet);
-	}
-	
-	@Override
-	public void actionForEachPlayer(L2PcInstance player, L2Npc npc, boolean isPet)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if ((st != null) && Util.checkIfInRange(1500, npc, player, false))
-		{
-			st.giveItems(LAVASAURUS_ALPHA_FRAGMENT, 1);
-			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
-			st.setCond(2, true);
-		}
 	}
 	
 	public static void main(String[] args)

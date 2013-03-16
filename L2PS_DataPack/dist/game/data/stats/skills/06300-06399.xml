@@ -621,10 +621,10 @@
 		<set name="power" val="-1" /> <!-- Land Always -->
 		<set name="reuseDelay" val="1000" />
 		<set name="saveVs" val="MEN" />
-		<set name="skillType" val="BUFF" />
+		<set name="skillType" val="DEBUFF" />
 		<set name="target" val="TARGET_SELF" />
 		<for>
-			<effect name="Buff" abnormalTime="300" val="0" abnormalLvl="3" abnormalType="speed_down">
+			<effect name="Debuff" abnormalTime="300" val="0" abnormalLvl="3" abnormalType="speed_down">
 				<mul order="0x30" stat="pAtkSpd" val="0.7" />
 			</effect>
 		</for>
@@ -643,10 +643,10 @@
 		<set name="power" val="-1" /> <!-- Land Always -->
 		<set name="reuseDelay" val="1000" />
 		<set name="saveVs" val="MEN" />
-		<set name="skillType" val="BUFF" />
+		<set name="skillType" val="DEBUFF" />
 		<set name="target" val="TARGET_SELF" />
 		<for>
-			<effect name="Buff" abnormalTime="300" val="0" abnormalLvl="3" abnormalType="speed_down">
+			<effect name="Debuff" abnormalTime="300" val="0" abnormalLvl="3" abnormalType="speed_down">
 				<mul order="0x30" stat="runSpd" val="0.7" />
 				<mul order="0x30" stat="pAtkSpd" val="0.7" />
 			</effect>

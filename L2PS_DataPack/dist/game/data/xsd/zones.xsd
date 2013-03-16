@@ -23,7 +23,6 @@
 												<xs:enumeration value="enterMsgId" />
 												<xs:enumeration value="fortId" />
 												<xs:enumeration value="HpRegenBonus" />
-												<xs:enumeration value="HotSpringZone" />
 												<xs:enumeration value="initialDelay" />
 												<xs:enumeration value="instanceId" />
 												<xs:enumeration value="instanceTemplate" />
@@ -124,7 +123,6 @@
 									<xs:enumeration value="EffectZone" />
 									<xs:enumeration value="FishingZone" />
 									<xs:enumeration value="FortZone" />
-									<xs:enumeration value="HotSpringZone" />
 									<xs:enumeration value="HqZone" />
 									<xs:enumeration value="JailZone" />
 									<xs:enumeration value="LandingZone" />

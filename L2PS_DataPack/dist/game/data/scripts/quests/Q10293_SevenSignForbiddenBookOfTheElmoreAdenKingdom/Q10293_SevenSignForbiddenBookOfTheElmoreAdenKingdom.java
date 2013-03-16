@@ -44,7 +44,9 @@ public class Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom extends Quest
 		QuestState st = player.getQuestState(getName());
 		int npcId = npc.getNpcId();
 		if (st == null)
+		{
 			return htmltext;
+		}
 		
 		if (npcId == Elcadia)
 		{
@@ -121,23 +123,29 @@ public class Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom extends Quest
 				if (npc.getNpcId() == Elcadia)
 				{
 					QuestState GirlOfDoubt = player.getQuestState("Q10292_SevenSignGirlofDoubt");
-					if(player.getLevel() >= 81 && GirlOfDoubt.isCompleted())
+					if ((player.getLevel() >= 81) && GirlOfDoubt.isCompleted())
+					{
 						htmltext = "32784-01.htm";
+					}
 					else
 					{
 						htmltext = "32784-11.htm";
 						st.exitQuest(true);
-					}	
+					}
 				}
 				break;
 			case State.STARTED:
-				if(npcId == Elcadia)
+				if (npcId == Elcadia)
 				{
 					if (cond == 1)
+					{
 						htmltext = "32784-06.html";
+					}
 					else if (cond >= 8)
+					{
 						htmltext = "32784-07.html";
-				}		
+					}
+				}
 				else if (npcId == Elcadia_Support)
 				{
 					switch (cond)
@@ -221,41 +229,51 @@ public class Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom extends Quest
 				else if (npcId == Books)
 				{
 					if (cond == 6)
+					{
 						htmltext = "32809-01.html";
+					}
 				}
 				else if (npcId == Books1)
 				{
 					if (cond == 6)
+					{
 						htmltext = "32810-01.html";
+					}
 				}
 				else if (npcId == Books2)
 				{
 					if (cond == 6)
+					{
 						htmltext = "32811-01.html";
+					}
 				}
 				else if (npcId == Books3)
 				{
 					if (cond == 6)
+					{
 						htmltext = "32812-01.html";
+					}
 				}
 				else if (npcId == Books4)
 				{
 					if (cond == 6)
+					{
 						htmltext = "32813-01.html";
+					}
 				}
-				break;	
+				break;
 			case State.COMPLETED:
 				if (npcId == Elcadia)
-				{				
+				{
 					htmltext = "32784-02.html";
 				}
-				break;	
-		}	
+				break;
+		}
 		return htmltext;
 	}
 	
 	@Override
-	public final String onFirstTalk (L2Npc npc, L2PcInstance player)
+	public final String onFirstTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
 		QuestState st = player.getQuestState(getName());
@@ -279,7 +297,6 @@ public class Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom extends Quest
 		}
 		return htmltext;
 	}
-
 	
 	public Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom(int questId, String name, String descr)
 	{
@@ -298,9 +315,11 @@ public class Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom extends Quest
 		addTalkId(Sophia3);
 		addStartNpc(Sophia3);
 		addFirstTalkId(Sophia3);
-
 		
-		questItemIds = new int[] { SolinasBiography };
+		questItemIds = new int[]
+		{
+			SolinasBiography
+		};
 	}
 	
 	public static void main(String[] args)

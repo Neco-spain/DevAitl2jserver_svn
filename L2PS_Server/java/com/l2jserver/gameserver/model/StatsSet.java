@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model;
 
@@ -24,7 +28,9 @@ import java.util.logging.Logger;
 import javolution.util.FastMap;
 
 /**
- * @author mkizub
+ * @author mkizub <BR>
+ *         This class is used in order to have a set of couples (key,value).<BR>
+ *         Methods deployed are accessors to the set (add/get value from its key) and addition of a whole set in the current one.
  */
 public final class StatsSet
 {
@@ -374,32 +380,6 @@ public final class StatsSet
 	}
 	
 	/**
-	 * Returns the long associated to the key put in parameter ("name").
-	 * @param name : String designating the key in the set
-	 * @return long : value associated to the key
-	 */
-	public long getLong(String name)
-	{
-		Object val = _set.get(name);
-		if (val == null)
-		{
-			throw new IllegalArgumentException("Integer value required, but not specified");
-		}
-		if (val instanceof Number)
-		{
-			return ((Number) val).longValue();
-		}
-		try
-		{
-			return Long.parseLong((String) val);
-		}
-		catch (Exception e)
-		{
-			throw new IllegalArgumentException("Integer value required, but found: " + val);
-		}
-	}
-	
-	/**
 	 * Returns the long associated to the key put in parameter ("name"). If the value associated to the key is null, this method returns the value of the parameter deflt.
 	 * @param name : String designating the key in the set
 	 * @param deflt : long designating the default value if value associated with the key is null
@@ -700,6 +680,27 @@ public final class StatsSet
 	public void set(String name, Enum<?> value)
 	{
 		_set.put(name, value);
+	}
+	
+	public long getLong(String name)
+	{
+		Object val = _set.get(name);
+		if (val == null)
+		{
+			throw new IllegalArgumentException("Integer value required, but not specified");
+		}
+		if (val instanceof Number)
+		{
+			return ((Number) val).longValue();
+		}
+		try
+		{
+			return Long.parseLong((String) val);
+		}
+		catch (Exception e)
+		{
+			throw new IllegalArgumentException("Integer value required, but found: " + val);
+		}
 	}
 	
 	public void unset(String name)

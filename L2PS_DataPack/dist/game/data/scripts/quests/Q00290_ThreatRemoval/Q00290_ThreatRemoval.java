@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00290_ThreatRemoval;
 
@@ -28,13 +32,13 @@ import com.l2jserver.gameserver.model.quest.State;
 
 /**
  * Threat Removal (290)
- * @Fixed L2PS Millu
+ * @author Adry_85
  */
 public class Q00290_ThreatRemoval extends Quest
 {
 	// NPC
 	private static final int PINAPS = 30201;
-	// Item
+	// Items
 	private static final int ENCHANT_WEAPON_S = 959;
 	private static final int ENCHANT_ARMOR_S = 960;
 	private static final int FIRE_CRYSTAL = 9552;
@@ -61,7 +65,6 @@ public class Q00290_ThreatRemoval extends Quest
 	public Q00290_ThreatRemoval(int id, String name, String descr)
 	{
 		super(id, name, descr);
-		
 		addStartNpc(PINAPS);
 		addTalkId(PINAPS);
 		addKillId(MOBS_TAG.keySet());
@@ -167,8 +170,27 @@ public class Q00290_ThreatRemoval extends Quest
 				break;
 			}
 		}
-		
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
+		if (partyMember == null)
+		{
+			return super.onKill(npc, player, isSummon);
+		}
+		
+		final QuestState st = partyMember.getQuestState(getName());
+		int npcId = npc.getNpcId();
+		float chance = (MOBS_TAG.get(npcId) * Config.RATE_QUEST_DROP);
+		if (getRandom(1000) < chance)
+		{
+			st.rewardItems(SEL_MAHUM_ID_TAG, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -191,39 +213,14 @@ public class Q00290_ThreatRemoval extends Quest
 			}
 			case State.STARTED:
 			{
-				if (npc.getNpcId() == PINAPS)
+				if (st.isCond(1))
 				{
-					if (st.isCond(1))
-					{
-						htmltext = (st.getQuestItemsCount(SEL_MAHUM_ID_TAG) < 400) ? "30201-04.html" : "30201-05.html";
-					}
+					htmltext = (st.getQuestItemsCount(SEL_MAHUM_ID_TAG) < 400) ? "30201-04.html" : "30201-05.html";
 				}
 				break;
 			}
 		}
-		
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		
-		final QuestState st = partyMember.getQuestState(getName());
-		int npcId = npc.getNpcId();
-		int chance = (int) ((MOBS_TAG.get(npcId) * Config.RATE_QUEST_DROP) % 1000);
-		if (getRandom(1000) < chance)
-		{
-			st.rewardItems(SEL_MAHUM_ID_TAG, 1);
-			st.playSound("ItemSound.quest_itemget");
-		}
-		
-		return super.onKill(npc, player, isPet);
 	}
 	
 	public static void main(String[] args)

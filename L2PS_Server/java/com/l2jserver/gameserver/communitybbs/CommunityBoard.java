@@ -1,34 +1,36 @@
+/*
+ * Copyright (C) 2004-2013 L2J Server
+ * 
+ * This file is part of L2J Server.
+ * 
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.l2jserver.gameserver.communitybbs;
 
-import java.util.StringTokenizer;
-
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.communitybbs.Manager.BuffBBSManager;
 import com.l2jserver.gameserver.communitybbs.Manager.ClanBBSManager;
-import com.l2jserver.gameserver.communitybbs.Manager.ClassBBSManager;
-import com.l2jserver.gameserver.communitybbs.Manager.EnchantBBSManager;
 import com.l2jserver.gameserver.communitybbs.Manager.PostBBSManager;
 import com.l2jserver.gameserver.communitybbs.Manager.RegionBBSManager;
-import com.l2jserver.gameserver.communitybbs.Manager.ServiceBBSManager;
-import com.l2jserver.gameserver.communitybbs.Manager.StateBBSManager;
-import com.l2jserver.gameserver.communitybbs.Manager.TeleportBBSManager;
 import com.l2jserver.gameserver.communitybbs.Manager.TopBBSManager;
 import com.l2jserver.gameserver.communitybbs.Manager.TopicBBSManager;
-import com.l2jserver.gameserver.datatables.MultiSell;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.SystemMessageId;
-import com.l2jserver.gameserver.network.serverpackets.ExShowVariationCancelWindow;
-import com.l2jserver.gameserver.network.serverpackets.ExShowVariationMakeWindow;
 import com.l2jserver.gameserver.network.serverpackets.ShowBoard;
 
 public class CommunityBoard
 {
-	protected CommunityBoard()
-	{
-	}
-	
 	public static CommunityBoard getInstance()
 	{
 		return SingletonHolder._instance;
@@ -42,77 +44,16 @@ public class CommunityBoard
 			return;
 		}
 		
-		if (activeChar.isInOlympiadMode())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.inObserverMode())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isAlikeDead())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isInSiege())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isInsideZone(ZoneId.PVP))
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isInCombat())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isDead())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isCastingNow())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isAttackingNow())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isInJail())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isFlying())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		if (activeChar.isInDuel())
-		{
-			activeChar.sendMessage("You cant use Community Board for now.");
-			return;
-		}
-		
 		switch (Config.COMMUNITY_TYPE)
 		{
 			default:
-			case 0:
+			case 0: // disabled
 				activeChar.sendPacket(SystemMessageId.CB_OFFLINE);
 				break;
-			case 1:
+			case 1: // old
 				RegionBBSManager.getInstance().parsecmd(command, activeChar);
 				break;
-			case 2:
+			case 2: // new
 				if (command.startsWith("_bbsclan"))
 				{
 					ClanBBSManager.getInstance().parsecmd(command, activeChar);
@@ -141,137 +82,6 @@ public class CommunityBoard
 				{
 					RegionBBSManager.getInstance().parsecmd(command, activeChar);
 				}
-				else if (command.startsWith("_bbsstat;"))
-				{
-					if (Config.ALLOW_COMMUNITY_STATS)
-					{
-						StateBBSManager.getInstance().parsecmd(command, activeChar);
-					}
-					else
-					{
-						activeChar.sendMessage("You cant see stats!");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbsteleport;"))
-				{
-					if (Config.ALLOW_COMMUNITY_TELEPORT)
-					{
-						TeleportBBSManager.getInstance().parsecmd(command, activeChar);
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service!");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbs_buff"))
-				{
-					if (Config.ALLOW_COMMUNITY_BUFF)
-					{
-						BuffBBSManager.getInstance().parsecmd(command, activeChar);
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service!");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbsservice"))
-				{
-					if (Config.ALLOW_COMMUNITY_SERVICES)
-					{
-						ServiceBBSManager.getInstance().parsecmd(command, activeChar);
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service!");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbsechant"))
-				{
-					if (Config.ALLOW_COMMUNITY_ENCHANT)
-					{
-						EnchantBBSManager.getInstance().parsecmd(command, activeChar);
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service!");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbsclass"))
-				{
-					if (Config.ALLOW_COMMUNITY_CLASS)
-					{
-						ClassBBSManager.getInstance().parsecmd(command, activeChar);
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service!");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbsmultisell;"))
-				{
-					if (Config.ALLOW_COMMUNITY_MULTISELL)
-					{
-						if (activeChar.isDead() || activeChar.isAlikeDead() || activeChar.isInSiege() || activeChar.isCastingNow() || activeChar.isInCombat() || activeChar.isAttackingNow() || activeChar.isInOlympiadMode() || activeChar.isInJail() || activeChar.isFlying() || (activeChar.getKarma() > 0) || activeChar.isInDuel())
-						{
-							activeChar.sendMessage("You cant use this service!");
-							return;
-						}
-						StringTokenizer st = new StringTokenizer(command, ";");
-						st.nextToken();
-						TopBBSManager.getInstance().parsecmd("_bbstop;" + st.nextToken(), activeChar);
-						int multisell = Integer.parseInt(st.nextToken());
-						MultiSell.getInstance().separateAndSend(multisell, activeChar, null, false);
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbsAugment;add"))
-				{
-					if (Config.ALLOW_COMMUNITY_MULTISELL)
-					{
-						TopBBSManager.getInstance().parsecmd(command, activeChar);
-						activeChar.sendPacket(SystemMessageId.SELECT_THE_ITEM_TO_BE_AUGMENTED);
-						activeChar.sendPacket(new ExShowVariationMakeWindow());
-						activeChar.cancelActiveTrade();
-						TopBBSManager.getInstance().parsecmd(command, activeChar);
-						return;
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service!");
-						return;
-					}
-				}
-				else if (command.startsWith("_bbsAugment;remove"))
-				{
-					if (Config.ALLOW_COMMUNITY_MULTISELL)
-					{
-						TopBBSManager.getInstance().parsecmd(command, activeChar);
-						activeChar.sendPacket(SystemMessageId.SELECT_THE_ITEM_FROM_WHICH_YOU_WISH_TO_REMOVE_AUGMENTATION);
-						activeChar.sendPacket(new ExShowVariationCancelWindow());
-						activeChar.cancelActiveTrade();
-						TopBBSManager.getInstance().parsecmd(command, activeChar);
-						return;
-					}
-					else
-					{
-						activeChar.sendMessage("You cant use this service!");
-						return;
-					}
-				}
-				else if (command.startsWith("bbs_add_fav"))
-				{
-					activeChar.sendMessage("Contact l2jps developers for missing text");
-				}
 				else
 				{
 					ShowBoard sb = new ShowBoard("<html><body><br><br><center>the command: " + command + " is not implemented yet</center><br><br></body></html>", "101");
@@ -283,6 +93,15 @@ public class CommunityBoard
 		}
 	}
 	
+	/**
+	 * @param client
+	 * @param url
+	 * @param arg1
+	 * @param arg2
+	 * @param arg3
+	 * @param arg4
+	 * @param arg5
+	 */
 	public void handleWriteCommands(L2GameClient client, String url, String arg1, String arg2, String arg3, String arg4, String arg5)
 	{
 		L2PcInstance activeChar = client.getActiveChar();

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.skills;
 
@@ -32,7 +36,6 @@ import com.l2jserver.gameserver.eventengine.Interface;
 import com.l2jserver.gameserver.handler.ITargetTypeHandler;
 import com.l2jserver.gameserver.handler.TargetHandler;
 import com.l2jserver.gameserver.model.ChanceCondition;
-import com.l2jserver.gameserver.model.IChanceSkillTrigger;
 import com.l2jserver.gameserver.model.L2ExtractableProductItem;
 import com.l2jserver.gameserver.model.L2ExtractableSkill;
 import com.l2jserver.gameserver.model.L2Object;
@@ -51,6 +54,7 @@ import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.effects.EffectTemplate;
 import com.l2jserver.gameserver.model.effects.L2Effect;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
+import com.l2jserver.gameserver.model.interfaces.IChanceSkillTrigger;
 import com.l2jserver.gameserver.model.items.L2Armor;
 import com.l2jserver.gameserver.model.items.type.L2ArmorType;
 import com.l2jserver.gameserver.model.skills.funcs.Func;
@@ -71,12 +75,14 @@ public abstract class L2Skill implements IChanceSkillTrigger
 	
 	private static final L2Object[] _emptyTargetList = new L2Object[0];
 	
-	public static final int SKILL_LUCKY = 194;
-	public static final int SKILL_CREATE_COMMON = 1320;
 	public static final int SKILL_CREATE_DWARVEN = 172;
+	public static final int SKILL_LUCKY = 194;
+	public static final int SKILL_EXPERTISE = 239;
 	public static final int SKILL_CRYSTALLIZE = 248;
-	public static final int SKILL_DIVINE_INSPIRATION = 1405;
 	public static final int SKILL_CLAN_LUCK = 390;
+	public static final int SKILL_ONYX_BEAST_TRANSFORMATION = 617;
+	public static final int SKILL_CREATE_COMMON = 1320;
+	public static final int SKILL_DIVINE_INSPIRATION = 1405;
 	public static final int SKILL_NPC_RACE = 4416;
 	
 	public static final boolean geoEnabled = Config.GEODATA > 0;
@@ -101,10 +107,6 @@ public abstract class L2Skill implements IChanceSkillTrigger
 	
 	/** Identifier for a skill that client can't display */
 	private int _displayId;
-	
-	private final int _faceId;
-	private final int _hairColorId;
-	private final int _hairStyleId;
 	
 	// not needed, just for easier debug
 	private final String _name;
@@ -256,6 +258,11 @@ public abstract class L2Skill implements IChanceSkillTrigger
 	private final boolean _isStaticHeal;
 	
 	private int _npcId = 0;
+	
+	// Appearance
+	private final int _faceId;
+	private final int _hairColorId;
+	private final int _hairStyleId;
 	
 	protected L2Skill(StatsSet set)
 	{
@@ -2176,9 +2183,36 @@ public abstract class L2Skill implements IChanceSkillTrigger
 		return _isStaticHeal;
 	}
 	
+	/**
+	 * @return the _npcId
+	 */
 	public int getNpcId()
 	{
 		return _npcId;
+	}
+	
+	/**
+	 * @return the _faceId
+	 */
+	public int getFaceId()
+	{
+		return _faceId;
+	}
+	
+	/**
+	 * @return the _hairColorId
+	 */
+	public int getHairColorId()
+	{
+		return _hairColorId;
+	}
+	
+	/**
+	 * @return the _hairStyleId
+	 */
+	public int getHairStyleId()
+	{
+		return _hairStyleId;
 	}
 	
 	public static final boolean checkForAreaFriendlySkills(L2PcInstance activeChar, L2Character target, L2Skill skill)
@@ -2253,20 +2287,5 @@ public abstract class L2Skill implements IChanceSkillTrigger
 		}
 		
 		return (!geoEnabled) || (GeoData.getInstance().canSeeTarget(activeChar, target));
-	}
-	
-	public int getFaceId()
-	{
-		return _faceId;
-	}
-	
-	public int getHairColorId()
-	{
-		return _hairColorId;
-	}
-	
-	public int getHairStyleId()
-	{
-		return _hairStyleId;
 	}
 }

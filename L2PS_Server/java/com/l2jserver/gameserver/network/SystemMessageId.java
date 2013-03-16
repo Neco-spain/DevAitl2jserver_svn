@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network;
 
@@ -33,6 +37,9 @@ import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.clientstrings.Builder;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
+/**
+ * @author Noctarius, Nille02, crion, Forsaiken
+ */
 public final class SystemMessageId
 {
 	private static final Logger _log = Logger.getLogger(SystemMessageId.class.getName());
@@ -238,7 +245,7 @@ public final class SystemMessageId
 	public static final SystemMessageId UNABLE_COMBAT_PLEASE_GO_RESTART;
 	
 	/**
-	 * ID: 32<br>
+	 * ID: 33<br>
 	 * Message: You cannot move while casting.
 	 */
 	public static final SystemMessageId CANT_MOVE_CASTING;
@@ -695,7 +702,7 @@ public final class SystemMessageId
 	
 	/**
 	 * ID: 112<br>
-	 * Message: You may no longer adjust items in the trade because the trade has been confirmed.
+	 * Message: You have run out of arrows.
 	 */
 	public static final SystemMessageId NOT_ENOUGH_ARROWS;
 	
@@ -1268,6 +1275,26 @@ public final class SystemMessageId
 	 * Message: $s2 of the clan $s1 requests declaration of war. Do you accept?
 	 */
 	public static final SystemMessageId S2_OF_THE_CLAN_S1_REQUESTS_WAR;
+	
+	/**
+	 * ID: 208<br>
+	 * Message: Please include file type when entering file path.
+	 */
+	
+	/**
+	 * ID: 209<br>
+	 * Message: The size of the image file is inappropriate. Please adjust to 16x12 pixels.
+	 */
+	
+	/**
+	 * ID: 210<br>
+	 * Message: Cannot find file. Please enter precise path.
+	 */
+	
+	/**
+	 * ID: 211<br>
+	 * Message: You can only register 16x12 pixel 256 color bmp files.
+	 */
 	
 	/**
 	 * ID: 212<br>
@@ -2632,7 +2659,7 @@ public final class SystemMessageId
 	public static final SystemMessageId ACCESS_FAILED;
 	
 	/**
-	 * ID: 461<br>
+	 * ID: 462<br>
 	 * Message: Please try again later.
 	 */
 	public static final SystemMessageId PLEASE_TRY_AGAIN_LATER;
@@ -3046,6 +3073,11 @@ public final class SystemMessageId
 	public static final SystemMessageId DISABLED_SPIRITSHOT;
 	
 	/**
+	 * ID: 535<br>
+	 * Message: Enter a name for your pet.
+	 */
+	
+	/**
 	 * ID: 536<br>
 	 * Message: How much adena do you wish to transfer to your Inventory?
 	 */
@@ -3242,6 +3274,17 @@ public final class SystemMessageId
 	 * Message: Cubic Summoning failed.
 	 */
 	public static final SystemMessageId CUBIC_SUMMONING_FAILED;
+	
+	/**
+	 * ID: 569<br>
+	 * Message: Caution -- this item's price greatly differs from non-player run shops. Do you wish to continue?
+	 */
+	
+	/**
+	 * ID: 570<br>
+	 * ID: 571<br>
+	 * Message: How many $s1(s) do you want to purchase?
+	 */
 	
 	/**
 	 * ID: 572<br>
@@ -3766,7 +3809,7 @@ public final class SystemMessageId
 	public static final SystemMessageId NOT_SIEGE_REGISTRATION_TIME1;
 	
 	/**
-	 * ID: 659<br>
+	 * ID: 660<br>
 	 * Message: This is not the time for siege registration and so registration and cancellation cannot be done.
 	 */
 	public static final SystemMessageId NOT_SIEGE_REGISTRATION_TIME2;
@@ -8759,7 +8802,7 @@ public final class SystemMessageId
 	
 	/**
 	 * ID: 1504<br>
-	 * Message: You have registered on the waiting list for the non-class-limited individual match event.
+	 * Message: You are currently registered for a 1v1 class irrelevant match.
 	 */
 	public static final SystemMessageId YOU_HAVE_BEEN_REGISTERED_IN_A_WAITING_LIST_OF_NO_CLASS_GAMES;
 	
@@ -9805,7 +9848,7 @@ public final class SystemMessageId
 	
 	/**
 	 * ID: 1683<br>
-	 * Message: Only a party leader can choose the option to leave a channel.
+	 * Message: Only a party leader can leave a command channel.
 	 */
 	public static final SystemMessageId ONLY_PARTY_LEADER_CAN_LEAVE_CHANNEL;
 	
@@ -11514,7 +11557,7 @@ public final class SystemMessageId
 	public static final SystemMessageId S1_OWNER;
 	
 	/**
-	 * ID: 1968<br>
+	 * ID: 1969<br>
 	 * Message: Area where $s1 appears.
 	 */
 	public static final SystemMessageId AREA_S1_APPEARS;
@@ -11754,7 +11797,7 @@ public final class SystemMessageId
 	public static final SystemMessageId CANT_EXCEED_1500_CHARACTERS;
 	
 	/**
-	 * ID: 2009<br>
+	 * ID: 2010<br>
 	 * Message: $s2 $s1
 	 */
 	public static final SystemMessageId S2_S1;
@@ -13338,10 +13381,47 @@ public final class SystemMessageId
 	public static final SystemMessageId SKILL_NOT_FOR_SUBCLASS;
 	
 	/**
+	 * ID: 2274<br>
+	 * Message: You entered an area where you cannot throw away items.
+	 */
+	
+	/**
+	 * ID: 2275<br>
+	 * Message: You are in an area where you cannot cancel pet summoning.
+	 */
+	
+	/**
 	 * ID: 2276<br>
 	 * Message: The rebel army recaptured the fortress.
 	 */
 	public static final SystemMessageId NPCS_RECAPTURED_FORTRESS;
+	
+	/**
+	 * ID: 2277<br>
+	 * Message: Party of $s1
+	 */
+	
+	/**
+	 * ID: 2278<br>
+	 * Message: Remaining Time $s1:$s2
+	 */
+	
+	/**
+	 * ID: 2279<br>
+	 * Message: You can no longer add a quest to the Quest Alterts.
+	 */
+	
+	/**
+	 * ID: 2280 Message: Damage is decreased because $c1 resisted $c2's magic.
+	 */
+	
+	/**
+	 * ID: 2281 Message: $c1 hit you for $s3 damage and hit your servitor for $s4.
+	 */
+	
+	/**
+	 * ID: 2282 Message: Leave Fantasy Isle.
+	 */
 	
 	/**
 	 * ID: 2283<br>
@@ -13354,18 +13434,6 @@ public final class SystemMessageId
 	 * Message: You can operate the machine when you participate in the party.
 	 */
 	public static final SystemMessageId CAN_OPERATE_MACHINE_WHEN_IN_PARTY;
-	
-	/**
-	 * ID: 2389<br>
-	 * Message: The maximum accumulation allowed of PC cafe points has been exceeded. You can no longer acquire PC cafe points.
-	 */
-	public static final SystemMessageId THE_MAXMIMUM_ACCUMULATION_ALLOWED_OF_PC_CAFE_POINTS_HAS_BEEN_EXCEEDED;
-	
-	/**
-	 * ID: 2393<br>
-	 * Message: You have acquired $s1 PC Cafe points.
-	 */
-	public static final SystemMessageId YOU_HAVE_ACQUIRED_S1_PC_CAFE_POINTS;
 	
 	/**
 	 * ID: 2293<br>
@@ -13414,6 +13482,18 @@ public final class SystemMessageId
 	 * Message: Resurrection is possible because of the courage charm's effect. Would you like to resurrect now?
 	 */
 	public static final SystemMessageId RESURRECT_USING_CHARM_OF_COURAGE;
+	
+	/**
+	 * ID: 2311<br>
+	 * Message: You do not have a servitor.
+	 */
+	public static final SystemMessageId DONT_HAVE_SERVITOR;
+	
+	/**
+	 * ID: 2312<br>
+	 * Message: You do not have a pet.
+	 */
+	public static final SystemMessageId DONT_HAVE_PET;
 	
 	/**
 	 * ID: 2314<br>
@@ -13804,6 +13884,12 @@ public final class SystemMessageId
 	 * Message: You have selected a 3 vs 3 class irrelevant team match. Do you wish to participate?
 	 */
 	public static final SystemMessageId OLYMPIAD_3VS3_CONFIRM;
+	
+	/**
+	 * ID: 2466<br>
+	 * Message: A pet on auxiliary mode cannot use skills.
+	 */
+	public static final SystemMessageId PET_AUXILIARY_MODE_CANNOT_USE_SKILLS;
 	
 	/**
 	 * ID: 2491<br>
@@ -14453,6 +14539,24 @@ public final class SystemMessageId
 	public static final SystemMessageId YOU_CANT_CANCEL_RECEIVED_MAIL;
 	
 	/**
+	 * ID: 3033<br>
+	 * Message: By using the invisible skill, sneak into the Dawn's document storage!
+	 */
+	public static final SystemMessageId SNEAK_INTO_DAWNS_DOCUMENT_STORAGE;
+	
+	/**
+	 * ID: 3037<br>
+	 * Message: Male guards can detect the concealment but the female guards cannot.
+	 */
+	public static final SystemMessageId MALE_GUARDS_CAN_DETECT_FEMALES_DONT;
+	
+	/**
+	 * ID: 3038<br>
+	 * Message: Female guards notice the disguises from far away better than the male guards do, so beware.
+	 */
+	public static final SystemMessageId FEMALE_GUARDS_NOTICE_BETTER_THAN_MALE;
+	
+	/**
 	 * ID: 3059<br>
 	 * Message: $s1 did not receive it during the waiting time, so it was returned automatically.
 	 */
@@ -14699,6 +14803,12 @@ public final class SystemMessageId
 	public static final SystemMessageId THE_S2_ATTRIBUTE_WAS_SUCCESSFULLY_BESTOWED_ON_S1_RES_TO_S3_INCREASED;
 	
 	/**
+	 * ID: 3147<br>
+	 * Message: If you are not resurrected within $s1 minutes, you will be expelled from the instant zone.
+	 */
+	public static final SystemMessageId YOU_WILL_BE_EXPELLED_IN_S1;
+	
+	/**
 	 * ID: 3150<br>
 	 * Message: You have requested a couple action with $c1.
 	 */
@@ -14837,6 +14947,12 @@ public final class SystemMessageId
 	public static final SystemMessageId MP_BECAME_0_ARCANE_SHIELD_DISAPPEARING;
 	
 	/**
+	 * ID: 3260<br>
+	 * Message: You cannot use the skill because the servitor has not been summoned.
+	 */
+	public static final SystemMessageId CANNOT_USE_SKILL_WITHOUT_SERVITOR;
+	
+	/**
 	 * ID: 3261<br>
 	 * Message: You have $s1 match(es) remaining that you can participate in this week ($s2 1 vs 1 Class matches, $s3 1 vs 1 matches, & $s4 3 vs 3 Team matches).
 	 */
@@ -14871,282 +14987,26 @@ public final class SystemMessageId
 	 * Message: You did not rescue Santa, and Thomas D. Turkey has disappeared.
 	 */
 	public static final SystemMessageId THOMAS_D_TURKEY_DISAPPEARED;
-	
-	/**
-	 * Array containing all SystemMessageIds<br>
-	 * Important: Always initialize with a length of the highest SystemMessageId + 1!!!
-	 */
-	private static SystemMessageId[] VALUES;
-	
-	/**
-	 * ID: 3034<br>
-	 * Message: The door in front of us is the entrance to the Dawn's document storage! Approach to the Code Input Device!
-	 */
-	public static final SystemMessageId DOOR_IS_ENTRANCE_APPROACH_DEVICE;
-	
-	/**
-	 * ID: 3033<br>
-	 * Message: By using the invisible skill, sneak into the Dawn's document storage!
-	 */
-	public static final SystemMessageId USING_INVISIBLE_SKILL_SNEAK_IN;
-	
-	/**
-	 * ID: 3037<br>
-	 * Message: Male guards can detect the concealment but the female guards cannot.
-	 */
-	public static final SystemMessageId MALE_GUARDS_CAN_DETECT_FEMALE_CANT;
-	
-	/**
-	 * ID: 3038<br>
-	 * Message: Female guards notice the disguises from far away better than the male guards do, so beware.
-	 */
-	public static final SystemMessageId FEMALE_GUARDS_NOTICE_FROM_FAR_AWAY_BEWARE;
-	
-	/**
-	 * The angel Nevit has blessed you from above. You are imbued with full Vitality as well as a Vitality Replenishing effect. And should you die, you will not lose Exp! Nevit's Advent Blessing is Upon You!
-	 */
-	public static final SystemMessageId THE_ANGEL_NEVIT_HAS_BLESSED_YOU_FROM_ABOVE;
-	
-	/**
-	 * You are starting to feel the effects of Nevit's Advent Blessing.
-	 */
-	public static final SystemMessageId YOU_ARE_STARTING_TO_FEEL_THE_EFFECTS_OF_NEVITS_ADVENT_BLESSING;
-	
-	/**
-	 * You are further infused with the blessings of Nevit! Continue to battle evil wherever it may lurk.
-	 */
-	public static final SystemMessageId YOU_ARE_FURTHER_INFUSED_WITH_THE_BLESSINGS_OF_NEVIT;
-	
-	/**
-	 * Nevit's Advent Blessing shines strongly from above. You can almost see his divine aura.
-	 */
-	public static final SystemMessageId NEVITS_ADVENT_BLESSING_SHINES_STRONGLY_FROM_ABOVE;
-	
-	/**
-	 * Nevit's Advent Blessing has ended. Continue your journey and you will surely meet his favor again sometime soon.
-	 */
-	public static final SystemMessageId NEVITS_ADVENT_BLESSING_HAS_ENDED;
-	
-	/**
-	 * unknow
-	 */
 	public static final SystemMessageId INSTANT_ZONE_RESTRICTED;
-	
-	/**
-	 * ID: 2371 Message: $c1 was reported as a BOT.
-	 */
-	public static final SystemMessageId C1_REPORTED_AS_BOT;
-	
-	/**
-	 * ID: 2377 Message: You cannot report a character who is in a peace zone or a battlefield.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_TARGET_IN_PEACE_ZONE;
-	
-	/**
-	 * ID: 2378 Message: You cannot report when a clan war has been declared.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_TARGET_IN_CLAN_WAR;
-	
-	/**
-	 * ID: 2379 Message: You cannot report a character who has not acquired any Exp. after connecting.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_CHARACTER_WITHOUT_GAINEXP;
-	
-	/**
-	 * ID: 2380 Message: You cannot report this person again at this time.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_CHARACTER_AGAIN;
-	
-	/**
-	 * ID: 2381 Message: You cannot report this person again at this time.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_CHARACTER_AGAIN_2;
-	
-	/**
-	 * ID: 2382 Message: You cannot report this person again at this time.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_CHARACTER_AGAIN_3;
-	
-	/**
-	 * ID: 2383 Message: You cannot report this person again at this time.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_CHARACTER_AGAIN_4;
-	
-	/**
-	 * ID: 2470 Message: This character cannot make a report. You cannot make a report while located inside a peace zone or a battlefield, while you are an opposing clan member during a clan war, or while participating in the Olympiad.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_IN_WARZONE_PEACEZONE_CLANWAR_OLYMPIAD;
-	
-	/**
-	 * ID: 2471 Message: This character cannot make a report. The target has already been reported by either your clan or alliance, or has already been reported from your current IP.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_ALREDY_REPORTED_FROM_YOUR_CLAN_OR_IP;
-	
-	/**
-	 * ID: 2472 Message: This character cannot make a report because another character from this account has already done so.
-	 */
-	public static final SystemMessageId CANNOT_REPORT_ALAREDY_REPORTED_FROM_SAME_ACCOUNT;
-	
-	/**
-	 * ID: 2473 Message: You have been reported as an illegal program user, and your chatting will be blocked for 10 minutes.
-	 */
-	public static final SystemMessageId REPORTED_10_MINS_WITHOUT_CHAT;
-	
-	/**
-	 * ID: 2474 Message: You have been reported as an illegal program user, and your party participation will be blocked for 60 minutes.
-	 */
-	public static final SystemMessageId REPORTED_60_MINS_WITHOUT_JOIN_PARTY;
-	
-	/**
-	 * ID: 2475 Message: You have been reported as an illegal program user, and your party participation will be blocked for 120 minutes.
-	 */
-	public static final SystemMessageId REPORTED_120_MINS_WITHOUT_JOIN_PARTY;
-	
-	/**
-	 * ID: 2476 Message: You have been reported as an illegal program user, and your party participation will be blocked for 180 minutes.
-	 */
-	public static final SystemMessageId REPORTED_180_MINS_WITHOUT_JOIN_PARTY;
-	
-	/**
-	 * ID: 2477 Message: You have been reported as an illegal program user, and your actions will be restricted for 120 minutes.
-	 */
-	public static final SystemMessageId REPORTED_120_MINS_WITHOUT_ACTIONS;
-	
-	/**
-	 * ID: 2478 Message: You have been reported as an illegal program user, and your actions will be restricted for 180 minutes.
-	 */
-	public static final SystemMessageId REPORTED_180_MINS_WITHOUT_ACTIONS;
-	
-	/**
-	 * ID: 2479 Message: You have been reported as an illegal program user, and your actions will be restricted for 180 minutes.
-	 */
-	public static final SystemMessageId REPORTED_180_MINS_WITHOUT_ACTIONS_2;
-	
-	/**
-	 * ID: 2480 Message: You have been reported as an illegal program user, and moving will be blocked for 120 minutes.
-	 */
-	public static final SystemMessageId REPORTED_120_MINS_WITHOUT_MOVE;
-	
-	/**
-	 * ID: 2481 Message: $c1% has been reported as an illegal program user and has been investigated.
-	 */
-	public static final SystemMessageId USER_REPORTED_AND_BEING_INVESTIGATED;
-	
-	/**
-	 * ID: 2482 Message: $c1% has been reported as an illegal program user and cannot join a party.
-	 */
-	public static final SystemMessageId USER_REPORTED_AND_CANNOT_JOIN_PARTY;
-	
-	/**
-	 * ID: 2483 Message: You have been reported as an illegal program user, and chatting is not allowed.
-	 */
-	public static final SystemMessageId YOU_HAVE_BEEN_REPORTED_AND_CANNOT_CHAT;
-	
-	/**
-	 * ID: 2484 Message: You have been reported as an illegal program user, and participating in a party is not allowed.
-	 */
-	public static final SystemMessageId YOU_HAVE_BEEN_REPORTED_AND_CANNOT_JOIN_PARTY;
-	
-	/**
-	 * ID: 2485 Message: You have been reported as an illegal program user, and your activities are only allowed within limitation.
-	 */
-	public static final SystemMessageId YOU_HAVE_BEEN_REPORTED_AND_ACTIONS_ARE_LIMITED;
-	
-	/**
-	 * ID: 2486 Message: You have been blocked due to verification that you are using a third party program. Subsequent violations may result termination of the account rather than a penalty within the game, so please keep this in mind.
-	 */
-	public static final SystemMessageId CHAR_BLOCKED_DUE_THIRD_PARTY_SOFTWARE_USE_VERIFICATION;
-	
-	/**
-	 * ID: 2487 Message: You have been reported as an illegal program user, and your connection has been ended. Please contact our CS team to confirm your identity.
-	 */
-	public static final SystemMessageId YOU_HAVE_BEEN_REPORTED_AND_CONNECTION_HAS_ENDED;
-	
-	/**
-	 * ID: 2748 Message: You have been reported as an illegal program user and cannot report other users.
-	 */
-	public static final SystemMessageId YOU_HAVE_BEEN_REPORTED_AND_CANNOT_REPORT;
-	
-	/**
-	 * ID: 2774 Message: You can make another report in $s1-minute(s). You have $s2 points remaining on this account.
-	 */
-	public static final SystemMessageId YOU_CAN_REPORT_IN_S1_MINUTES_S2_REPORT_POINTS_REMAIN_IN_ACCOUNT;
-	
-	/**
-	 * ID: 2427 Message: The Red Team is victorious.
-	 */
-	public static final SystemMessageId THE_RED_TEAM_IS_VICTORIOUS;
-	
-	/**
-	 * ID: 2428 Message: The Blue Team is victorious.
-	 */
-	public static final SystemMessageId THE_BLUE_TEAM_IS_VICTORIOUS;
-	
-	/**
-	 * ID: 2311<br>
-	 * Message: You do not have a servitor.
-	 */
-	public static final SystemMessageId DONT_HAVE_SERVITOR;
-	
-	/**
-	 * ID: 2312<br>
-	 * Message: You do not have a pet.
-	 */
-	public static final SystemMessageId DONT_HAVE_PET;
-	
-	/**
-	 * ID: 2466<br>
-	 * Message: A pet on auxiliary mode cannot use skills.
-	 */
-	public static final SystemMessageId PET_AUXILIARY_MODE_CANNOT_USE_SKILLS;
+	public static final SystemMessageId YOU_ARE_STARTING_TO_FEEL_THE_EFFECTS_OF_NEVITS_ADVENT_BLESSING;
+	public static final SystemMessageId YOU_ARE_FURTHER_INFUSED_WITH_THE_BLESSINGS_OF_NEVIT;
+	public static final SystemMessageId NEVITS_ADVENT_BLESSING_SHINES_STRONGLY_FROM_ABOVE;
+	public static final SystemMessageId NEVITS_ADVENT_BLESSING_HAS_ENDED;
+	public static final SystemMessageId FROM_NOW_ON_ANGEL_NEVIT_ABIDE_WITH_YOU;
+	public static final SystemMessageId YOU_HAVE_ACQUIRED_S1_PC_CAFE_POINTS;
+	public static final SystemMessageId THE_MAXMIMUM_ACCUMULATION_ALLOWED_OF_PC_CAFE_POINTS_HAS_BEEN_EXCEEDED;
+	private static SystemMessageId[] VALUES;
 	
 	static
 	{
-		DONT_HAVE_SERVITOR = new SystemMessageId(2311);
-		DONT_HAVE_PET = new SystemMessageId(2312);
-		PET_AUXILIARY_MODE_CANNOT_USE_SKILLS = new SystemMessageId(2466);
-		THE_RED_TEAM_IS_VICTORIOUS = new SystemMessageId(2427);
-		THE_BLUE_TEAM_IS_VICTORIOUS = new SystemMessageId(2428);
 		YOU_HAVE_ACQUIRED_S1_PC_CAFE_POINTS = new SystemMessageId(2393);
 		THE_MAXMIMUM_ACCUMULATION_ALLOWED_OF_PC_CAFE_POINTS_HAS_BEEN_EXCEEDED = new SystemMessageId(2389);
-		C1_REPORTED_AS_BOT = new SystemMessageId(2371);
-		CANNOT_REPORT_TARGET_IN_PEACE_ZONE = new SystemMessageId(2377);
-		CANNOT_REPORT_TARGET_IN_CLAN_WAR = new SystemMessageId(2378);
-		CANNOT_REPORT_CHARACTER_WITHOUT_GAINEXP = new SystemMessageId(2379);
-		CANNOT_REPORT_CHARACTER_AGAIN = new SystemMessageId(2380);
-		CANNOT_REPORT_CHARACTER_AGAIN_2 = new SystemMessageId(2381);
-		CANNOT_REPORT_CHARACTER_AGAIN_3 = new SystemMessageId(2382);
-		CANNOT_REPORT_CHARACTER_AGAIN_4 = new SystemMessageId(2384);
-		CANNOT_REPORT_IN_WARZONE_PEACEZONE_CLANWAR_OLYMPIAD = new SystemMessageId(2470);
-		CANNOT_REPORT_ALREDY_REPORTED_FROM_YOUR_CLAN_OR_IP = new SystemMessageId(2471);
-		CANNOT_REPORT_ALAREDY_REPORTED_FROM_SAME_ACCOUNT = new SystemMessageId(2472);
-		REPORTED_10_MINS_WITHOUT_CHAT = new SystemMessageId(2473);
-		REPORTED_60_MINS_WITHOUT_JOIN_PARTY = new SystemMessageId(2474);
-		REPORTED_120_MINS_WITHOUT_JOIN_PARTY = new SystemMessageId(2475);
-		REPORTED_180_MINS_WITHOUT_JOIN_PARTY = new SystemMessageId(2476);
-		REPORTED_120_MINS_WITHOUT_ACTIONS = new SystemMessageId(2477);
-		REPORTED_180_MINS_WITHOUT_ACTIONS = new SystemMessageId(2478);
-		REPORTED_180_MINS_WITHOUT_ACTIONS_2 = new SystemMessageId(2479);
-		REPORTED_120_MINS_WITHOUT_MOVE = new SystemMessageId(2480);
-		USER_REPORTED_AND_BEING_INVESTIGATED = new SystemMessageId(2481);
-		USER_REPORTED_AND_CANNOT_JOIN_PARTY = new SystemMessageId(2482);
-		YOU_HAVE_BEEN_REPORTED_AND_CANNOT_CHAT = new SystemMessageId(2483);
-		YOU_HAVE_BEEN_REPORTED_AND_CANNOT_JOIN_PARTY = new SystemMessageId(2484);
-		YOU_HAVE_BEEN_REPORTED_AND_ACTIONS_ARE_LIMITED = new SystemMessageId(2485);
-		CHAR_BLOCKED_DUE_THIRD_PARTY_SOFTWARE_USE_VERIFICATION = new SystemMessageId(2486);
-		YOU_HAVE_BEEN_REPORTED_AND_CONNECTION_HAS_ENDED = new SystemMessageId(2487);
-		YOU_HAVE_BEEN_REPORTED_AND_CANNOT_REPORT = new SystemMessageId(2748);
-		YOU_CAN_REPORT_IN_S1_MINUTES_S2_REPORT_POINTS_REMAIN_IN_ACCOUNT = new SystemMessageId(2774);
-		THE_ANGEL_NEVIT_HAS_BLESSED_YOU_FROM_ABOVE = new SystemMessageId(3266);
+		FROM_NOW_ON_ANGEL_NEVIT_ABIDE_WITH_YOU = new SystemMessageId(3266);
 		YOU_ARE_STARTING_TO_FEEL_THE_EFFECTS_OF_NEVITS_ADVENT_BLESSING = new SystemMessageId(3267);
 		YOU_ARE_FURTHER_INFUSED_WITH_THE_BLESSINGS_OF_NEVIT = new SystemMessageId(3268);
 		NEVITS_ADVENT_BLESSING_SHINES_STRONGLY_FROM_ABOVE = new SystemMessageId(3269);
 		NEVITS_ADVENT_BLESSING_HAS_ENDED = new SystemMessageId(3275);
 		INSTANT_ZONE_RESTRICTED = new SystemMessageId(6507);
-		USING_INVISIBLE_SKILL_SNEAK_IN = new SystemMessageId(3033);
-		DOOR_IS_ENTRANCE_APPROACH_DEVICE = new SystemMessageId(3034);
-		MALE_GUARDS_CAN_DETECT_FEMALE_CANT = new SystemMessageId(3037);
-		FEMALE_GUARDS_NOTICE_FROM_FAR_AWAY_BEWARE = new SystemMessageId(3038);
 		YOU_HAVE_BEEN_DISCONNECTED = new SystemMessageId(0);
 		THE_SERVER_WILL_BE_COMING_DOWN_IN_S1_SECONDS = new SystemMessageId(1);
 		S1_DOES_NOT_EXIST = new SystemMessageId(2);
@@ -17374,6 +17234,8 @@ public final class SystemMessageId
 		S2_MINUTES_S3_SECONDS_REMAINING_FOR_REUSE_S1 = new SystemMessageId(2304);
 		S2_HOURS_S3_MINUTES_S4_SECONDS_REMAINING_FOR_REUSE_S1 = new SystemMessageId(2305);
 		RESURRECT_USING_CHARM_OF_COURAGE = new SystemMessageId(2306);
+		DONT_HAVE_SERVITOR = new SystemMessageId(2311);
+		DONT_HAVE_PET = new SystemMessageId(2312);
 		VITALITY_IS_AT_MAXIMUM = new SystemMessageId(2314);
 		VITALITY_HAS_INCREASED = new SystemMessageId(2315);
 		VITALITY_HAS_DECREASED = new SystemMessageId(2316);
@@ -17439,6 +17301,7 @@ public final class SystemMessageId
 		THE_AIRSHIP_FUEL_SOON_RUN_OUT = new SystemMessageId(2463);
 		THE_AIRSHIP_FUEL_RUN_OUT = new SystemMessageId(2464);
 		OLYMPIAD_3VS3_CONFIRM = new SystemMessageId(2465);
+		PET_AUXILIARY_MODE_CANNOT_USE_SKILLS = new SystemMessageId(2466);
 		THE_AIRSHIP_CANNOT_TELEPORT = new SystemMessageId(2491);
 		THE_AIRSHIP_SUMMONED = new SystemMessageId(2492);
 		THE_COLLECTION_HAS_SUCCEEDED = new SystemMessageId(2500);
@@ -17547,6 +17410,9 @@ public final class SystemMessageId
 		YOU_CANNOT_USE_SKILL_ENCHANT_ATTACKING_TRANSFORMED_BOAT = new SystemMessageId(3028);
 		S1_RETURNED_MAIL = new SystemMessageId(3029);
 		YOU_CANT_CANCEL_RECEIVED_MAIL = new SystemMessageId(3030);
+		SNEAK_INTO_DAWNS_DOCUMENT_STORAGE = new SystemMessageId(3033);
+		MALE_GUARDS_CAN_DETECT_FEMALES_DONT = new SystemMessageId(3037);
+		FEMALE_GUARDS_NOTICE_BETTER_THAN_MALE = new SystemMessageId(3038);
 		S1_NOT_RECEIVE_DURING_WAITING_TIME_MAIL_RETURNED = new SystemMessageId(3059);
 		DO_YOU_WANT_TO_PAY_S1_ADENA = new SystemMessageId(3062);
 		DO_YOU_WANT_TO_FORWARD = new SystemMessageId(3063);
@@ -17588,6 +17454,7 @@ public final class SystemMessageId
 		PARTY_LOOT_CHANGED_S1 = new SystemMessageId(3138);
 		C1_IS_CURRENTLY_DEAD_AND_CANNOT_BE_REQUESTED_FOR_A_COUPLE_ACTION = new SystemMessageId(3139);
 		THE_S2_ATTRIBUTE_WAS_SUCCESSFULLY_BESTOWED_ON_S1_RES_TO_S3_INCREASED = new SystemMessageId(3144);
+		YOU_WILL_BE_EXPELLED_IN_S1 = new SystemMessageId(3147);
 		YOU_HAVE_REQUESTED_COUPLE_ACTION_C1 = new SystemMessageId(3150);
 		S1_S2_ATTRIBUTE_REMOVED_RESISTANCE_S3_DECREASED = new SystemMessageId(3152);
 		YOU_DO_NOT_HAVE_ENOUGH_FUNDS_TO_CANCEL_ATTRIBUTE = new SystemMessageId(3156);
@@ -17611,6 +17478,7 @@ public final class SystemMessageId
 		ARCANE_SHIELD_DECREASED_YOUR_MP_BY_S1_INSTEAD_OF_HP = new SystemMessageId(3255);
 		YOU_EARNED_S1_EXP_BONUS_S2_AND_S3_SP_BONUS_S4 = new SystemMessageId(3259);
 		MP_BECAME_0_ARCANE_SHIELD_DISAPPEARING = new SystemMessageId(3256);
+		CANNOT_USE_SKILL_WITHOUT_SERVITOR = new SystemMessageId(3260);
 		YOU_HAVE_S1_MATCHES_REMAINING_THAT_YOU_CAN_PARTECIPATE_IN_THIS_WEEK_S2_CLASSED_S3_NON_CLASSED_S4_TEAM = new SystemMessageId(3261);
 		SAFE_ENCHANT_FAILED = new SystemMessageId(6004);
 		YOU_CANNOT_BOOKMARK_THIS_LOCATION_BECAUSE_YOU_DO_NOT_HAVE_A_MY_TELEPORT_FLAG = new SystemMessageId(6501);

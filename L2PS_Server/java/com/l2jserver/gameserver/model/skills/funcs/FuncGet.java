@@ -10,7 +10,7 @@
  * details.
  * 
  * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://com.l2jserver.ru/>.
+ * this program. If not, see <http://L2J.EternityWorld.ru/>.
  */
 package com.l2jserver.gameserver.model.skills.funcs;
 

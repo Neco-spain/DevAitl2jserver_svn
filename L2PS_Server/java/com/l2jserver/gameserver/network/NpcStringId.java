@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network;
 
@@ -21602,23 +21606,20 @@ public final class NpcStringId
 	public static final NpcStringId IT_TELEPORTS_THE_GUARD_MEMBERS_OF_THE_ELMORE_IMPERIAL_CASTLE_TO_THE_INSIDE_OF_THE_CASTLE;
 	
 	/**
-	 * Array containing all NpcStringId<br>
-	 * Important: Always initialize with a length of the highest NpcStringId + 1!!!
-	 */
-	private static NpcStringId[] VALUES;
-	
-	/**
 	 * ID: 1800232<br>
 	 * Message: The Soul Coffin has Awakened Ekimus!
 	 */
 	public static final NpcStringId THE_SOUL_COFFIN_HAS_AWAKENED_EKIMUS;
 	
-	public static NpcStringId NONE;
+	/**
+	 * Array containing all NpcStringId<br>
+	 * Important: Always initialize with a length of the highest NpcStringId + 1!!!
+	 */
+	private static NpcStringId[] VALUES;
 	
 	static
 	{
 		THE_SOUL_COFFIN_HAS_AWAKENED_EKIMUS = new NpcStringId(1800232);
-		NONE = new NpcStringId(65535);
 		HELLO_I_AM_S1_YOU_ARE_S2_RIGHT_HEHEHE = new NpcStringId(1);
 		S1_S2_S3_S4_S5_HEHEHE = new NpcStringId(2);
 		WITHDRAW_THE_FEE_FOR_THE_NEXT_TIME_AT_S1_S2_S4 = new NpcStringId(5);

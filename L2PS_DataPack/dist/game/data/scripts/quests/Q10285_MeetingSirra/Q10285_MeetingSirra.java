@@ -137,7 +137,7 @@ public class Q10285_MeetingSirra extends Quest
 				}
 				else
 				{
-					htmltext = "32029-01a";
+					htmltext = "32029-01a.htm";
 				}
 			}
 		}

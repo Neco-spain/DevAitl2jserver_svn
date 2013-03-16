@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00026_TiredOfWaiting;
 
@@ -26,12 +30,22 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00026_TiredOfWaiting extends Quest
 {
+	// NPCs
 	private static final int ISAEL_SILVERSHADOW = 30655;
 	private static final int KITZKA = 31045;
+	// Items
 	private static final int DELIVERY_BOX = 17281;
 	private static final int WILL_OF_ANTHARAS = 17266;
 	private static final int LARGE_DRAGON_BONE = 17248;
 	private static final int SEALED_BLOOD_CRYSTAL = 17267;
+	
+	public Q00026_TiredOfWaiting(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(ISAEL_SILVERSHADOW);
+		addTalkId(ISAEL_SILVERSHADOW, KITZKA);
+		registerQuestItems(DELIVERY_BOX);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -97,7 +111,7 @@ public class Q00026_TiredOfWaiting extends Quest
 				}
 				break;
 			case State.STARTED:
-				if (st.getInt("cond") == 1)
+				if (st.isCond(1))
 				{
 					switch (npcId)
 					{
@@ -118,15 +132,6 @@ public class Q00026_TiredOfWaiting extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	public Q00026_TiredOfWaiting(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(ISAEL_SILVERSHADOW);
-		addTalkId(ISAEL_SILVERSHADOW, KITZKA);
-		registerQuestItems(DELIVERY_BOX);
 	}
 	
 	public static void main(String[] args)

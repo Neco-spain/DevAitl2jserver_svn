@@ -1,28 +1,34 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor;
 
 import com.l2jserver.gameserver.ai.CtrlEvent;
-import com.l2jserver.gameserver.model.CharEffectList;
+import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.knownlist.PlayableKnownList;
 import com.l2jserver.gameserver.model.actor.stat.PlayableStat;
 import com.l2jserver.gameserver.model.actor.status.PlayableStatus;
 import com.l2jserver.gameserver.model.actor.templates.L2CharTemplate;
+import com.l2jserver.gameserver.model.effects.EffectFlag;
 import com.l2jserver.gameserver.model.effects.L2Effect;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
+import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.skills.L2Skill;
 
@@ -167,6 +173,15 @@ public abstract class L2Playable extends L2Character
 				qs.getQuest().notifyDeath((killer == null ? this : killer), this, qs);
 			}
 		}
+		// Notify instance
+		if (getInstanceId() > 0)
+		{
+			final Instance instance = InstanceManager.getInstance().getInstance(getInstanceId());
+			if (instance != null)
+			{
+				instance.notifyDeath(killer, this);
+			}
+		}
 		
 		if (killer != null)
 		{
@@ -259,7 +274,7 @@ public abstract class L2Playable extends L2Character
 	// after resurrect
 	public final boolean isNoblesseBlessed()
 	{
-		return _effects.isAffected(CharEffectList.EFFECT_FLAG_NOBLESS_BLESSING);
+		return _effects.isAffected(EffectFlag.NOBLESS_BLESSING);
 	}
 	
 	public final void stopNoblesseBlessing(L2Effect effect)
@@ -278,7 +293,7 @@ public abstract class L2Playable extends L2Character
 	// Support for Soul of the Phoenix and Salvation skills
 	public final boolean isPhoenixBlessed()
 	{
-		return _effects.isAffected(CharEffectList.EFFECT_FLAG_PHOENIX_BLESSING);
+		return _effects.isAffected(EffectFlag.PHOENIX_BLESSING);
 	}
 	
 	public final void stopPhoenixBlessing(L2Effect effect)
@@ -300,13 +315,13 @@ public abstract class L2Playable extends L2Character
 	 */
 	public boolean isSilentMoving()
 	{
-		return _effects.isAffected(CharEffectList.EFFECT_FLAG_SILENT_MOVE);
+		return _effects.isAffected(EffectFlag.SILENT_MOVE);
 	}
 	
 	// for Newbie Protection Blessing skill, keeps you safe from an attack by a chaotic character >= 10 levels apart from you
 	public final boolean getProtectionBlessing()
 	{
-		return _effects.isAffected(CharEffectList.EFFECT_FLAG_PROTECTION_BLESSING);
+		return _effects.isAffected(EffectFlag.PROTECTION_BLESSING);
 	}
 	
 	/**
@@ -329,7 +344,7 @@ public abstract class L2Playable extends L2Character
 	// Charm of Luck - During a Raid/Boss war, decreased chance for death penalty
 	public final boolean getCharmOfLuck()
 	{
-		return _effects.isAffected(CharEffectList.EFFECT_FLAG_CHARM_OF_LUCK);
+		return _effects.isAffected(EffectFlag.CHARM_OF_LUCK);
 	}
 	
 	public final void stopCharmOfLuck(L2Effect effect)

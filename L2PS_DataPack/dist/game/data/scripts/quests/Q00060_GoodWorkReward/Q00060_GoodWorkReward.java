@@ -1,3 +1,17 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00060_GoodWorkReward;
 
 import java.util.Collection;
@@ -97,24 +111,24 @@ public class Q00060_GoodWorkReward extends Quest
 	
 	static
 	{
-		profs.put(1, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WL\">Warlord.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-GL\">Gladiator.</a>");
-		profs.put(4, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PA\">Paladin.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-DA\">Dark Avenger.</a>");
-		profs.put(7, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-TH\">Treasure Hunter.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-HK\">Hawkeye.</a>");
-		profs.put(11, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SC\">Sorcerer.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-NM\">Necromancer.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WA\">Warlock.</a>");
-		profs.put(15, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-BS\">Bishop.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PP\">Prophet.</a>");
-		profs.put(19, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-TK\">Temple Knight.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SS\">Swordsinger.</a>");
-		profs.put(22, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PW\">Plainswalker.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SR\">Silver Ranger.</a>");
-		profs.put(26, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SP\">Spellsinger.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-ES\">Elemental Summoner.</a>");
-		profs.put(29, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-EE\">Elven Elder.</a>");
-		profs.put(32, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SK\">Shillien Knight.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-BD\">Blade Dancer.</a>");
-		profs.put(35, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-AW\">Abyss Walker.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PR\">Phantom Ranger.</a>");
-		profs.put(39, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SH\">Spellhowler.</a>" + "<br><a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PS\">Phantom Summoner.</a>");
-		profs.put(42, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SE\">Shillien Elder.</a>");
-		profs.put(45, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-DT\">Destroyer.</a>");
-		profs.put(47, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-TR\">Tyrant.</a>");
-		profs.put(50, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-OL\">Overlord.</a><br>" + "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WC\">Warcryer.</a>");
-		profs.put(54, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-BH\">Bounty Hunter.</a>");
-		profs.put(56, "<a action=\"bypass -h QuestEvent " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WS\">Warsmith.</a>");
+		profs.put(1, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WL\">Warlord.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-GL\">Gladiator.</a>");
+		profs.put(4, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PA\">Paladin.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-DA\">Dark Avenger.</a>");
+		profs.put(7, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-TH\">Treasure Hunter.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-HK\">Hawkeye.</a>");
+		profs.put(11, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SC\">Sorcerer.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-NM\">Necromancer.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WA\">Warlock.</a>");
+		profs.put(15, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-BS\">Bishop.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PP\">Prophet.</a>");
+		profs.put(19, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-TK\">Temple Knight.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SS\">Swordsinger.</a>");
+		profs.put(22, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PW\">Plainswalker.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SR\">Silver Ranger.</a>");
+		profs.put(26, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SP\">Spellsinger.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-ES\">Elemental Summoner.</a>");
+		profs.put(29, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-EE\">Elven Elder.</a>");
+		profs.put(32, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SK\">Shillien Knight.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-BD\">Blade Dancer.</a>");
+		profs.put(35, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-AW\">Abyss Walker.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PR\">Phantom Ranger.</a>");
+		profs.put(39, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SH\">Spellhowler.</a>" + "<br><a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-PS\">Phantom Summoner.</a>");
+		profs.put(42, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-SE\">Shillien Elder.</a>");
+		profs.put(45, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-DT\">Destroyer.</a>");
+		profs.put(47, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-TR\">Tyrant.</a>");
+		profs.put(50, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-OL\">Overlord.</a><br>" + "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WC\">Warcryer.</a>");
+		profs.put(54, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-BH\">Bounty Hunter.</a>");
+		profs.put(56, "<a action=\"bypass -h Quest " + Q00060_GoodWorkReward.class.getSimpleName() + " classes-WS\">Warsmith.</a>");
 		
 		classes.put("AW", new int[]
 		{

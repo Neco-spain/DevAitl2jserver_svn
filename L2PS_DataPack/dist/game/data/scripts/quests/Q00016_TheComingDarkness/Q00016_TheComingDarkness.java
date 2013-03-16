@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00016_TheComingDarkness;
 
@@ -30,13 +34,23 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00016_TheComingDarkness extends Quest
 {
+	// NPCs
 	private static final int HIERARCH = 31517;
 	private static final int EVIL_ALTAR_1 = 31512;
 	private static final int EVIL_ALTAR_2 = 31513;
 	private static final int EVIL_ALTAR_3 = 31514;
 	private static final int EVIL_ALTAR_4 = 31515;
 	private static final int EVIL_ALTAR_5 = 31516;
+	// Item
 	private static final int CRYSTAL_OF_SEAL = 7167;
+	
+	private Q00016_TheComingDarkness(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(HIERARCH);
+		addTalkId(HIERARCH, EVIL_ALTAR_1, EVIL_ALTAR_2, EVIL_ALTAR_3, EVIL_ALTAR_4, EVIL_ALTAR_5);
+		registerQuestItems(CRYSTAL_OF_SEAL);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -48,14 +62,12 @@ public class Q00016_TheComingDarkness extends Quest
 			return htmltext;
 		}
 		
-		final int cond = st.getInt("cond");
+		final int cond = st.getCond();
 		switch (event)
 		{
 			case "31517-02.htm":
+				st.startQuest();
 				st.giveItems(CRYSTAL_OF_SEAL, 5);
-				st.set("cond", "1");
-				st.setState(State.STARTED);
-				st.playSound("ItemSound.quest_accept");
 				break;
 			case "31512-01.html":
 			case "31513-01.html":
@@ -66,8 +78,7 @@ public class Q00016_TheComingDarkness extends Quest
 				if ((cond == (npcId - 31511)) && st.hasQuestItems(CRYSTAL_OF_SEAL))
 				{
 					st.takeItems(CRYSTAL_OF_SEAL, 1);
-					st.set("cond", String.valueOf(cond + 1));
-					st.playSound("ItemSound.quest_middle");
+					st.setCond(cond + 1, true);
 				}
 				break;
 		}
@@ -100,22 +111,20 @@ public class Q00016_TheComingDarkness extends Quest
 				break;
 			case State.STARTED:
 				final int npcId = npc.getNpcId();
-				final int cond = st.getInt("cond");
 				if (npcId == HIERARCH)
 				{
-					if (cond == 6)
+					if (st.isCond(6))
 					{
-						htmltext = "31517-03.html";
 						st.addExpAndSp(865187, 69172);
-						st.playSound("ItemSound.quest_finish");
-						st.exitQuest(false);
+						st.exitQuest(false, true);
+						htmltext = "31517-03.html";
 					}
 					else
 					{
 						htmltext = "31517-02a.html";
 					}
 				}
-				else if ((npcId - 31511) == cond)
+				else if ((npcId - 31511) == st.getCond())
 				{
 					htmltext = npcId + "-00.html";
 				}
@@ -126,20 +135,6 @@ public class Q00016_TheComingDarkness extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	public Q00016_TheComingDarkness(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(HIERARCH);
-		
-		addTalkId(HIERARCH, EVIL_ALTAR_1, EVIL_ALTAR_2, EVIL_ALTAR_3, EVIL_ALTAR_4, EVIL_ALTAR_5);
-		
-		questItemIds = new int[]
-		{
-			CRYSTAL_OF_SEAL
-		};
 	}
 	
 	public static void main(String[] args)

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model;
 
@@ -18,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.interfaces.IL2Procedure;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
@@ -100,7 +105,7 @@ public abstract class AbstractPlayerGroup
 	
 	/**
 	 * Broadcasts a System Message to this group
-	 * @param message System Message to bradcast
+	 * @param message System Message to broadcast
 	 */
 	public void broadcastMessage(SystemMessageId message)
 	{
@@ -154,7 +159,7 @@ public abstract class AbstractPlayerGroup
 	 * @param procedure to be executed on members, <br>
 	 *            if it returns {@code true}, loop will continue, <br>
 	 *            if it returns {@code false}, loop will break
-	 * @return {@code false} if it was interupted by a {@code false} return of the procedure
+	 * @return {@code false} if it was interrupted by a {@code false} return of the procedure
 	 */
 	public boolean forEachMember(IL2Procedure<L2PcInstance> procedure)
 	{

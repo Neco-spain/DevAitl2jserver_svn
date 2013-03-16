@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00131_BirdInACage;
 
@@ -45,81 +49,6 @@ public class Q00131_BirdInACage extends Quest
 		addStartNpc(KANIS);
 		addTalkId(KANIS, PARME);
 		registerQuestItems(ECHO_CRYSTAL_OF_FREE_THOUGHT, PARMES_LETTER);
-	}
-	
-	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
-		QuestState st = player.getQuestState(getName());
-		String htmltext = getNoQuestMsg(player);
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		switch (st.getState())
-		{
-			case State.COMPLETED:
-			{
-				htmltext = getAlreadyCompletedMsg(player);
-				break;
-			}
-			case State.CREATED:
-			{
-				if (npc.getNpcId() == KANIS)
-				{
-					htmltext = (player.getLevel() >= MIN_LEVEL) ? "32264-01.htm" : "32264-02.html";
-				}
-				break;
-			}
-			case State.STARTED:
-			{
-				if (npc.getNpcId() == KANIS)
-				{
-					switch (st.getCond())
-					{
-						case 1:
-						{
-							htmltext = "32264-05.html";
-							break;
-						}
-						case 2:
-						{
-							htmltext = "32264-08.html";
-							break;
-						}
-						case 3:
-						{
-							htmltext = "32264-13.html";
-							break;
-						}
-						case 4:
-						{
-							htmltext = "32264-16.html";
-							break;
-						}
-						case 5:
-						{
-							htmltext = "32264-18.html";
-							break;
-						}
-					}
-				}
-				else if (npc.getNpcId() == PARME)
-				{
-					if (st.getCond() < 3)
-					{
-						htmltext = "32271-01.html";
-					}
-					else if (st.isCond(3))
-					{
-						htmltext = "32271-02.html";
-					}
-				}
-				break;
-			}
-		}
-		return htmltext;
 	}
 	
 	@Override
@@ -227,6 +156,81 @@ public class Q00131_BirdInACage extends Quest
 					player.setInstanceId(0);
 					player.teleToLocation(INSTANCE_EXIT, true);
 					htmltext = event;
+				}
+				break;
+			}
+		}
+		return htmltext;
+	}
+	
+	@Override
+	public String onTalk(L2Npc npc, L2PcInstance player)
+	{
+		QuestState st = player.getQuestState(getName());
+		String htmltext = getNoQuestMsg(player);
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		switch (st.getState())
+		{
+			case State.COMPLETED:
+			{
+				htmltext = getAlreadyCompletedMsg(player);
+				break;
+			}
+			case State.CREATED:
+			{
+				if (npc.getNpcId() == KANIS)
+				{
+					htmltext = (player.getLevel() >= MIN_LEVEL) ? "32264-01.htm" : "32264-02.html";
+				}
+				break;
+			}
+			case State.STARTED:
+			{
+				if (npc.getNpcId() == KANIS)
+				{
+					switch (st.getCond())
+					{
+						case 1:
+						{
+							htmltext = "32264-05.html";
+							break;
+						}
+						case 2:
+						{
+							htmltext = "32264-08.html";
+							break;
+						}
+						case 3:
+						{
+							htmltext = "32264-13.html";
+							break;
+						}
+						case 4:
+						{
+							htmltext = "32264-16.html";
+							break;
+						}
+						case 5:
+						{
+							htmltext = "32264-18.html";
+							break;
+						}
+					}
+				}
+				else if (npc.getNpcId() == PARME)
+				{
+					if (st.getCond() < 3)
+					{
+						htmltext = "32271-01.html";
+					}
+					else if (st.isCond(3))
+					{
+						htmltext = "32271-02.html";
+					}
 				}
 				break;
 			}

@@ -1408,21 +1408,20 @@
 	</skill>
 	<skill id="1553" levels="1" name="Chain Heal">
 		<!-- High Five Skill -->
-		<set name="aggroPoints" val="398" /> <!-- FIXME: value unconfirmed -->
-		<set name="hitTime" val="1000" />
+		<set name="aggroPoints" val="398" /> 
+		<set name="hitTime" val="3000" />
 		<set name="isMagic" val="1" /> <!-- Magic Skill -->
 		<set name="itemConsumeCount" val="4" />
 		<set name="itemConsumeId" val="3031" />
-		<!-- set name="maxTargets" val="10" / TODO: Require Support -->
 		<set name="magicLvl" val="83" />
 		<set name="mpConsume" val="156" />
 		<set name="mpInitialConsume" val="38" />
-		<set name="operateType" val="A1" /> <!-- FIXME: value unconfirmed -->
+		<set name="operateType" val="A1" />
 		<set name="power" val="30" />
-		<set name="reuseDelay" val="3000" />
-		<set name="skillRadius" val="500" />
+		<set name="reuseDelay" val="5000" />
+		<set name="skillRadius" val="900" />
 		<set name="skillType" val="CHAIN_HEAL" />
-		<set name="target" val="TARGET_CHAIN_HEAL" /> <!-- TODO: Appears to be only for TARGET_ALLY_MEMBER_AREA + (10 targets around him), not ALL ALLY MEMBERS -->
+		<set name="target" val="TARGET_CHAIN_HEAL" />
 	</skill>
 	<skill id="1554" levels="1" name="Aura Blast">
 		<!-- High Five Skill -->
@@ -1561,7 +1560,7 @@
 		<set name="effectRange" val="400" />
 		<set name="hitTime" val="1800" />
 		<set name="lethal1" val="8" />
-		<set name="lethal2" val="1" />
+		<set name="lethal2" val="1" /> <!-- FIXME: unconfirmed -->
 		<set name="magicLvl" val="83" />
 		<set name="mpConsume" val="82" />
 		<set name="nextActionAttack" val="true" />

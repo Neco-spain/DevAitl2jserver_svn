@@ -21,12 +21,12 @@ import javolution.text.TextBuilder;
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.ItemTable;
-import com.l2jserver.gameserver.model.VoteMain;
+import com.l2jserver.gameserver.eventsmanager.VoteMain;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.serverpackets.MyTargetSelected;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
-import com.l2jserver.gameserver.network.serverpackets.PledgeCrest;
+import com.l2jserver.gameserver.network.serverpackets.PledgeCrestVote;
 import com.l2jserver.gameserver.network.serverpackets.ValidateLocation;
 
 import gov.nasa.worldwind.formats.dds.DDSConverter;
@@ -136,8 +136,6 @@ public class L2VoteManagerInstance extends L2Npc
 		tb.append("<center>");
 		tb.append("<table><tr><td align=\"center\"><font color=\"00ff00\">Votting: </font>" + VoteMain.whosVoting() + "</td></tr>");
 		tb.append("<tr><td align=\"center\"><font color=\"00ff00\">Tries left: </font>" + VoteMain.getTries(activeChar) + "</td></tr></table>");
-		// tb.append("<tr><td align=\"center\"><font color=\"FF00FF\">Vote in Hopzone at " + VoteMain.hopCd(activeChar) + "</font></td></tr>");
-		// tb.append("<tr><td align=\"center\"><font color=\"FF00FF\">Vote in Topzone at " + VoteMain.topCd(activeChar) + "</font></td></tr></table>");
 		tb.append("</center>");
 		if (!VoteMain.hasVotedHop() || !VoteMain.hasVotedTop())
 		{
@@ -199,35 +197,35 @@ public class L2VoteManagerInstance extends L2Npc
 			if (imgId == 1821)
 			{
 				File captcha = new File("data/images/hz.png");
-				PledgeCrest packet = new PledgeCrest(imgId, DDSConverter.convertToDDS(captcha).array());
+				PledgeCrestVote packet = new PledgeCrestVote(imgId, DDSConverter.convertToDDS(captcha).array());
 				activeChar.sendPacket(packet);
 			}
 			
 			if (imgId == 11888)
 			{
 				File captcha = new File("data/images/tz.png");
-				PledgeCrest packet = new PledgeCrest(imgId, DDSConverter.convertToDDS(captcha).array());
+				PledgeCrestVote packet = new PledgeCrestVote(imgId, DDSConverter.convertToDDS(captcha).array());
 				activeChar.sendPacket(packet);
 			}
 			
 			if (imgId == 65531)
 			{
 				File captcha = new File("data/images/reward.png");
-				PledgeCrest packet = new PledgeCrest(imgId, DDSConverter.convertToDDS(captcha).array());
+				PledgeCrestVote packet = new PledgeCrestVote(imgId, DDSConverter.convertToDDS(captcha).array());
 				activeChar.sendPacket(packet);
 			}
 			
 			if (imgId == 65532)
 			{
 				File captcha = new File("data/images/yes.png");
-				PledgeCrest packet = new PledgeCrest(imgId, DDSConverter.convertToDDS(captcha).array());
+				PledgeCrestVote packet = new PledgeCrestVote(imgId, DDSConverter.convertToDDS(captcha).array());
 				activeChar.sendPacket(packet);
 			}
 			
 			if (imgId == 65533)
 			{
 				File captcha = new File("data/images/no.png");
-				PledgeCrest packet = new PledgeCrest(imgId, DDSConverter.convertToDDS(captcha).array());
+				PledgeCrestVote packet = new PledgeCrestVote(imgId, DDSConverter.convertToDDS(captcha).array());
 				activeChar.sendPacket(packet);
 			}
 		}

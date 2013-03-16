@@ -13,6 +13,7 @@ public class ExBrProductList extends L2GameServerPacket
 		this.primeList = PrimeShopTable.getInstance().getPrimeItems();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected final void writeImpl()
 	{

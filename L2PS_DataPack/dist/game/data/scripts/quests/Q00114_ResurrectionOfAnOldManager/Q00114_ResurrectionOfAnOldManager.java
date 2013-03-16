@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00114_ResurrectionOfAnOldManager;
 
@@ -21,13 +25,12 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.itemcontainer.PcInventory;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.model.zone.L2ZoneType;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 import com.l2jserver.gameserver.network.serverpackets.NpcSay;
 
 /**
@@ -43,22 +46,26 @@ public class Q00114_ResurrectionOfAnOldManager extends Quest
 	private static final int STONES = 32046;
 	private static final int WENDY = 32047;
 	private static final int BOX = 32050;
-	
 	// Items
 	private static final int STARSTONE = 8287;
 	private static final int LETTER = 8288;
 	private static final int STARSTONE2 = 8289;
 	private static final int DETCTOR = 8090;
 	private static final int DETCTOR2 = 8091;
-	private static final int ADENA = 57;
-	
 	// Monster
 	private static final int GUARDIAN = 27318;
 	
-	// Zones
-	private static final int[] ZONES = {200032, 200033, 200034};
-	
 	private static L2Attackable golem = null;
+	
+	public Q00114_ResurrectionOfAnOldManager(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(YUMI);
+		addTalkId(YUMI, WENDY, BOX, STONES, NEWYEAR);
+		addKillId(GUARDIAN);
+		addSeeCreatureId(STONES);
+		registerQuestItems(STARSTONE, STARSTONE2, DETCTOR, DETCTOR2, LETTER);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -223,10 +230,10 @@ public class Q00114_ResurrectionOfAnOldManager extends Quest
 				st.setCond(15, true);
 				break;
 			case "32047-29c.html":
-				if (st.getQuestItemsCount(ADENA) >= 3000)
+				if (player.getAdena() >= 3000)
 				{
 					st.giveItems(STARSTONE2, 1);
-					st.takeItems(ADENA, 3000);
+					st.takeItems(PcInventory.ADENA_ID, 3000);
 					st.unset("talk");
 					st.setCond(26, true);
 				}
@@ -313,6 +320,38 @@ public class Q00114_ResurrectionOfAnOldManager extends Quest
 				break;
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		
+		if ((st != null) && st.isCond(10) && (st.getInt("spawned") == 1))
+		{
+			npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getNpcId(), NpcStringId.THIS_ENEMY_IS_FAR_TOO_POWERFUL_FOR_ME_TO_FIGHT_I_MUST_WITHDRAW));
+			st.setCond(11, true);
+			st.unset("spawned");
+			cancelQuestTimers("golem_despawn");
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
+	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon)
+	{
+		if (creature.isPlayer())
+		{
+			final QuestState st = creature.getActingPlayer().getQuestState(getName());
+			if ((st != null) && st.isCond(17))
+			{
+				st.takeItems(DETCTOR, 1);
+				st.giveItems(DETCTOR2, 1);
+				st.setCond(18, true);
+				showOnScreenMsg(creature.getActingPlayer(), NpcStringId.THE_RADIO_SIGNAL_DETECTOR_IS_RESPONDING_A_SUSPICIOUS_PILE_OF_STONES_CATCHES_YOUR_EYE, 2, 4500);
+			}
+		}
+		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
@@ -551,50 +590,6 @@ public class Q00114_ResurrectionOfAnOldManager extends Quest
 		}
 		
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final QuestState st = player.getQuestState(getName());
-		
-		if ((st != null) && st.isCond(10) && (st.getInt("spawned") == 1))
-		{
-			npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getNpcId(), NpcStringId.THIS_ENEMY_IS_FAR_TOO_POWERFUL_FOR_ME_TO_FIGHT_I_MUST_WITHDRAW));
-			st.setCond(11, true);
-			st.unset("spawned");
-			cancelQuestTimers("golem_despawn");
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	// TODO: Custom until onNpcSee support is done
-	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone)
-	{
-		if (character.isPlayer())
-		{
-			final QuestState st = ((L2PcInstance) character).getQuestState(getName());
-			if ((st != null) && st.isCond(17))
-			{
-				st.takeItems(DETCTOR, 1);
-				st.giveItems(DETCTOR2, 1);
-				st.setCond(18, true);
-				character.sendPacket(new ExShowScreenMessage(NpcStringId.THE_RADIO_SIGNAL_DETECTOR_IS_RESPONDING_A_SUSPICIOUS_PILE_OF_STONES_CATCHES_YOUR_EYE, 2, 4500));
-			}
-		}
-		return super.onEnterZone(character, zone);
-	}
-	
-	public Q00114_ResurrectionOfAnOldManager(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(YUMI);
-		addTalkId(YUMI, WENDY, BOX, STONES, NEWYEAR);
-		addKillId(GUARDIAN);
-		addEnterZoneId(ZONES);
-		
-		registerQuestItems(STARSTONE, STARSTONE2, DETCTOR, DETCTOR2, LETTER);
 	}
 	
 	public static void main(String[] args)

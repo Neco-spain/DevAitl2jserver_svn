@@ -14,6 +14,9 @@
  */
 package quests.Q10284_AcquisitionOfDivineSword;
 
+/**
+ * Author: RobikBobik
+ */
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -24,13 +27,11 @@ import com.l2jserver.gameserver.model.quest.State;
 
 public class Q10284_AcquisitionOfDivineSword extends Quest
 {
-	private static final String qn = "10284_AcquisitionOfDivineSword";
-	// NPC's
 	private static final int _rafforty = 32020;
 	private static final int _jinia = 32760;
 	private static final int _kroon = 32653;
 	private static final int _taroon = 32654;
-
+	
 	public Q10284_AcquisitionOfDivineSword(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
@@ -41,15 +42,17 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 		addTalkId(_kroon);
 		addTalkId(_taroon);
 	}
-
+	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = event;
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		
 		if (st == null)
+		{
 			return htmltext;
+		}
 		
 		if (npc.getNpcId() == _rafforty)
 		{
@@ -58,7 +61,7 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 				st.setState(State.STARTED);
 				st.set("progress", "1");
 				st.set("cond", "1");
-				st.set("jinia_themes", "102030"); //theme ID - state - something like 1-0, 2-0, 3-0
+				st.set("jinia_themes", "102030"); // theme ID - state - something like 1-0, 2-0, 3-0
 				st.playSound("ItemSound.quest_accept");
 			}
 		}
@@ -67,69 +70,69 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 		{
 			if ("32760-05.htm".equals(event))
 			{
-				switch(st.getInt("jinia_themes"))
+				switch (st.getInt("jinia_themes"))
 				{
-				case 112030: //1st theme have been readed
-					htmltext = "32760-05a.htm";
-					break;
-				
-				case 102130: //2nd theme have been readed
-					htmltext = "32760-05b.htm";
-					break;
-
-				case 102031: //3rd theme have been readed
-					htmltext = "32760-05c.htm";
-					break;
-
-				case 102131: //2nd and 3rd theme have been readed
-					htmltext = "32760-05d.htm";
-					break;
-
-				case 112031: //1st and 3rd theme have been readed
-					htmltext = "32760-05e.htm";
-					break;
-
-				case 112130: //1st and 2nd theme have been readed
-					htmltext = "32760-05f.htm";
-					break;
-
-				case 112131: //all three themes have been readed
-					htmltext = "32760-05g.htm";
+					case 112030: // 1st theme have been readed
+						htmltext = "32760-05a.htm";
+						break;
+					
+					case 102130: // 2nd theme have been readed
+						htmltext = "32760-05b.htm";
+						break;
+					
+					case 102031: // 3rd theme have been readed
+						htmltext = "32760-05c.htm";
+						break;
+					
+					case 102131: // 2nd and 3rd theme have been readed
+						htmltext = "32760-05d.htm";
+						break;
+					
+					case 112031: // 1st and 3rd theme have been readed
+						htmltext = "32760-05e.htm";
+						break;
+					
+					case 112130: // 1st and 2nd theme have been readed
+						htmltext = "32760-05f.htm";
+						break;
+					
+					case 112131: // all three themes have been readed
+						htmltext = "32760-05g.htm";
 				}
 			}
 			
 			else if ("32760-02c.htm".equals(event))
 			{
 				int jinia_themes = st.getInt("jinia_themes");
-				jinia_themes += 10000; //mark 1st theme as readed
+				jinia_themes += 10000; // mark 1st theme as readed
 				st.set("jinia_themes", Integer.toString(jinia_themes));
 			}
-
+			
 			else if ("32760-03c.htm".equals(event))
 			{
 				int jinia_themes = st.getInt("jinia_themes");
-				jinia_themes += 100; //mark 2nd theme as readed
+				jinia_themes += 100; // mark 2nd theme as readed
 				st.set("jinia_themes", Integer.toString(jinia_themes));
 			}
-
+			
 			else if ("32760-04c.htm".equals(event))
 			{
 				int jinia_themes = st.getInt("jinia_themes");
-				jinia_themes += 1; //mark 3rd theme as readed
+				jinia_themes += 1; // mark 3rd theme as readed
 				st.set("jinia_themes", Integer.toString(jinia_themes));
 			}
-
+			
 			else if ("32760-07.htm".equals(event))
 			{
-				st.set("jinia_themes","102030");
+				st.set("jinia_themes", "102030");
 				st.set("progress", "2");
 				st.set("cond", "3");
 				st.playSound("ItemSound.quest_middle");
-
-			// destroy instance after 1 min
-			Instance inst = InstanceManager.getInstance().getInstance(player.getInstanceId());
-			inst.setDuration(60000);
-			inst.setEmptyDestroyTime(0);				
+				
+				// destroy instance after 1 min
+				Instance inst = InstanceManager.getInstance().getInstance(player.getInstanceId());
+				inst.setDuration(60000);
+				inst.setEmptyDestroyTime(0);
 			}
 		}
 		
@@ -140,9 +143,11 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		if (st == null)
+		{
 			return htmltext;
+		}
 		
 		if (npc.getNpcId() == _rafforty)
 		{
@@ -151,15 +156,23 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 				case State.CREATED:
 					QuestState _prev = player.getQuestState("Q10283_RequestOfIceMerchant");
 					if ((_prev != null) && (_prev.getState() == State.COMPLETED) && (player.getLevel() >= 82))
+					{
 						htmltext = "32020-01.htm";
+					}
 					else
+					{
 						htmltext = "32020-03.htm";
+					}
 					break;
 				case State.STARTED:
 					if (st.getInt("progress") == 1)
+					{
 						htmltext = "32020-05.htm";
+					}
 					else if (st.getInt("progress") == 2)
+					{
 						htmltext = "32020-09.htm";
+					}
 					break;
 				case State.COMPLETED:
 					htmltext = "32020-02.htm";
@@ -169,53 +182,58 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 		else if (npc.getNpcId() == _jinia)
 		{
 			if (st.getState() != State.STARTED)
+			{
 				return getNoQuestMsg(player);
-
+			}
+			
 			if (st.getInt("progress") == 1)
 			{
 				int jinia_themes = st.getInt("jinia_themes");
-				//look above for explanation 
-				switch(jinia_themes)
+				// look above for explanation
+				switch (jinia_themes)
 				{
 					case 102030:
-						htmltext = "32760-01.htm"; 
+						htmltext = "32760-01.htm";
 						break;
 					case 112030:
-						htmltext = "32760-01a.htm"; 
+						htmltext = "32760-01a.htm";
 						break;
 					case 102130:
-						htmltext = "32760-01b.htm"; 
+						htmltext = "32760-01b.htm";
 						break;
 					case 102031:
-						htmltext = "32760-01c.htm"; 
+						htmltext = "32760-01c.htm";
 						break;
 					case 102131:
-						htmltext = "32760-01d.htm"; 
+						htmltext = "32760-01d.htm";
 						break;
 					case 112031:
-						htmltext = "32760-01e.htm"; 
+						htmltext = "32760-01e.htm";
 						break;
 					case 112130:
-						htmltext = "32760-01f.htm"; 
+						htmltext = "32760-01f.htm";
 						break;
 					case 112131:
-						htmltext = "32760-01g.htm"; 
+						htmltext = "32760-01g.htm";
 						break;
 				}
 			}
 		}
 		
-		else if (npc.getNpcId() == _kroon || npc.getNpcId() == _taroon)
+		else if ((npc.getNpcId() == _kroon) || (npc.getNpcId() == _taroon))
 		{
 			if (st.getState() != State.STARTED)
+			{
 				return getNoQuestMsg(player);
+			}
 			
 			if (st.getInt("progress") == 2)
+			{
 				htmltext = npc.getNpcId() == _kroon ? "32653-01.htm" : "32654-01.htm";
-
+			}
 			else if (st.getInt("progress") == 3)
 			{
-				st.set("jinia_themes","102030");
+				st.set("jinia_themes", "102030");
 				st.giveItems(57, 296425);
 				st.addExpAndSp(921805, 82230);
 				st.playSound("ItemSound.quest_finish");
@@ -226,9 +244,9 @@ public class Q10284_AcquisitionOfDivineSword extends Quest
 		
 		return htmltext;
 	}
-
+	
 	public static void main(String[] args)
 	{
-		new Q10284_AcquisitionOfDivineSword(10284, qn, "Acquisition of Divine Sword");
+		new Q10284_AcquisitionOfDivineSword(10284, Q10284_AcquisitionOfDivineSword.class.getSimpleName(), "Acquisition of Divine Sword");
 	}
 }

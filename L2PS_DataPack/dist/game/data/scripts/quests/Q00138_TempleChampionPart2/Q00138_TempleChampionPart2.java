@@ -1,18 +1,24 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00138_TempleChampionPart2;
+
+import quests.Q00137_TempleChampionPart1.Q00137_TempleChampionPart1;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -20,7 +26,7 @@ import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 
 /**
- * Temple Champion Part 2 (138)
+ * Temple Champion - 2 (138)
  * @author nonom
  */
 public class Q00138_TempleChampionPart2 extends Quest
@@ -30,7 +36,6 @@ public class Q00138_TempleChampionPart2 extends Quest
 	private static final int PUPINA = 30118;
 	private static final int ANGUS = 30474;
 	private static final int SLA = 30666;
-	
 	private static final int MOBS[] =
 	{
 		20176, // Wyrm
@@ -38,12 +43,20 @@ public class Q00138_TempleChampionPart2 extends Quest
 		20551, // Road Scavenger
 		20552, // Fettered Soul
 	};
-	
 	// Items
-	private static final int MANIFESTO = 10340;
-	private static final int RELIC = 10340;
-	private static final int ANGUS_REC = 10343;
-	private static final int PUPINA_REC = 10344;
+	private static final int TEMPLE_MANIFESTO = 10341;
+	private static final int RELICS_OF_THE_DARK_ELF_TRAINEE = 10342;
+	private static final int ANGUS_RECOMMENDATION = 10343;
+	private static final int PUPINAS_RECOMMENDATION = 10344;
+	
+	public Q00138_TempleChampionPart2(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(SYLVAIN);
+		addTalkId(SYLVAIN, PUPINA, ANGUS, SLA);
+		addKillId(MOBS);
+		registerQuestItems(TEMPLE_MANIFESTO, RELICS_OF_THE_DARK_ELF_TRAINEE, ANGUS_RECOMMENDATION, PUPINAS_RECOMMENDATION);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -57,7 +70,7 @@ public class Q00138_TempleChampionPart2 extends Quest
 		{
 			case "30070-02.htm":
 				st.startQuest();
-				st.giveItems(MANIFESTO, 1);
+				st.giveItems(TEMPLE_MANIFESTO, 1);
 				break;
 			case "30070-05.html":
 				st.giveAdena(84593, true);
@@ -75,23 +88,23 @@ public class Q00138_TempleChampionPart2 extends Quest
 				break;
 			case "30118-09.html":
 				st.setCond(6, true);
-				st.giveItems(PUPINA_REC, 1);
+				st.giveItems(PUPINAS_RECOMMENDATION, 1);
 				break;
 			case "30474-02.html":
 				st.setCond(4, true);
 				break;
 			case "30666-02.html":
-				if (st.hasQuestItems(PUPINA_REC))
+				if (st.hasQuestItems(PUPINAS_RECOMMENDATION))
 				{
 					st.set("talk", "1");
-					st.takeItems(PUPINA_REC, -1);
+					st.takeItems(PUPINAS_RECOMMENDATION, -1);
 				}
 				break;
 			case "30666-03.html":
-				if (st.hasQuestItems(MANIFESTO))
+				if (st.hasQuestItems(TEMPLE_MANIFESTO))
 				{
 					st.set("talk", "2");
-					st.takeItems(MANIFESTO, -1);
+					st.takeItems(TEMPLE_MANIFESTO, -1);
 				}
 				break;
 			case "30666-08.html":
@@ -103,6 +116,25 @@ public class Q00138_TempleChampionPart2 extends Quest
 	}
 	
 	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if ((st != null) && st.isStarted() && st.isCond(4) && (st.getQuestItemsCount(RELICS_OF_THE_DARK_ELF_TRAINEE) < 10))
+		{
+			st.giveItems(RELICS_OF_THE_DARK_ELF_TRAINEE, 1);
+			if (st.getQuestItemsCount(RELICS_OF_THE_DARK_ELF_TRAINEE) >= 10)
+			{
+				st.playSound(QuestSound.ITEMSOUND_QUEST_MIDDLE);
+			}
+			else
+			{
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			}
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
@@ -111,11 +143,10 @@ public class Q00138_TempleChampionPart2 extends Quest
 		{
 			return htmltext;
 		}
-		final int cond = st.getInt("cond");
 		switch (npc.getNpcId())
 		{
 			case SYLVAIN:
-				switch (cond)
+				switch (st.getCond())
 				{
 					case 1:
 						htmltext = "30070-02.htm";
@@ -135,12 +166,13 @@ public class Q00138_TempleChampionPart2 extends Quest
 						{
 							return getAlreadyCompletedMsg(player);
 						}
-						htmltext = (player.getLevel() >= 36) ? "30070-01.htm" : "30070-00.html";
+						final QuestState qs = player.getQuestState(Q00137_TempleChampionPart1.class.getSimpleName());
+						htmltext = (player.getLevel() >= 36) ? ((qs != null) && qs.isCompleted()) ? "30070-01.htm" : "30070-00a.htm" : "30070-00.htm";
 						break;
 				}
 				break;
 			case PUPINA:
-				switch (cond)
+				switch (st.getCond())
 				{
 					case 2:
 						htmltext = "30118-01.html";
@@ -151,9 +183,9 @@ public class Q00138_TempleChampionPart2 extends Quest
 						break;
 					case 5:
 						htmltext = "30118-08.html";
-						if (st.hasQuestItems(ANGUS_REC))
+						if (st.hasQuestItems(ANGUS_RECOMMENDATION))
 						{
-							st.takeItems(ANGUS_REC, -1);
+							st.takeItems(ANGUS_RECOMMENDATION, -1);
 						}
 						break;
 					case 6:
@@ -162,16 +194,16 @@ public class Q00138_TempleChampionPart2 extends Quest
 				}
 				break;
 			case ANGUS:
-				switch (cond)
+				switch (st.getCond())
 				{
 					case 3:
 						htmltext = "30474-01.html";
 						break;
 					case 4:
-						if (st.getQuestItemsCount(RELIC) >= 10)
+						if (st.getQuestItemsCount(RELICS_OF_THE_DARK_ELF_TRAINEE) >= 10)
 						{
-							st.takeItems(RELIC, -1);
-							st.giveItems(ANGUS_REC, 1);
+							st.takeItems(RELICS_OF_THE_DARK_ELF_TRAINEE, -1);
+							st.giveItems(ANGUS_RECOMMENDATION, 1);
 							st.setCond(5, true);
 							htmltext = "30474-04.html";
 						}
@@ -186,7 +218,7 @@ public class Q00138_TempleChampionPart2 extends Quest
 				}
 				break;
 			case SLA:
-				switch (cond)
+				switch (st.getCond())
 				{
 					case 6:
 						switch (st.getInt("talk"))
@@ -211,42 +243,8 @@ public class Q00138_TempleChampionPart2 extends Quest
 		return htmltext;
 	}
 	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if ((st != null) && st.isStarted() && st.isCond(4) && (st.getQuestItemsCount(RELIC) < 10))
-		{
-			st.giveItems(RELIC, 1);
-			if (st.getQuestItemsCount(RELIC) >= 10)
-			{
-				st.playSound("ItemSound.quest_middle");
-			}
-			else
-			{
-				st.playSound("ItemSound.quest_itemget");
-			}
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00138_TempleChampionPart2(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(SYLVAIN);
-		addTalkId(SYLVAIN, PUPINA, ANGUS, SLA);
-		addKillId(MOBS);
-		questItemIds = new int[]
-		{
-			MANIFESTO,
-			RELIC,
-			ANGUS_REC,
-			PUPINA_REC
-		};
-	}
-	
 	public static void main(String[] args)
 	{
-		new Q00138_TempleChampionPart2(138, Q00138_TempleChampionPart2.class.getSimpleName(), "Temple Champion Part 2");
+		new Q00138_TempleChampionPart2(138, Q00138_TempleChampionPart2.class.getSimpleName(), "Temple Champion - 2");
 	}
 }

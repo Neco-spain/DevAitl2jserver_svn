@@ -21,31 +21,38 @@ import quests.Q10296_SevenSignPoweroftheSeal.Q10296_SevenSignPoweroftheSeal;
 
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
+/**
+ * Author: RobikBobik L2PS Team
+ */
 public class ElcadiaTent extends Quest
 {
-	private static final String qn = "ElcadiaTent";
-	// Values
 	private static final int INSTANCE_ID = 158;
-	// NPC's
 	private static final int Gruff_looking_Man = 32862;
 	private static final int Elcadia = 32784;
-	// Teleports
 	private static final int ENTER = 0;
 	private static final int EXIT = 1;
-	private static final int[][] TELEPORTS = 
-	{ 
-		{ 89706, -238074, -9632 },
-		{ 43316, -87986, -2832 }
+	private static final int[][] TELEPORTS =
+	{
+		{
+			89706,
+			-238074,
+			-9632
+		},
+		{
+			43316,
+			-87986,
+			-2832
+		}
 	};
 	
 	private class ElcadiaTentWorld extends InstanceWorld
@@ -73,22 +80,22 @@ public class ElcadiaTent extends Quest
 				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ALREADY_ENTERED_ANOTHER_INSTANCE_CANT_ENTER));
 				return;
 			}
-			Instance inst = InstanceManager.getInstance().getInstance(world.instanceId);
+			Instance inst = InstanceManager.getInstance().getInstance(world.getInstanceId());
 			if (inst != null)
 			{
-				teleportPlayer(player, TELEPORTS[ENTER], world.instanceId);
+				teleportPlayer(player, TELEPORTS[ENTER], world.getInstanceId());
 			}
 			return;
 		}
 		final int instanceId = InstanceManager.getInstance().createDynamicInstance("ElcadiaTent.xml");
 		
 		world = new ElcadiaTentWorld();
-		world.instanceId = instanceId;
-		world.templateId = INSTANCE_ID;
-		world.status = 0;
+		world.setInstanceId(instanceId);
+		world.setTemplateId(INSTANCE_ID);
+		world.setStatus(0);
 		InstanceManager.getInstance().addWorld(world);
 		
-		world.allowed.add(player.getObjectId());
+		world.addAllowed(player.getObjectId());
 		teleportPlayer(player, TELEPORTS[ENTER], instanceId);
 		
 		return;
@@ -98,33 +105,35 @@ public class ElcadiaTent extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		if (st == null)
+		{
 			st = newQuestState(player);
+		}
 		
 		if (npc.getNpcId() == Gruff_looking_Man)
 		{
-			if (player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()) != null && player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()).getState() == State.STARTED)
+			if ((player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()) != null) && (player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()).getState() == State.STARTED))
 			{
 				enterInstance(player);
 				return null;
 			}
-			else if (player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()) != null && player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()).getState() == State.COMPLETED && player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()) == null)
+			else if ((player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()) != null) && (player.getQuestState(Q10292_SevenSignGirlofDoubt.class.getSimpleName()).getState() == State.COMPLETED) && (player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()) == null))
 			{
 				enterInstance(player);
 				return null;
 			}
-			else if (player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()) != null && player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()).getState() != State.COMPLETED)
+			else if ((player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()) != null) && (player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()).getState() != State.COMPLETED))
 			{
 				enterInstance(player);
 				return null;
 			}
-			else if (player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()) != null && player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()).getState() == State.COMPLETED && player.getQuestState(Q10294_SevenSignToTheMonastery.class.getSimpleName()) == null)
+			else if ((player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()) != null) && (player.getQuestState(Q10293_SevenSignForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName()).getState() == State.COMPLETED) && (player.getQuestState(Q10294_SevenSignToTheMonastery.class.getSimpleName()) == null))
 			{
 				enterInstance(player);
 				return null;
 			}
-			else if (player.getQuestState(Q10296_SevenSignPoweroftheSeal.class.getSimpleName()) != null && player.getQuestState(Q10296_SevenSignPoweroftheSeal.class.getSimpleName()).getInt("cond") == 3)
+			else if ((player.getQuestState(Q10296_SevenSignPoweroftheSeal.class.getSimpleName()) != null) && (player.getQuestState(Q10296_SevenSignPoweroftheSeal.class.getSimpleName()).getInt("cond") == 3))
 			{
 				enterInstance(player);
 				return null;
@@ -153,6 +162,6 @@ public class ElcadiaTent extends Quest
 	
 	public static void main(String[] args)
 	{
-		new ElcadiaTent(-1, qn, "instances");
+		new ElcadiaTent(-1, ElcadiaTent.class.getSimpleName(), "instances");
 	}
 }

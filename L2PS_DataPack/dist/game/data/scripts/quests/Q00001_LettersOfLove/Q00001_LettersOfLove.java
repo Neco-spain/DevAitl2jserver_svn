@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00001_LettersOfLove;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -5,20 +23,25 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
 
 /**
- * Author: RobikBobik L2PS Team
+ * Letters of Love (1)
+ * @author Zoey76
  */
 public class Q00001_LettersOfLove extends Quest
 {
+	// NPCs
 	private static final int DARIN = 30048;
 	private static final int ROXXY = 30006;
 	private static final int BAULRO = 30033;
+	// Items
 	private static final int DARINS_LETTER = 687;
 	private static final int ROXXYS_KERCHIEF = 688;
 	private static final int DARINS_RECEIPT = 1079;
 	private static final int BAULROS_POTION = 1080;
 	private static final int NECKLACE_OF_KNOWLEDGE = 906;
+	// Misc
 	private static final int MIN_LEVEL = 2;
 	
 	private Q00001_LettersOfLove(int questId, String name, String descr)
@@ -176,6 +199,8 @@ public class Q00001_LettersOfLove extends Quest
 						{
 							case DARIN:
 							{
+								// TODO: Beside this message something should be set for the Newbie Guide.
+								showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
 								st.giveItems(NECKLACE_OF_KNOWLEDGE, 1);
 								st.addExpAndSp(5672, 446);
 								st.giveAdena(2466, false);

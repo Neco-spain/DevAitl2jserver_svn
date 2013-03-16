@@ -113,6 +113,7 @@ public class Buffer
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private void loadSQL()
 	{
 		if (!Configuration.getInstance().getBoolean(0, "eventBufferEnabled"))
@@ -167,10 +168,7 @@ public class Buffer
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 	
 	public void showHtml(Integer player)

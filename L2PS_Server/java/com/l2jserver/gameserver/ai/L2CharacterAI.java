@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.ai;
 
@@ -29,12 +33,12 @@ import java.util.List;
 import javolution.util.FastList;
 
 import com.l2jserver.Config;
+import com.l2jserver.gameserver.GameTimeController;
 import com.l2jserver.gameserver.GeoData;
+import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.WalkingManager;
 import com.l2jserver.gameserver.model.L2CharPosition;
 import com.l2jserver.gameserver.model.L2Object;
-import com.l2jserver.gameserver.model.L2Object.InstanceType;
-import com.l2jserver.gameserver.model.actor.FakePc;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -47,13 +51,13 @@ import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance.ItemLocation;
 import com.l2jserver.gameserver.model.items.type.L2WeaponType;
+import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.skills.L2Skill;
 import com.l2jserver.gameserver.model.skills.L2SkillType;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.AutoAttackStop;
-import com.l2jserver.gameserver.network.serverpackets.ChangeWaitType;
 import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
 import com.l2jserver.gameserver.util.Point3D;
 import com.l2jserver.util.Rnd;
@@ -85,6 +89,34 @@ public class L2CharacterAI extends AbstractAI
 		public CtrlIntention getCtrlIntention()
 		{
 			return _crtlIntention;
+		}
+	}
+	
+	/**
+	 * Cast Task
+	 * @author Zoey76
+	 */
+	public static class CastTask implements Runnable
+	{
+		private final L2Character _activeChar;
+		private final L2Object _target;
+		private final L2Skill _skill;
+		
+		public CastTask(L2Character actor, L2Skill skill, L2Object target)
+		{
+			_activeChar = actor;
+			_target = target;
+			_skill = skill;
+		}
+		
+		@Override
+		public void run()
+		{
+			if (_activeChar.isAttackingNow())
+			{
+				_activeChar.abortAttack();
+			}
+			_activeChar.getAI().changeIntentionToCast(_skill, _target);
 		}
 	}
 	
@@ -138,14 +170,6 @@ public class L2CharacterAI extends AbstractAI
 		// Stop the actor auto-attack client side by sending Server->Client packet AutoAttackStop (broadcast)
 		clientStopAutoAttack();
 		
-		if (_actor.isInstanceType(InstanceType.L2Npc) && !_actor.isAlikeDead())
-		{
-			FakePc fPc = ((L2Npc) _actor).getFakePc();
-			if ((fPc != null) && fPc.sitWhileIdle)
-			{
-				_actor.broadcastPacket(new ChangeWaitType(_actor, ChangeWaitType.WT_SITTING));
-			}
-		}
 	}
 	
 	/**
@@ -187,15 +211,6 @@ public class L2CharacterAI extends AbstractAI
 			
 			// Launch the Think Event
 			onEvtThink();
-		}
-		
-		if (_actor.isInstanceType(InstanceType.L2Npc) && !_actor.isAlikeDead())
-		{
-			FakePc fPc = ((L2Npc) _actor).getFakePc();
-			if ((fPc != null) && fPc.sitWhileIdle)
-			{
-				_actor.broadcastPacket(new ChangeWaitType(_actor, ChangeWaitType.WT_SITTING));
-			}
 		}
 	}
 	
@@ -308,23 +323,22 @@ public class L2CharacterAI extends AbstractAI
 			return;
 		}
 		
+		if (_actor.getBowAttackEndTime() > GameTimeController.getGameTicks())
+		{
+			ThreadPoolManager.getInstance().scheduleGeneral(new CastTask(_actor, skill, target), (_actor.getBowAttackEndTime() - GameTimeController.getGameTicks()) * GameTimeController.MILLIS_IN_TICK);
+		}
+		else
+		{
+			changeIntentionToCast(skill, target);
+		}
+	}
+	
+	protected void changeIntentionToCast(L2Skill skill, L2Object target)
+	{
 		// Set the AI cast target
 		setCastTarget((L2Character) target);
-		
-		// Stop actions client-side to cast the skill
-		if (skill.getHitTime() > 50)
-		{
-			// Abort the attack of the L2Character and send Server->Client ActionFailed packet
-			_actor.abortAttack();
-			
-			// Cancel action client side by sending Server->Client packet ActionFailed to the L2PcInstance actor
-			// no need for second ActionFailed packet, abortAttack() already sent it
-			// clientActionFailed();
-		}
-		
 		// Set the AI skill used by INTENTION_CAST
 		_skill = skill;
-		
 		// Change the Intention of this AbstractAI to AI_INTENTION_CAST
 		changeIntention(AI_INTENTION_CAST, skill, target);
 		
@@ -728,27 +742,25 @@ public class L2CharacterAI extends AbstractAI
 		}
 		clientStoppedMoving();
 		
-		// Walking Manager support
 		if (_actor instanceof L2Npc)
 		{
-			WalkingManager.getInstance().onArrived((L2Npc) _actor);
+			L2Npc npc = (L2Npc) _actor;
+			WalkingManager.getInstance().onArrived(npc); // Walking Manager support
+			
+			// Notify quest
+			if (npc.getTemplate().getEventQuests(Quest.QuestEventType.ON_MOVE_FINISHED) != null)
+			{
+				for (Quest quest : npc.getTemplate().getEventQuests(Quest.QuestEventType.ON_MOVE_FINISHED))
+				{
+					quest.notifyMoveFinished(npc);
+				}
+			}
 		}
 		
 		// If the Intention was AI_INTENTION_MOVE_TO, set the Intention to AI_INTENTION_ACTIVE
 		if (getIntention() == AI_INTENTION_MOVE_TO)
 		{
 			setIntention(AI_INTENTION_ACTIVE);
-		}
-		else if ((getIntention() == AI_INTENTION_ACTIVE) || (getIntention() == AI_INTENTION_IDLE))
-		{
-			if (_actor.isInstanceType(InstanceType.L2Npc) && !_actor.isAlikeDead())
-			{
-				FakePc fPc = ((L2Npc) _actor).getFakePc();
-				if ((fPc != null) && fPc.sitWhileIdle)
-				{
-					_actor.broadcastPacket(new ChangeWaitType(_actor, ChangeWaitType.WT_SITTING));
-				}
-			}
 		}
 		
 		// Launch actions corresponding to the Event Think
@@ -1280,7 +1292,6 @@ public class L2CharacterAI extends AbstractAI
 					case HEAL:
 					case HEAL_PERCENT:
 					case HEAL_STATIC:
-					case BALANCE_LIFE:
 					case HOT:
 						healSkills.add(sk);
 						hasHealOrResurrect = true;

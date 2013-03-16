@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.skills.l2skills;
 
@@ -40,13 +44,15 @@ public class L2SkillSummon extends L2Skill
 	private final boolean _isCubic;
 	
 	// cubic AI
+	// Power for a cubic
+	private final int _cubicPower;
 	// Duration for a cubic
 	private final int _cubicDuration;
 	// Activation time for a cubic
 	private final int _cubicDelay;
-	// Maximum casts made by the cubic until it goes idle.
+	// Maximum casts made by the cubic until it goes idle
 	private final int _cubicMaxCount;
-	// Activation chance for a cubic.
+	// Activation chance for a cubic
 	private final int _cubicSkillChance;
 	
 	// What is the total lifetime of summons (in millisecs)
@@ -75,6 +81,7 @@ public class L2SkillSummon extends L2Skill
 		_expPenalty = set.getFloat("expPenalty", 0.f);
 		_isCubic = set.getBool("isCubic", false);
 		
+		_cubicPower = set.getInteger("cubicPower", 0);
 		_cubicDuration = set.getInteger("cubicDuration", 0);
 		_cubicDelay = set.getInteger("cubicDelay", 0);
 		_cubicMaxCount = set.getInteger("cubicMaxCount", -1);
@@ -204,11 +211,11 @@ public class L2SkillSummon extends L2Skill
 					}
 					if (player == activeChar)
 					{
-						player.addCubic(getNpcId(), _cubicSkillLevel, getPower(), _cubicDelay, _cubicSkillChance, _cubicMaxCount, _cubicDuration, false);
+						player.addCubic(getNpcId(), _cubicSkillLevel, _cubicPower, _cubicDelay, _cubicSkillChance, _cubicMaxCount, _cubicDuration, false);
 					}
 					else
 					{
-						player.addCubic(getNpcId(), _cubicSkillLevel, getPower(), _cubicDelay, _cubicSkillChance, _cubicMaxCount, _cubicDuration, true);
+						player.addCubic(getNpcId(), _cubicSkillLevel, _cubicPower, _cubicDelay, _cubicSkillChance, _cubicMaxCount, _cubicDuration, true);
 					}
 					player.broadcastUserInfo();
 				}
@@ -237,7 +244,7 @@ public class L2SkillSummon extends L2Skill
 					activeChar.sendPacket(SystemMessageId.CUBIC_SUMMONING_FAILED);
 					return;
 				}
-				activeChar.addCubic(getNpcId(), _cubicSkillLevel, getPower(), _cubicDelay, _cubicSkillChance, _cubicMaxCount, _cubicDuration, false);
+				activeChar.addCubic(getNpcId(), _cubicSkillLevel, _cubicPower, _cubicDelay, _cubicSkillChance, _cubicMaxCount, _cubicDuration, false);
 				activeChar.broadcastUserInfo();
 			}
 			return;

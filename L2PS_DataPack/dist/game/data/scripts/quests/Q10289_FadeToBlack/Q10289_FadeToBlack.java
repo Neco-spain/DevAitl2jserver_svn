@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q10289_FadeToBlack;
 
@@ -33,15 +37,22 @@ import com.l2jserver.gameserver.util.Util;
  */
 public class Q10289_FadeToBlack extends Quest
 {
-	// NPCs
+	// NPC
 	private static final int GREYMORE = 32757;
-	
 	// Items
 	private static final int MARK_OF_SPLENDOR = 15527;
 	private static final int MARK_OF_DARKNESS = 15528;
-	
-	// Monsters
+	// Monster
 	private static final int ANAYS = 25701;
+	
+	public Q10289_FadeToBlack(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(GREYMORE);
+		addTalkId(GREYMORE);
+		addKillId(ANAYS);
+		registerQuestItems(MARK_OF_SPLENDOR, MARK_OF_DARKNESS);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -53,7 +64,6 @@ public class Q10289_FadeToBlack extends Quest
 		}
 		
 		String htmltext = event;
-		
 		switch (event)
 		{
 			case "32757-03.htm":
@@ -172,42 +182,7 @@ public class Q10289_FadeToBlack extends Quest
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
-		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		switch (st.getState())
-		{
-			case State.CREATED:
-				st = player.getQuestState(Q10288_SecretMission.class.getSimpleName());
-				htmltext = ((player.getLevel() < 82) || (st == null) || !st.isCompleted()) ? "32757-00.htm" : "32757-01.htm";
-				break;
-			case State.STARTED:
-				switch (st.getCond())
-				{
-					case 1:
-						htmltext = "32757-04.html";
-						break;
-					case 2:
-					case 3:
-						htmltext = "32757-05.html";
-						break;
-				}
-				break;
-			case State.COMPLETED:
-				htmltext = "32757-10.html";
-				break;
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc anays, L2PcInstance killer, boolean isPet)
+	public String onKill(L2Npc anays, L2PcInstance killer, boolean isSummon)
 	{
 		List<L2PcInstance> killers = new ArrayList<>();
 		// first, populate the list of players liable for a reward
@@ -278,20 +253,42 @@ public class Q10289_FadeToBlack extends Quest
 				}
 			}
 		}
-		return super.onKill(anays, killer, isPet);
+		return super.onKill(anays, killer, isSummon);
 	}
 	
-	public Q10289_FadeToBlack(int questId, String name, String descr)
+	@Override
+	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
-		super(questId, name, descr);
-		addStartNpc(GREYMORE);
-		addTalkId(GREYMORE);
-		addKillId(ANAYS);
-		questItemIds = new int[]
+		String htmltext = getNoQuestMsg(player);
+		QuestState st = player.getQuestState(getName());
+		if (st == null)
 		{
-			MARK_OF_SPLENDOR,
-			MARK_OF_DARKNESS
-		};
+			return htmltext;
+		}
+		
+		switch (st.getState())
+		{
+			case State.CREATED:
+				st = player.getQuestState(Q10288_SecretMission.class.getSimpleName());
+				htmltext = ((player.getLevel() < 82) || (st == null) || !st.isCompleted()) ? "32757-00.htm" : "32757-01.htm";
+				break;
+			case State.STARTED:
+				switch (st.getCond())
+				{
+					case 1:
+						htmltext = "32757-04.html";
+						break;
+					case 2:
+					case 3:
+						htmltext = "32757-05.html";
+						break;
+				}
+				break;
+			case State.COMPLETED:
+				htmltext = "32757-10.html";
+				break;
+		}
+		return htmltext;
 	}
 	
 	public static void main(String[] args)

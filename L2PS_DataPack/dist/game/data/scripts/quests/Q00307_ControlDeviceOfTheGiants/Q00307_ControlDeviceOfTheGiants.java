@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00307_ControlDeviceOfTheGiants;
 
@@ -29,22 +33,27 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest
 {
 	// NPC
 	private final static int DROPH = 32711;
-	
 	// RB
 	private final static int GORGOLOS = 25681;
 	private final static int LAST_TITAN_UTENUS = 25684;
 	private final static int GIANT_MARPANAK = 25680;
 	private final static int HEKATON_PRIME = 25687;
-	
 	// Items
 	private final static int SUPPORT_ITEMS = 14850;
 	private final static int CET_1_SHEET = 14851;
 	private final static int CET_2_SHEET = 14852;
 	private final static int CET_3_SHEET = 14853;
-	
 	// Misc
 	private final static int RESPAWN_DELAY = 3600000; // 1 hour
 	private static L2Npc hekaton;
+	
+	public Q00307_ControlDeviceOfTheGiants(int id, String name, String descr)
+	{
+		super(id, name, descr);
+		addStartNpc(DROPH);
+		addTalkId(DROPH);
+		addKillId(GORGOLOS, LAST_TITAN_UTENUS, GIANT_MARPANAK, HEKATON_PRIME);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -62,7 +71,7 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest
 				if (player.getLevel() >= 79)
 				{
 					st.startQuest();
-					htmltext = (hasQuestItems(player, CET_1_SHEET, CET_2_SHEET, CET_3_SHEET)) ? "32711-04a.html" : "32711-04.html";
+					htmltext = (st.hasQuestItems(CET_1_SHEET, CET_2_SHEET, CET_3_SHEET)) ? "32711-04a.html" : "32711-04.html";
 				}
 				break;
 			case "32711-05a.html":
@@ -107,51 +116,12 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
 	{
-		String htmltext = getNoQuestMsg(player);
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		switch (st.getState())
-		{
-			case State.CREATED:
-			{
-				htmltext = (player.getLevel() >= 79) ? "32711-01.htm" : "32711-02.htm";
-				break;
-			}
-			case State.STARTED:
-			{
-				if ((hekaton != null) && !hekaton.isDead())
-				{
-					htmltext = "32711-09.html";
-				}
-				else if (st.isCond(1))
-				{
-					htmltext = (!hasQuestItems(player, CET_1_SHEET, CET_2_SHEET, CET_3_SHEET)) ? "32711-07.html" : "32711-08.html";
-				}
-				else if (st.isCond(2))
-				{
-					st.giveItems(SUPPORT_ITEMS, 1);
-					st.exitQuest(true, true);
-					htmltext = "32711-10.html";
-				}
-				break;
-			}
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "1");
+		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
 		if (partyMember == null)
 		{
-			return super.onKill(npc, player, isPet);
+			return super.onKill(npc, player, isSummon);
 		}
 		final QuestState st = partyMember.getQuestState(getName());
 		
@@ -193,15 +163,46 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest
 				break;
 			}
 		}
-		return super.onKill(npc, player, isPet);
+		return super.onKill(npc, player, isSummon);
 	}
 	
-	public Q00307_ControlDeviceOfTheGiants(int id, String name, String descr)
+	@Override
+	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
-		super(id, name, descr);
-		addStartNpc(DROPH);
-		addTalkId(DROPH);
-		addKillId(GORGOLOS, LAST_TITAN_UTENUS, GIANT_MARPANAK, HEKATON_PRIME);
+		String htmltext = getNoQuestMsg(player);
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		switch (st.getState())
+		{
+			case State.CREATED:
+			{
+				htmltext = (player.getLevel() >= 79) ? "32711-01.htm" : "32711-02.htm";
+				break;
+			}
+			case State.STARTED:
+			{
+				if ((hekaton != null) && !hekaton.isDead())
+				{
+					htmltext = "32711-09.html";
+				}
+				else if (st.isCond(1))
+				{
+					htmltext = (!hasQuestItems(player, CET_1_SHEET, CET_2_SHEET, CET_3_SHEET)) ? "32711-07.html" : "32711-08.html";
+				}
+				else if (st.isCond(2))
+				{
+					st.giveItems(SUPPORT_ITEMS, 1);
+					st.exitQuest(true, true);
+					htmltext = "32711-10.html";
+				}
+				break;
+			}
+		}
+		return htmltext;
 	}
 	
 	public static void main(String[] args)

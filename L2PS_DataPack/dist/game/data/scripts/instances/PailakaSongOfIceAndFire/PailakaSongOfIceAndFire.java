@@ -17,12 +17,12 @@ package instances.PailakaSongOfIceAndFire;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
@@ -236,15 +236,15 @@ public class PailakaSongOfIceAndFire extends Quest
 		InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player);
 		if (world != null)
 		{
-			if (world.templateId != INSTANCE_ID)
+			if (world.getTemplateId() != INSTANCE_ID)
 			{
 				player.sendPacket(SystemMessageId.ALREADY_ENTERED_ANOTHER_INSTANCE_CANT_ENTER);
 				return;
 			}
-			Instance inst = InstanceManager.getInstance().getInstance(world.instanceId);
+			Instance inst = InstanceManager.getInstance().getInstance(world.getInstanceId());
 			if (inst != null)
 			{
-				teleportPlayer(player, TELEPORT, world.instanceId);
+				teleportPlayer(player, TELEPORT, world.getInstanceId());
 			}
 			return;
 		}
@@ -252,11 +252,11 @@ public class PailakaSongOfIceAndFire extends Quest
 		final int instanceId = InstanceManager.getInstance().createDynamicInstance("PailakaSongOfIceAndFire.xml");
 		
 		world = new InstanceWorld();
-		world.instanceId = instanceId;
-		world.templateId = INSTANCE_ID;
+		world.setInstanceId(instanceId);
+		world.setTemplateId(INSTANCE_ID);
 		InstanceManager.getInstance().addWorld(world);
 		
-		world.allowed.add(player.getObjectId());
+		world.addAllowed(player.getObjectId());
 		teleportPlayer(player, TELEPORT, instanceId);
 		
 	}
@@ -516,9 +516,9 @@ public class PailakaSongOfIceAndFire extends Quest
 		if ((character instanceof L2PcInstance) && !character.isDead() && !character.isTeleporting() && ((L2PcInstance) character).isOnline())
 		{
 			InstanceWorld world = InstanceManager.getInstance().getWorld(character.getInstanceId());
-			if ((world != null) && (world.templateId == INSTANCE_ID))
+			if ((world != null) && (world.getTemplateId() == INSTANCE_ID))
 			{
-				ThreadPoolManager.getInstance().scheduleGeneral(new Teleport(character, world.instanceId), 1000);
+				ThreadPoolManager.getInstance().scheduleGeneral(new Teleport(character, world.getInstanceId()), 1000);
 			}
 		}
 		return super.onExitZone(character, zone);

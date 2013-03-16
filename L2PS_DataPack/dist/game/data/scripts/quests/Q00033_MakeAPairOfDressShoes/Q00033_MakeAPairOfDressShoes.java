@@ -1,92 +1,108 @@
+/*
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00033_MakeAPairOfDressShoes;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.itemcontainer.PcInventory;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 
 /**
- * Author: RobikBobik L2PS Tem
+ * Make a Pair of Dress Shoes (33)
+ * @author malyelfik
  */
 public class Q00033_MakeAPairOfDressShoes extends Quest
 {
-	private static final int ADENA = 57;
-	private static final int DRESS_SHOES_BOX = 7113;
+	// NPCs
+	private static final int IAN = 30164;
+	private static final int WOODLEY = 30838;
+	private static final int LEIKAR = 31520;
+	// Items
 	private static final int LEATHER = 1882;
 	private static final int THREAD = 1868;
+	private static final int DRESS_SHOES_BOX = 7113;
+	// Misc
+	private static final int MIN_LEVEL = 60;
+	private static final int LEATHER_COUNT = 200;
+	private static final int THREAD_COUNT = 600;
+	private static final int ADENA_COUNT = 500000;
+	private static final int ADENA_COUNT2 = 200000;
+	private static final int ADENA_COUNT3 = 300000;
 	
-	public Q00033_MakeAPairOfDressShoes(int questId, String name, String descr)
+	private Q00033_MakeAPairOfDressShoes(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		
-		addStartNpc(30838);
-		addTalkId(30838);
-		addTalkId(30164);
-		addTalkId(31520);
+		addStartNpc(WOODLEY);
+		addTalkId(WOODLEY, IAN, LEIKAR);
 	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
-		String htmltext = event;
-		
-		QuestState st = player.getQuestState(getName());
+		final QuestState st = player.getQuestState(getName());
 		if (st == null)
 		{
-			return htmltext;
+			return null;
 		}
 		
-		if (event.equalsIgnoreCase("30838-1.htm"))
+		String htmltext = event;
+		switch (event)
 		{
-			st.set("cond", "1");
-			st.setState(State.STARTED);
-			st.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("31520-1.htm"))
-		{
-			st.set("cond", "2");
-			st.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("30838-3.htm"))
-		{
-			st.set("cond", "3");
-			st.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("30838-5.htm"))
-		{
-			if ((st.getQuestItemsCount(LEATHER) >= 200) && (st.getQuestItemsCount(THREAD) >= 600) && (st.getQuestItemsCount(ADENA) >= 200000))
-			{
-				st.takeItems(LEATHER, 200);
-				st.takeItems(THREAD, 600);
-				st.takeItems(ADENA, 200000);
-				st.set("cond", "4");
-				st.playSound("ItemSound.quest_accept");
-			}
-			else
-			{
-				htmltext = "30838-3a.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30164-1.htm"))
-		{
-			if (st.getQuestItemsCount(ADENA) >= 300000)
-			{
-				st.takeItems(ADENA, 300000);
-				st.set("cond", "5");
-				st.playSound("ItemSound.quest_accept");
-			}
-			else
-			{
-				htmltext = "30164-1b.htm";
-			}
-		}
-		else if (event.equalsIgnoreCase("30838-7.htm"))
-		{
-			st.giveItems(DRESS_SHOES_BOX, 1);
-			st.playSound("ItemSound.quest_finish");
-			st.unset("cond");
-			st.exitQuest(true);
+			case "30838-03.htm":
+				st.startQuest();
+				break;
+			case "30838-06.html":
+				st.setCond(3, true);
+				break;
+			case "30838-09.html":
+				if ((st.getQuestItemsCount(LEATHER) >= LEATHER_COUNT) && (st.getQuestItemsCount(THREAD) >= THREAD_COUNT) && (player.getAdena() >= ADENA_COUNT2))
+				{
+					st.takeItems(LEATHER, LEATHER_COUNT);
+					st.takeItems(THREAD, LEATHER_COUNT);
+					st.takeItems(PcInventory.ADENA_ID, ADENA_COUNT2);
+					st.setCond(4, true);
+				}
+				else
+				{
+					htmltext = "30838-10.html";
+				}
+				break;
+			case "30838-13.html":
+				st.giveItems(DRESS_SHOES_BOX, 1);
+				st.exitQuest(false, true);
+				break;
+			case "31520-02.html":
+				st.setCond(2, true);
+				break;
+			case "30164-02.html":
+				if (player.getAdena() < ADENA_COUNT3)
+				{
+					return "30164-03.html";
+				}
+				st.takeItems(PcInventory.ADENA_ID, ADENA_COUNT3);
+				st.setCond(5, true);
+				break;
+			default:
+				htmltext = null;
+				break;
 		}
 		return htmltext;
 	}
@@ -95,94 +111,77 @@ public class Q00033_MakeAPairOfDressShoes extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(getName());
-		
-		int npcId = npc.getNpcId();
-		int cond = st.getInt("cond");
-		
-		if (st.isCompleted())
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
 		{
-			htmltext = getAlreadyCompletedMsg(player);
+			return htmltext;
 		}
 		
-		if (npcId == 30838)
+		switch (npc.getNpcId())
 		{
-			if ((cond == 0) && (st.getQuestItemsCount(DRESS_SHOES_BOX) == 0))
-			{
-				if (st.getPlayer().getLevel() >= 60)
+			case WOODLEY:
+				switch (st.getState())
 				{
-					QuestState fwear = st.getPlayer().getQuestState("Q00037_PleaseMakeMeFormalWear");
-					if ((fwear != null) && (fwear.get("cond") != null))
+					case State.CREATED:
+						htmltext = (player.getLevel() >= MIN_LEVEL) ? "30838-01.htm" : "30838-02.html";
+						break;
+					case State.STARTED:
+						switch (st.getCond())
+						{
+							case 1:
+								htmltext = "30838-04.html";
+								break;
+							case 2:
+								htmltext = "30838-05.html";
+								break;
+							case 3:
+								htmltext = ((st.getQuestItemsCount(LEATHER) >= LEATHER_COUNT) && (st.getQuestItemsCount(THREAD) >= THREAD_COUNT) && (player.getAdena() >= ADENA_COUNT)) ? "30838-07.html" : "30838-08.html";
+								break;
+							case 4:
+								htmltext = "30838-11.html";
+								break;
+							case 5:
+								htmltext = "30838-12.html";
+								break;
+						}
+						break;
+					case State.COMPLETED:
+						htmltext = getAlreadyCompletedMsg(player);
+						break;
+				}
+				break;
+			case LEIKAR:
+				if (st.isStarted())
+				{
+					if (st.isCond(1))
 					{
-						if (fwear.get("cond").equals("7"))
-						{
-							htmltext = "30838-0.htm";
-						}
-						else
-						{
-							htmltext = "30838-8.htm";
-							st.exitQuest(true);
-						}
+						htmltext = "31520-01.html";
 					}
-					else
+					else if (st.isCond(2))
 					{
-						htmltext = "30838-8.htm";
-						st.exitQuest(true);
+						htmltext = "31520-03.html";
 					}
 				}
-				else
+				break;
+			case IAN:
+				if (st.isStarted())
 				{
-					htmltext = "30838-8.htm";
+					if (st.isCond(4))
+					{
+						htmltext = "30164-01.html";
+					}
+					else if (st.isCond(5))
+					{
+						htmltext = "30164-04.html";
+					}
 				}
-			}
-			else if (cond == 1)
-			{
-				htmltext = "30838-1a.htm";
-			}
-			else if (cond == 2)
-			{
-				htmltext = "30838-2.htm";
-			}
-			else if (cond == 3)
-			{
-				htmltext = "30838-4.htm";
-			}
-			else if (cond == 4)
-			{
-				htmltext = "30838-5a.htm";
-			}
-			else if (cond == 5)
-			{
-				htmltext = "30838-6.htm";
-			}
-		}
-		else if (npcId == 31520)
-		{
-			if (cond == 1)
-			{
-				htmltext = "31520-0.htm";
-			}
-			else if (cond == 2)
-			{
-				htmltext = "31520-1a.htm";
-			}
-		}
-		else if (npcId == 30164)
-		{
-			if (cond == 4)
-			{
-				htmltext = "30164-0.htm";
-			}
-			else if (cond == 5)
-			{
-				htmltext = "30164-1a.htm";
-			}
+				break;
 		}
 		return htmltext;
 	}
 	
 	public static void main(String[] args)
 	{
-		new Q00033_MakeAPairOfDressShoes(33, Q00033_MakeAPairOfDressShoes.class.getSimpleName(), "");
+		new Q00033_MakeAPairOfDressShoes(33, Q00033_MakeAPairOfDressShoes.class.getSimpleName(), "Make a Pair of Dress Shoes");
 	}
 }

@@ -19,10 +19,10 @@ import javolution.util.FastMap;
 
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.network.NpcStringId;
@@ -32,24 +32,41 @@ import com.l2jserver.gameserver.network.serverpackets.NpcSay;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.util.Rnd;
 
+/**
+ * Author: RobikBobik L2PS Team
+ */
 public class LibraryOfSages extends Quest
 {
-	private static final String qn = "LibraryOfSages";
-	// Values
 	private static final int INSTANCE_ID = 156;
-	// NPC's
 	private static final int Sophia = 32596;
 	private static final int Sophia2 = 32861;
 	private static final int Sophia3 = 32863;
 	private static final int Elcadia_Support = 32785;
-	// Teleports
 	private static final int ENTER = 0;
 	private static final int EXIT = 1;
 	private static final int HidenRoom = 2;
-	private static final int[][] TELEPORTS = { { 37063, -49813, -1128 }, { 37063, -49813, -1128 }, { 37355, -50065, -1127 } // books
+	private static final int[][] TELEPORTS =
+	{
+		{
+			37063,
+			-49813,
+			-1128
+		},
+		{
+			37063,
+			-49813,
+			-1128
+		},
+		{
+			37355,
+			-50065,
+			-1127
+		}
+	// books
 	};
 	
-	private static final NpcStringId[] spam = {
+	private static final NpcStringId[] spam =
+	{
 		NpcStringId.I_MUST_ASK_LIBRARIAN_SOPHIA_ABOUT_THE_BOOK,
 		NpcStringId.THIS_LIBRARY_ITS_HUGE_BUT_THERE_ARENT_MANY_USEFUL_BOOKS_RIGHT,
 		NpcStringId.AN_UNDERGROUND_LIBRARY_I_HATE_DAMP_AND_SMELLY_PLACES,
@@ -72,7 +89,7 @@ public class LibraryOfSages extends Quest
 	private void teleportPlayer(L2Npc npc, L2PcInstance player, int[] coords, int instanceId)
 	{
 		InstanceHolder holder = instanceWorlds.get(instanceId);
-		if (holder == null && instanceId > 0)
+		if (instanceId > 0)
 		{
 			holder = new InstanceHolder();
 			instanceWorlds.put(instanceId, holder);
@@ -82,17 +99,15 @@ public class LibraryOfSages extends Quest
 		player.setInstanceId(instanceId);
 		player.teleToLocation(coords[0], coords[1], coords[2], false);
 		cancelQuestTimer("check_follow", npc, player);
-		if (holder != null)
+		for (L2Npc h : holder.mobs)
 		{
-			for(L2Npc h : holder.mobs)
-			{
-				h.deleteMe();
-			}
-			holder.mobs.clear();
+			h.deleteMe();
 		}
+		holder.mobs.clear();
+		
 		if (instanceId > 0)
 		{
-			L2Npc support = addSpawn(Elcadia_Support, player.getX(), player.getY(),player.getZ(), 0, false, 0, false, player.getInstanceId());
+			L2Npc support = addSpawn(Elcadia_Support, player.getX(), player.getY(), player.getZ(), 0, false, 0, false, player.getInstanceId());
 			holder.mobs.add(support);
 			startQuestTimer("check_follow", 3000, support, player);
 		}
@@ -108,22 +123,22 @@ public class LibraryOfSages extends Quest
 				player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.ALREADY_ENTERED_ANOTHER_INSTANCE_CANT_ENTER));
 				return;
 			}
-			Instance inst = InstanceManager.getInstance().getInstance(world.instanceId);
+			Instance inst = InstanceManager.getInstance().getInstance(world.getInstanceId());
 			if (inst != null)
 			{
-				teleportPlayer(npc, player, TELEPORTS[ENTER], world.instanceId);
+				teleportPlayer(npc, player, TELEPORTS[ENTER], world.getInstanceId());
 			}
 			return;
 		}
 		final int instanceId = InstanceManager.getInstance().createDynamicInstance("LibraryOfSages.xml");
 		
 		world = new LibraryOfSagesWorld();
-		world.instanceId = instanceId;
-		world.templateId = INSTANCE_ID;
-		world.status = 0;
+		world.setInstanceId(instanceId);
+		world.setTemplateId(INSTANCE_ID);
+		world.setStatus(0);
 		InstanceManager.getInstance().addWorld(world);
 		
-		world.allowed.add(player.getObjectId());
+		world.addAllowed(player.getObjectId());
 		
 		teleportPlayer(npc, player, TELEPORTS[ENTER], instanceId);
 		return;
@@ -131,11 +146,13 @@ public class LibraryOfSages extends Quest
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{		
+	{
 		String htmltext = getNoQuestMsg(player);
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		if (st == null)
+		{
 			st = newQuestState(player);
+		}
 		
 		if (event.equalsIgnoreCase("check_follow"))
 		{
@@ -167,7 +184,7 @@ public class LibraryOfSages extends Quest
 				InstanceHolder holder = instanceWorlds.get(player.getInstanceId());
 				if (holder != null)
 				{
-					for(L2Npc h : holder.mobs)
+					for (L2Npc h : holder.mobs)
 					{
 						h.deleteMe();
 					}
@@ -202,6 +219,6 @@ public class LibraryOfSages extends Quest
 	
 	public static void main(String[] args)
 	{
-		new LibraryOfSages(-1, qn, "instances");
+		new LibraryOfSages(-1, LibraryOfSages.class.getSimpleName(), "instances");
 	}
 }

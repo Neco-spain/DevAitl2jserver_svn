@@ -26,6 +26,10 @@ import com.l2jserver.gameserver.model.quest.QuestState.QuestType;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.util.Util;
 
+/**
+ * Wings of Sand (455)
+ * @author Zoey76
+ */
 public class Q00455_WingsOfSand extends Quest
 {
 	// NPCs
@@ -48,7 +52,7 @@ public class Q00455_WingsOfSand extends Quest
 	private static final int SHADOW_SUMMONER = 25722;
 	private static final int SPIKE_SLASHER = 25723;
 	private static final int MUSCLE_BOMBER = 25724;
-	// Items
+	// Item
 	private static final int LARGE_BABY_DRAGON = 17250;
 	// Misc
 	private static final int MIN_LEVEL = 80;
@@ -61,6 +65,64 @@ public class Q00455_WingsOfSand extends Quest
 		addTalkId(SEPARATED_SOULS);
 		addKillId(EMERALD_HORN, DUST_RIDER, BLEEDING_FLY, BLACK_DAGGER_WING, SHADOW_SUMMONER, SPIKE_SLASHER, MUSCLE_BOMBER);
 		registerQuestItems(LARGE_BABY_DRAGON);
+	}
+	
+	@Override
+	public void actionForEachPlayer(L2PcInstance player, L2Npc npc, boolean isSummon)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if ((st != null) && Util.checkIfInRange(1500, npc, player, false) && (getRandom(1000) < CHANCE))
+		{
+			st.giveItems(LARGE_BABY_DRAGON, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			if (st.getQuestItemsCount(LARGE_BABY_DRAGON) == 1)
+			{
+				st.setCond(2, true);
+			}
+			else if (st.getQuestItemsCount(LARGE_BABY_DRAGON) == 2)
+			{
+				st.setCond(3, true);
+			}
+		}
+	}
+	
+	@Override
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		
+		String htmltext = null;
+		if (player.getLevel() >= MIN_LEVEL)
+		{
+			switch (event)
+			{
+				case "32864-02.htm":
+				case "32864-03.htm":
+				case "32864-04.htm":
+				{
+					htmltext = event;
+					break;
+				}
+				case "32864-05.htm":
+				{
+					st.startQuest();
+					htmltext = event;
+					break;
+				}
+			}
+		}
+		return htmltext;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	{
+		executeForEachPlayer(killer, npc, isSummon, true, false);
+		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -94,13 +156,13 @@ public class Q00455_WingsOfSand extends Quest
 					}
 					case 2:
 					{
-						reward(st);
+						giveItems(st);
 						htmltext = "32864-07.html";
 						break;
 					}
 					case 3:
 					{
-						reward(st);
+						giveItems(st);
 						htmltext = "32864-07.html";
 						break;
 					}
@@ -127,90 +189,11 @@ public class Q00455_WingsOfSand extends Quest
 		return htmltext;
 	}
 	
-	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return null;
-		}
-		
-		String htmltext = null;
-		if (player.getLevel() >= MIN_LEVEL)
-		{
-			switch (event)
-			{
-				case "32864-02.htm":
-				case "32864-03.htm":
-				case "32864-04.htm":
-				{
-					htmltext = event;
-					break;
-				}
-				case "32864-05.htm":
-				{
-					if (player.getLevel() >= MIN_LEVEL)
-					{
-						st.startQuest();
-						htmltext = event;
-					}
-					break;
-				}
-			}
-		}
-		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isPet)
-	{
-		QuestState st;
-		if (killer.isInParty())
-		{
-			for (L2PcInstance player : killer.getParty().getMembers())
-			{
-				st = player.getQuestState(getName());
-				if ((st != null) && Util.checkIfInRange(1500, npc, player, false) && (getRandom(1000) < CHANCE))
-				{
-					st.giveItems(LARGE_BABY_DRAGON, 1);
-					st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
-					if (st.getQuestItemsCount(LARGE_BABY_DRAGON) == 1)
-					{
-						st.setCond(2, true);
-					}
-					else if (st.getQuestItemsCount(LARGE_BABY_DRAGON) == 2)
-					{
-						st.setCond(3, true);
-					}
-				}
-			}
-		}
-		else
-		{
-			st = killer.getQuestState(getName());
-			if ((st != null) && Util.checkIfInRange(1500, npc, killer, false) && (getRandom(1000) < CHANCE))
-			{
-				st.giveItems(LARGE_BABY_DRAGON, 1);
-				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
-				if (st.getQuestItemsCount(LARGE_BABY_DRAGON) == 1)
-				{
-					st.setCond(2, true);
-				}
-				else if (st.getQuestItemsCount(LARGE_BABY_DRAGON) == 2)
-				{
-					st.setCond(3, true);
-				}
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * Reward the player.
 	 * @param st the quest state of the player to reward
 	 */
-	private static final void reward(QuestState st)
+	private static final void giveItems(QuestState st)
 	{
 		int chance;
 		for (int i = 1; i <= (st.getCond() - 1); i++)

@@ -1,80 +1,90 @@
+/*
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package quests.Q00007_ATripBegins;
 
-import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.base.Race;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 
 /**
- * Author: RobikBobik L2PS Team
+ * A Trip Begins (7)
+ * @author malyelfik
  */
 public class Q00007_ATripBegins extends Quest
 {
-	private final static int QUEST_NPC[] =
-	{
-		30146,
-		30148,
-		30154
-	};
-	private final static int QUEST_ITEM[] =
-	{
-		7572
-	};
-	private final static int QUEST_REWARD[] =
-	{
-		7559,
-		7570
-	};
+	// NPCs
+	private static final int MIRABEL = 30146;
+	private static final int ARIEL = 30148;
+	private static final int ASTERIOS = 30154;
+	// Items
+	private static final int ARIELS_RECOMMENDATION = 7572;
+	private static final int SCROLL_OF_ESCAPE_GIRAN = 7559;
+	private static final int MARK_OF_TRAVELER = 7570;
+	// Misc
+	private static final int MIN_LEVEL = 3;
 	
-	public Q00007_ATripBegins(int questId, String name, String descr)
+	private Q00007_ATripBegins(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		addStartNpc(QUEST_NPC[0]);
-		for (int npcId : QUEST_NPC)
-		{
-			addTalkId(npcId);
-		}
-		questItemIds = QUEST_ITEM;
+		addStartNpc(MIRABEL);
+		addTalkId(MIRABEL, ARIEL, ASTERIOS);
+		registerQuestItems(ARIELS_RECOMMENDATION);
 	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
 	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return null;
+		}
+		
 		String htmltext = event;
-		
-		QuestState qs = player.getQuestState(getName());
-		if (qs == null)
+		switch (event)
 		{
-			return htmltext;
-		}
-		
-		if (event.equalsIgnoreCase("30146-03.htm"))
-		{
-			qs.set("cond", "1");
-			qs.setState(State.STARTED);
-			qs.playSound("ItemSound.quest_accept");
-		}
-		else if (event.equalsIgnoreCase("30148-02.htm"))
-		{
-			qs.set("cond", "2");
-			qs.giveItems(QUEST_ITEM[0], 1);
-			qs.playSound("ItemSound.quest_middle");
-		}
-		else if (event.equalsIgnoreCase("30154-02.htm"))
-		{
-			qs.set("cond", "3");
-			qs.takeItems(QUEST_ITEM[0], 1);
-			qs.playSound("ItemSound.quest_middle");
-		}
-		else if (event.equalsIgnoreCase("30146-06.htm"))
-		{
-			qs.giveItems(QUEST_REWARD[0], (long) Config.RATE_QUEST_REWARD);
-			qs.giveItems(QUEST_REWARD[1], 1);
-			qs.unset("cond");
-			qs.exitQuest(false);
-			qs.playSound("ItemSound.quest_finish");
+			case "30146-03.htm":
+				st.startQuest();
+				break;
+			case "30146-06.html":
+				st.giveItems(SCROLL_OF_ESCAPE_GIRAN, 1);
+				st.giveItems(MARK_OF_TRAVELER, 1);
+				st.exitQuest(false, true);
+				break;
+			case "30148-02.html":
+				st.setCond(2, true);
+				st.giveItems(ARIELS_RECOMMENDATION, 1);
+				break;
+			case "30154-02.html":
+				if (!st.hasQuestItems(ARIELS_RECOMMENDATION))
+				{
+					return "30154-03.html";
+				}
+				st.takeItems(ARIELS_RECOMMENDATION, -1);
+				st.setCond(3, true);
+				break;
+			default:
+				htmltext = null;
+				break;
 		}
 		return htmltext;
 	}
@@ -82,73 +92,60 @@ public class Q00007_ATripBegins extends Quest
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
-		QuestState qs = player.getQuestState(getName());
-		if (qs == null)
-		{
-			qs = newQuestState(player);
-		}
 		String htmltext = getNoQuestMsg(player);
-		final int cond = qs.getInt("cond");
-		final int npcId = npc.getNpcId();
-		
-		switch (qs.getState())
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
 		{
-			case State.COMPLETED:
-				htmltext = getAlreadyCompletedMsg(player);
-				break;
-			case State.CREATED:
-				if (npcId == QUEST_NPC[0])
+			return htmltext;
+		}
+		
+		switch (npc.getNpcId())
+		{
+			case MIRABEL:
+				switch (st.getState())
 				{
-					if ((player.getRace().ordinal() == 1) && (player.getLevel() >= 3))
+					case State.CREATED:
+						htmltext = ((player.getRace() == Race.Elf) && (player.getLevel() >= MIN_LEVEL)) ? "30146-01.htm" : "30146-02.html";
+						break;
+					case State.STARTED:
+						if (st.isCond(1))
+						{
+							htmltext = "30146-04.html";
+						}
+						else if (st.isCond(3))
+						{
+							htmltext = "30146-05.html";
+						}
+						break;
+					case State.COMPLETED:
+						htmltext = getAlreadyCompletedMsg(player);
+						break;
+				}
+				break;
+			case ARIEL:
+				if (st.isStarted())
+				{
+					if (st.isCond(1))
 					{
-						htmltext = "30146-02.htm";
+						htmltext = "30148-01.html";
 					}
-					else
+					else if (st.isCond(2))
 					{
-						htmltext = "30146-01.htm";
-						qs.exitQuest(true);
+						htmltext = "30148-03.html";
 					}
 				}
 				break;
-			case State.STARTED:
-				switch (cond)
+			case ASTERIOS:
+				if (st.isStarted())
 				{
-					case 1:
-						if (npcId == QUEST_NPC[0])
-						{
-							htmltext = "30146-04.htm";
-						}
-						else if (npcId == QUEST_NPC[1])
-						{
-							if (qs.getQuestItemsCount(QUEST_ITEM[0]) == 0)
-							{
-								htmltext = "30148-01.htm";
-							}
-						}
-						break;
-					case 2:
-						if (npcId == QUEST_NPC[1])
-						{
-							htmltext = "30148-03.htm";
-						}
-						else if (npcId == QUEST_NPC[2])
-						{
-							if (qs.getQuestItemsCount(QUEST_ITEM[0]) == 0)
-							{
-								htmltext = "30154-01.htm";
-							}
-						}
-						break;
-					case 3:
-						if (npcId == QUEST_NPC[0])
-						{
-							htmltext = "30146-05.htm";
-						}
-						else if (npcId == QUEST_NPC[2])
-						{
-							htmltext = "30154-03.htm";
-						}
-						break;
+					if (st.isCond(2))
+					{
+						htmltext = "30154-01.html";
+					}
+					else if (st.isCond(3))
+					{
+						htmltext = "30154-04.html";
+					}
 				}
 				break;
 		}
@@ -157,6 +154,6 @@ public class Q00007_ATripBegins extends Quest
 	
 	public static void main(String[] args)
 	{
-		new Q00007_ATripBegins(7, Q00007_ATripBegins.class.getSimpleName(), "");
+		new Q00007_ATripBegins(7, Q00007_ATripBegins.class.getSimpleName(), "A Trip Begins");
 	}
 }

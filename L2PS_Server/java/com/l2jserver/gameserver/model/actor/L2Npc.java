@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.actor;
 
@@ -18,9 +22,7 @@ import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_ACTIVE;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 import com.l2jserver.Config;
@@ -28,9 +30,7 @@ import com.l2jserver.gameserver.SevenSigns;
 import com.l2jserver.gameserver.SevenSignsFestival;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.cache.HtmCache;
-import com.l2jserver.gameserver.datatables.FakePcsTable;
 import com.l2jserver.gameserver.datatables.ItemTable;
-import com.l2jserver.gameserver.datatables.NpcPersonalAIData;
 import com.l2jserver.gameserver.eventengine.Interface;
 import com.l2jserver.gameserver.handler.BypassHandler;
 import com.l2jserver.gameserver.handler.IBypassHandler;
@@ -100,13 +100,6 @@ import com.l2jserver.util.StringUtil;
  */
 public class L2Npc extends L2Character
 {
-	protected boolean _champion = false;
-	
-	private FakePc _fakePc = null;
-	
-	/** Support for random animation switching */
-	private boolean _isRandomAnimationEnabled = true;
-	
 	/** The interaction distance of the L2NpcInstance(is used as offset in MovetoLocation method) */
 	public static final int INTERACTION_DISTANCE = 150;
 	
@@ -128,8 +121,9 @@ public class L2Npc extends L2Character
 	/** The fortress index in the array of L2Fort this L2NpcInstance belongs to */
 	private int _fortIndex = -2;
 	
-	public boolean isEventMob = false;
+	private boolean _eventMob = false;
 	private boolean _isInTown = false;
+	protected boolean _isNoAnimation = false;
 	
 	/** True if this L2Npc is autoattackable **/
 	private boolean _isAutoAttackable = false;
@@ -139,6 +133,9 @@ public class L2Npc extends L2Character
 	
 	/** Minimum interval between social packets */
 	private final int _minimalSocialInterval = 6000;
+	
+	/** Support for random animation switching */
+	private boolean _isRandomAnimationEnabled = true;
 	
 	protected RandomAnimationTask _rAniTask = null;
 	private int _currentLHandId; // normally this shouldn't change from the template, but there exist exceptions
@@ -150,11 +147,9 @@ public class L2Npc extends L2Character
 	private int _soulshotamount = 0;
 	private int _spiritshotamount = 0;
 	private int _displayEffect = 0;
-	private Map<Integer, Integer> _scriptVal;
+	private int _scriptVal = 0;
 	
-	/**
-	 * The character that summons this NPC.
-	 */
+	/** The character that summons this NPC. */
 	private L2Character _summoner = null;
 	
 	private final L2NpcAIData _staticAIData = getTemplate().getAIDataStatic();
@@ -455,7 +450,24 @@ public class L2Npc extends L2Character
 	 */
 	public boolean hasRandomAnimation()
 	{
-		return ((Config.MAX_NPC_ANIMATION > 0) && !getAiType().equals(AIType.CORPSE));
+		return ((Config.MAX_NPC_ANIMATION > 0) && _isRandomAnimationEnabled && !getAiType().equals(AIType.CORPSE));
+	}
+	
+	/**
+	 * Switches random Animation state into val.
+	 * @param val needed state of random animation
+	 */
+	public void setRandomAnimationEnabled(boolean val)
+	{
+		_isRandomAnimationEnabled = val;
+	}
+	
+	/**
+	 * @return {@code true}, if random animation is enabled, {@code false} otherwise.
+	 */
+	public boolean isRandomAnimationEnabled()
+	{
+		return _isRandomAnimationEnabled;
 	}
 	
 	/**
@@ -481,6 +493,7 @@ public class L2Npc extends L2Character
 		_currentLHandId = getTemplate().getLeftHand();
 		_currentRHandId = getTemplate().getRightHand();
 		_currentEnchant = Config.ENABLE_RANDOM_ENCHANT_EFFECT ? Rnd.get(4, 21) : getTemplate().getEnchantEffect();
+		
 		// initialize the "current" collisions
 		_currentCollisionHeight = getTemplate().getfCollisionHeight();
 		_currentCollisionRadius = getTemplate().getfCollisionRadius();
@@ -490,8 +503,6 @@ public class L2Npc extends L2Character
 			_log.severe("No template for Npc. Please check your datapack is setup correctly.");
 			return;
 		}
-		
-		_fakePc = FakePcsTable.getInstance().getFakePc(template.getNpcId());
 		
 		// Set the name of the L2Character
 		setName(template.getName());
@@ -586,12 +597,7 @@ public class L2Npc extends L2Character
 	 */
 	public int getAggroRange()
 	{
-		return hasAIValue("aggroRange") ? getAIValue("aggroRange") : _staticAIData.getAggroRange();
-	}
-	
-	public int getScriptValue(int index)
-	{
-		return ((_scriptVal == null) || !_scriptVal.containsKey(index)) ? 0 : _scriptVal.get(index);
+		return _staticAIData.getAggroRange();
 	}
 	
 	/**
@@ -681,6 +687,16 @@ public class L2Npc extends L2Character
 	public int getDistanceToForgetObject(L2Object object)
 	{
 		return 2 * getDistanceToWatchObject(object);
+	}
+	
+	public boolean isEventMob()
+	{
+		return _eventMob;
+	}
+	
+	public void setEventMob(boolean val)
+	{
+		_eventMob = val;
 	}
 	
 	@Override
@@ -1349,7 +1365,6 @@ public class L2Npc extends L2Character
 				filename = (getHtmlPath(npcId, val));
 				break;
 		}
-		
 		if (Interface.talkNpc(player.getObjectId(), getObjectId()))
 		{
 			return;
@@ -1405,19 +1420,21 @@ public class L2Npc extends L2Character
 		player.sendPacket(ActionFailed.STATIC_PACKET);
 	}
 	
-	/**
-	 * @return the Exp Reward of this L2NpcInstance contained in the L2NpcTemplate (modified by RATE_XP).
-	 */
-	public int getExpReward()
+	public int getExpReward(int isPremium)
 	{
+		if (isPremium == 1)
+		{
+			return (int) (getTemplate().getRewardExp() * Config.PREMIUM_RATE_XP);
+		}
 		return (int) (getTemplate().getRewardExp() * Config.RATE_XP);
 	}
 	
-	/**
-	 * @return the SP Reward of this L2NpcInstance contained in the L2NpcTemplate (modified by RATE_SP).
-	 */
-	public int getSpReward()
+	public int getSpReward(int isPremium)
 	{
+		if (isPremium == 1)
+		{
+			return (int) (getTemplate().getRewardSp() * Config.PREMIUM_RATE_SP);
+		}
 		return (int) (getTemplate().getRewardSp() * Config.RATE_SP);
 	}
 	
@@ -1467,6 +1484,7 @@ public class L2Npc extends L2Character
 	{
 		super.onSpawn();
 		
+		// Recharge shots
 		_soulshotamount = getTemplate().getAIDataStatic().getSoulShot();
 		_spiritshotamount = getTemplate().getAIDataStatic().getSpiritShot();
 		
@@ -1476,6 +1494,11 @@ public class L2Npc extends L2Character
 			{
 				quest.notifySpawn(this);
 			}
+		}
+		
+		if (!isTeleporting())
+		{
+			WalkingManager.getInstance().onSpawn(this);
 		}
 	}
 	
@@ -1828,6 +1851,9 @@ public class L2Npc extends L2Character
 		}
 	}
 	
+	/**
+	 * @return {@code true} if this L2Npc is registered in WalkingManager
+	 */
 	@Override
 	public boolean isWalker()
 	{
@@ -1889,84 +1915,27 @@ public class L2Npc extends L2Character
 		}
 	}
 	
-	public void broadcastNpcSay(String text)
-	{
-		broadcastNpcSay(0, text);
-	}
-	
-	public void broadcastNpcSay(int messageType, String text)
-	{
-		broadcastPacket(new NpcSay(getObjectId(), messageType, getNpcId(), text));
-	}
-	
-	public void setRandomAnimationEnabled(boolean val)
-	{
-		_isRandomAnimationEnabled = val;
-	}
-	
-	public boolean isRandomAnimationEnabled()
-	{
-		return _isRandomAnimationEnabled;
-	}
-	
-	public void setChampion(boolean champ)
-	{
-		_champion = champ;
-	}
-	
 	public int getScriptValue()
 	{
-		return getScriptValue(0);
-	}
-	
-	public void setScriptValue(int index, int val)
-	{
-		if (_scriptVal == null)
-		{
-			_scriptVal = new HashMap<>();
-		}
-		
-		_scriptVal.put(index, val);
-	}
-	
-	public boolean isScriptValue(int index, int val)
-	{
-		return getScriptValue(index) == val;
+		return _scriptVal;
 	}
 	
 	public void setScriptValue(int val)
 	{
-		setScriptValue(0, val);
+		_scriptVal = val;
 	}
 	
 	public boolean isScriptValue(int val)
 	{
-		return isScriptValue(0, val);
+		return _scriptVal == val;
 	}
 	
-	public FakePc getFakePc()
-	{
-		return _fakePc;
-	}
-	
-	public void clearScriptValues()
-	{
-		if (_scriptVal != null)
-		{
-			_scriptVal.clear();
-		}
-	}
-	
-	public int getAIValue(final String paramName)
-	{
-		return hasAIValue(paramName) ? NpcPersonalAIData.getInstance().getAIValue(getSpawn().getName(), paramName) : -1;
-	}
-	
-	public boolean hasAIValue(final String paramName)
-	{
-		return (getSpawn() != null) && (getSpawn().getName() != null) && NpcPersonalAIData.getInstance().hasAIValue(getSpawn().getName(), paramName);
-	}
-	
+	/**
+	 * Send an "event" to all NPC's within given radius
+	 * @param eventName - name of event
+	 * @param radius - radius to send event
+	 * @param reference - L2Object to pass, if needed
+	 */
 	public void broadcastEvent(String eventName, int radius, L2Object reference)
 	{
 		for (L2Object obj : L2World.getInstance().getVisibleObjects(this, radius))
@@ -1979,6 +1948,16 @@ public class L2Npc extends L2Character
 				}
 			}
 		}
+	}
+	
+	public void broadcastNpcSay(String text)
+	{
+		broadcastNpcSay(0, text);
+	}
+	
+	public void broadcastNpcSay(int messageType, String text)
+	{
+		broadcastPacket(new NpcSay(getObjectId(), messageType, getNpcId(), text));
 	}
 	
 	public void block()
@@ -1994,5 +1973,10 @@ public class L2Npc extends L2Character
 	public boolean isBlocked()
 	{
 		return _blocked;
+	}
+	
+	public final void setIsNoAnimation(boolean value)
+	{
+		_isNoAnimation = value;
 	}
 }

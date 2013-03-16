@@ -18,15 +18,14 @@ import java.io.File;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-
 import javolution.util.FastList;
 import javolution.util.FastMap;
 
-import com.l2jserver.gameserver.engines.DocumentParser;
-import com.l2jserver.gameserver.eventengine.io.Out;
-
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import com.l2jserver.gameserver.engines.DocumentParser;
+import com.l2jserver.gameserver.eventengine.io.Out;
 
 public class Configuration extends DocumentParser
 {
@@ -41,18 +40,18 @@ public class Configuration extends DocumentParser
 		return SingletonHolder._instance;
 	}
 	
-	private Logger _log = Logger.getLogger(Configuration.class.getName());
-	private FastMap<Integer, FastMap<String, String>> Configuration;
+	private final Logger _log = Logger.getLogger(Configuration.class.getName());
+	private final FastMap<Integer, FastMap<String, String>> Configuration;
 	
-	private FastMap<Integer, FastMap<String, FastMap<Integer, int[]>>> positions;
+	private final FastMap<Integer, FastMap<String, FastMap<Integer, int[]>>> positions;
 	
-	private FastMap<Integer, FastMap<String, int[]>> colors;
+	private final FastMap<Integer, FastMap<String, int[]>> colors;
 	
-	private FastMap<Integer, FastMap<String, FastList<Integer>>> restrictions;
+	private final FastMap<Integer, FastMap<String, FastList<Integer>>> restrictions;
 	
-	private FastMap<Integer, FastMap<String, String>> messages;
+	private final FastMap<Integer, FastMap<String, String>> messages;
 	
-	private FastMap<Integer, FastMap<String, FastMap<Integer, Integer>>> rewards;
+	private final FastMap<Integer, FastMap<String, FastMap<Integer, Integer>>> rewards;
 	
 	public Configuration()
 	{
@@ -97,7 +96,13 @@ public class Configuration extends DocumentParser
 			positions.get(id).put(owner, new FastMap<Integer, int[]>());
 		}
 		
-		positions.get(id).get(owner).put(positions.get(id).get(owner).size() + 1, new int[] { x, y, z, radius });
+		positions.get(id).get(owner).put(positions.get(id).get(owner).size() + 1, new int[]
+		{
+			x,
+			y,
+			z,
+			radius
+		});
 	}
 	
 	private void addProperty(int id, String propName, String value)
@@ -154,11 +159,8 @@ public class Configuration extends DocumentParser
 		{
 			return Boolean.parseBoolean(Configuration.get(event).get(propName));
 		}
-		else
-		{
-			_log.warning("Event: Try to get a non existing property: " + propName);
-			return false;
-		}
+		_log.warning("Event: Try to get a non existing property: " + propName);
+		return false;
 		
 	}
 	
@@ -167,18 +169,25 @@ public class Configuration extends DocumentParser
 		if (!(colors.containsKey(event)))
 		{
 			_log.warning("Event: Try to get a color of a non existing event: ID: " + event);
-			return new int[] {255, 255, 255 };
+			return new int[]
+			{
+				255,
+				255,
+				255
+			};
 		}
 		
 		if (colors.get(event).containsKey(owner))
 		{
 			return colors.get(event).get(owner);
 		}
-		else
+		_log.warning("Event: Try to get a non existing color: " + owner);
+		return new int[]
 		{
-			_log.warning("Event: Try to get a non existing color: " + owner);
-			return new int[] {255, 255, 255 };
-		}
+			255,
+			255,
+			255
+		};
 	}
 	
 	public int getInt(int event, String propName)
@@ -193,11 +202,8 @@ public class Configuration extends DocumentParser
 		{
 			return Integer.parseInt(Configuration.get(event).get(propName));
 		}
-		else
-		{
-			_log.warning("Event: Try to get a non existing property: " + propName);
-			return -1;
-		}
+		_log.warning("Event: Try to get a non existing property: " + propName);
+		return -1;
 	}
 	
 	protected String getMessage(int event, String name)
@@ -212,11 +218,8 @@ public class Configuration extends DocumentParser
 		{
 			return messages.get(event).get(name);
 		}
-		else
-		{
-			_log.warning("Event: Try to get a non existing message: " + name);
-			return null;
-		}
+		_log.warning("Event: Try to get a non existing message: " + name);
+		return null;
 		
 	}
 	
@@ -242,10 +245,7 @@ public class Configuration extends DocumentParser
 		{
 			return positions.get(event).get(owner).get(Out.random(positions.get(event).get(owner).size()) + 1);
 		}
-		else
-		{
-			return positions.get(event).get(owner).get(num);
-		}
+		return positions.get(event).get(owner).get(num);
 	}
 	
 	public FastList<Integer> getRestriction(int event, String type)
@@ -259,11 +259,8 @@ public class Configuration extends DocumentParser
 		{
 			return restrictions.get(event).get(type);
 		}
-		else
-		{
-			_log.warning("Event: Try to get a non existing restriction: " + type);
-			return null;
-		}
+		_log.warning("Event: Try to get a non existing restriction: " + type);
+		return null;
 	}
 	
 	public FastMap<Integer, Integer> getRewards(int event, String owner)
@@ -295,13 +292,11 @@ public class Configuration extends DocumentParser
 		{
 			return Configuration.get(event).get(propName);
 		}
-		else
-		{
-			_log.warning("Event: Try to get a non existing property: " + propName);
-			return null;
-		}
+		_log.warning("Event: Try to get a non existing property: " + propName);
+		return null;
 		
 	}
+	
 	@Override
 	public void load()
 	{
@@ -311,7 +306,7 @@ public class Configuration extends DocumentParser
 		restrictions.clear();
 		messages.clear();
 		rewards.clear();
-		parseDirectory(new File("./config/EventsEngine"));	
+		parseDirectory(new File("./config/EventsEngine"));
 		_log.info("EventConfiguration: Loaded Finish ");
 	}
 	
@@ -359,7 +354,12 @@ public class Configuration extends DocumentParser
 								int r = parseInt(attrs, "r");
 								int g = parseInt(attrs, "g");
 								int b = parseInt(attrs, "b");
-								addColor(eventId, owner, new int[] { r, g, b });
+								addColor(eventId, owner, new int[]
+								{
+									r,
+									g,
+									b
+								});
 							}
 							
 							if ("restriction".equalsIgnoreCase(c.getNodeName()))

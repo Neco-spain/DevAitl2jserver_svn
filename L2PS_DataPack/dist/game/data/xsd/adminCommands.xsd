@@ -15,26 +15,11 @@
 						</xs:attribute>
 						<xs:attribute name="command" use="required">
 							<xs:simpleType>
-									<xs:restriction base="xs:token">
-									<xs:enumeration value="admin_fbuilder" />
-									<xs:enumeration value="admin_fence" />
-									<xs:enumeration value="admin_delallspawned" />
-									<xs:enumeration value="admin_dellastspawned" />
-									<xs:enumeration value="admin_addseq" />
-									<xs:enumeration value="admin_playseqq" />
-									<xs:enumeration value="admin_delsequence" />
-									<xs:enumeration value="admin_editsequence" />
-									<xs:enumeration value="admin_delallspawned" />
-									<xs:enumeration value="admin_addsequence" />
-									<xs:enumeration value="admin_playsequence" />
-									<xs:enumeration value="admin_movie" />
-									<xs:enumeration value="admin_updatesequence" />
-									<xs:enumeration value="admin_brodcast" />
-									<xs:enumeration value="admin_delallspawned" />
-									<xs:enumeration value="admin_playmovie" />
-									<xs:enumeration value="admin_brodmovie" />
-									<xs:enumeration value="admin_add_premium" />
-									<xs:enumeration value="admin_remove_premium" />
+								<xs:restriction base="xs:token">
+									<xs:enumeration value="admin_premium_menu" />
+									<xs:enumeration value="admin_premium_add1" />
+									<xs:enumeration value="admin_premium_add2" />
+									<xs:enumeration value="admin_premium_add3" />
 									<xs:enumeration value="admin_abnormal_menu" />
 									<xs:enumeration value="admin_abnormal" />
 									<xs:enumeration value="admin_accept_petition" />
@@ -318,8 +303,6 @@
 									<xs:enumeration value="admin_polymorph" />
 									<xs:enumeration value="admin_polyself_menu" />
 									<xs:enumeration value="admin_polyself" />
-									<xs:enumeration value="admin_add_premium" />
-									<xs:enumeration value="admin_remove_premium" />
 									<xs:enumeration value="admin_quest_info" />
 									<xs:enumeration value="admin_quest_reload" />
 									<xs:enumeration value="admin_rec" />

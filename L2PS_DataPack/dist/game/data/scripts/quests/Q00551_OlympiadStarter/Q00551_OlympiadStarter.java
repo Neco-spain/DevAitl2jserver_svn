@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00551_OlympiadStarter;
 
@@ -42,15 +46,9 @@ public class Q00551_OlympiadStarter extends Quest
 	public Q00551_OlympiadStarter(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
-		
 		addStartNpc(MANAGER);
 		addTalkId(MANAGER);
-		questItemIds = new int[]
-		{
-			CERT_3,
-			CERT_5,
-			CERT_10
-		};
+		registerQuestItems(CERT_3, CERT_5, CERT_10);
 		setOlympiadUse(true);
 	}
 	
@@ -66,9 +64,7 @@ public class Q00551_OlympiadStarter extends Quest
 		
 		if (event.equalsIgnoreCase("31688-03.html"))
 		{
-			st.setState(State.STARTED);
-			st.set("cond", "1");
-			st.playSound("ItemSound.quest_accept");
+			st.startQuest();
 		}
 		else if (event.equalsIgnoreCase("31688-04.html"))
 		{
@@ -80,8 +76,7 @@ public class Q00551_OlympiadStarter extends Quest
 				{
 					st.giveItems(MEDAL_OF_GLORY, 3);
 				}
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(QuestType.DAILY);
+				st.exitQuest(QuestType.DAILY, true);
 			}
 			else
 			{
@@ -89,6 +84,76 @@ public class Q00551_OlympiadStarter extends Quest
 			}
 		}
 		return htmltext;
+	}
+	
+	@Override
+	public void onOlympiadLose(L2PcInstance loser, CompetitionType type)
+	{
+		if (loser != null)
+		{
+			final QuestState st = loser.getQuestState(getName());
+			if ((st != null) && st.isStarted())
+			{
+				final int matches = st.getInt("matches") + 1;
+				switch (matches)
+				{
+					case 3:
+						if (!st.hasQuestItems(CERT_3))
+						{
+							st.giveItems(CERT_3, 1);
+						}
+						break;
+					case 5:
+						if (!st.hasQuestItems(CERT_5))
+						{
+							st.giveItems(CERT_5, 1);
+						}
+						break;
+					case 10:
+						if (!st.hasQuestItems(CERT_10))
+						{
+							st.giveItems(CERT_10, 1);
+						}
+						break;
+				}
+				st.set("matches", String.valueOf(matches));
+			}
+		}
+	}
+	
+	@Override
+	public void onOlympiadWin(L2PcInstance winner, CompetitionType type)
+	{
+		if (winner != null)
+		{
+			final QuestState st = winner.getQuestState(getName());
+			if ((st != null) && st.isStarted())
+			{
+				final int matches = st.getInt("matches") + 1;
+				switch (matches)
+				{
+					case 3:
+						if (!st.hasQuestItems(CERT_3))
+						{
+							st.giveItems(CERT_3, 1);
+						}
+						break;
+					case 5:
+						if (!st.hasQuestItems(CERT_5))
+						{
+							st.giveItems(CERT_5, 1);
+						}
+						break;
+					case 10:
+						if (!st.hasQuestItems(CERT_10))
+						{
+							st.giveItems(CERT_10, 1);
+						}
+						break;
+				}
+				st.set("matches", String.valueOf(matches));
+			}
+		}
 	}
 	
 	@Override
@@ -129,11 +194,10 @@ public class Q00551_OlympiadStarter extends Quest
 			final long count = st.getQuestItemsCount(CERT_3) + st.getQuestItemsCount(CERT_5) + st.getQuestItemsCount(CERT_10);
 			if (count == 3)
 			{
-				htmltext = "31688-04.html"; // reusing the same html
+				htmltext = "31688-04.html";
 				st.giveItems(OLY_CHEST, 4);
 				st.giveItems(MEDAL_OF_GLORY, 5);
-				st.playSound("ItemSound.quest_finish");
-				st.exitQuest(QuestType.DAILY);
+				st.exitQuest(QuestType.DAILY, true);
 			}
 			else
 			{
@@ -141,76 +205,6 @@ public class Q00551_OlympiadStarter extends Quest
 			}
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public void onOlympiadWin(L2PcInstance winner, CompetitionType type)
-	{
-		if (winner != null)
-		{
-			final QuestState st = winner.getQuestState(getName());
-			if ((st != null) && st.isStarted())
-			{
-				final int matches = st.getInt("matches") + 1;
-				switch (matches)
-				{
-					case 3:
-						if (!st.hasQuestItems(CERT_3))
-						{
-							st.giveItems(CERT_3, 1);
-						}
-						break;
-					case 5:
-						if (!st.hasQuestItems(CERT_5))
-						{
-							st.giveItems(CERT_5, 1);
-						}
-						break;
-					case 10:
-						if (!st.hasQuestItems(CERT_10))
-						{
-							st.giveItems(CERT_10, 1);
-						}
-						break;
-				}
-				st.set("matches", String.valueOf(matches));
-			}
-		}
-	}
-	
-	@Override
-	public void onOlympiadLose(L2PcInstance loser, CompetitionType type)
-	{
-		if (loser != null)
-		{
-			final QuestState st = loser.getQuestState(getName());
-			if ((st != null) && st.isStarted())
-			{
-				final int matches = st.getInt("matches") + 1;
-				switch (matches)
-				{
-					case 3:
-						if (!st.hasQuestItems(CERT_3))
-						{
-							st.giveItems(CERT_3, 1);
-						}
-						break;
-					case 5:
-						if (!st.hasQuestItems(CERT_5))
-						{
-							st.giveItems(CERT_5, 1);
-						}
-						break;
-					case 10:
-						if (!st.hasQuestItems(CERT_10))
-						{
-							st.giveItems(CERT_10, 1);
-						}
-						break;
-				}
-				st.set("matches", String.valueOf(matches));
-			}
-		}
 	}
 	
 	public static void main(String[] args)

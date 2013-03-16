@@ -56,6 +56,7 @@ public class L2PcInstanceAction implements IActionHandler
 	@Override
 	public boolean action(L2PcInstance activeChar, L2Object target, boolean interact)
 	{
+		
 		// Check if the L2PcInstance is confused
 		if (activeChar.isOutOfControl())
 		{

@@ -67,6 +67,7 @@ public class PrimeShopTable
 		load();
 	}
 	
+	@SuppressWarnings("null")
 	private void load()
 	{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

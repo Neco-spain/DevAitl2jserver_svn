@@ -151,10 +151,7 @@ public class Battlefield extends AbstractEvent
 			{
 				return 1;
 			}
-			else
-			{
-				return 2;
-			}
+			return 2;
 		}
 		
 		return 1;

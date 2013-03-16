@@ -10,7 +10,7 @@
  * details.
  * 
  * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://com.l2jserver.ru/>.
+ * this program.
  */
 package instances.ChamberOfDelusionTower;
 
@@ -18,25 +18,28 @@ import java.util.Calendar;
 
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager.InstanceWorld;
 import com.l2jserver.gameserver.model.L2Party;
+import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.skills.L2Skill;
-import com.l2jserver.gameserver.model.L2World;
+import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
+import com.l2jserver.gameserver.model.skills.L2Skill;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Util;
 import com.l2jserver.util.Rnd;
 
+/**
+ * Author: RobikBobik
+ */
 public class ChamberOfDelusionTower extends Quest
 {
 	private class CDWorld extends InstanceWorld
 	{
-		private L2Npc manager, managera, managerb, managerc, managerd, managere, managerf, managerg, managerh, chesta, chestb, chestc, chestd, _aenkinel;
+		protected L2Npc manager, managera, managerb, managerc, managerd, managere, managerf, managerg, managerh, chesta, chestb, chestc, chestd, _aenkinel;
 		
 		public CDWorld()
 		{
@@ -44,12 +47,9 @@ public class ChamberOfDelusionTower extends Quest
 		}
 	}
 	
-	private static final String qn = "ChamberOfDelusionTower";
 	private static final int INSTANCEID = 132;
 	private static final int RESET_HOUR = 6;
 	private static final int RESET_MIN = 30;
-
-	// NPCs
 	private static boolean RB_Attacked = false;
 	private static final int GKSTART = 32663;
 	private static final int GKFINISH = 32669;
@@ -83,7 +83,7 @@ public class ChamberOfDelusionTower extends Quest
 	private int r7 = 0;
 	private int r8 = 0;
 	
-	private class teleCoord
+	protected class teleCoord
 	{
 		int instanceId;
 		int x;
@@ -91,22 +91,60 @@ public class ChamberOfDelusionTower extends Quest
 		int z;
 	}
 	
-	private static final int[][] TELEPORT = 
+	private static final int[][] TELEPORT =
 	{
-		{ -108992, -152624, -6752 },
-		{ -108992, -153504, -6752 },
-		{ -107120, -154304, -6752 },
-		{ -107120, -155184, -6752 },
-		{ -108064, -151328, -6752 },
-		{ -107120, -153008, -6752 },
-		{ -108992, -154800, -6752 },
-		{ -108064, -153008, -6752 }
+		{
+			-108992,
+			-152624,
+			-6752
+		},
+		{
+			-108992,
+			-153504,
+			-6752
+		},
+		{
+			-107120,
+			-154304,
+			-6752
+		},
+		{
+			-107120,
+			-155184,
+			-6752
+		},
+		{
+			-108064,
+			-151328,
+			-6752
+		},
+		{
+			-107120,
+			-153008,
+			-6752
+		},
+		{
+			-108992,
+			-154800,
+			-6752
+		},
+		{
+			-108064,
+			-153008,
+			-6752
+		}
 	};
 	
-	private static final int[] CHESTSPAWN_X = { -108110, -108075, -108040, -108005 };
+	private static final int[] CHESTSPAWN_X =
+	{
+		-108110,
+		-108075,
+		-108040,
+		-108005
+	};
 	
-	private int spawn2,spawn3,spawn4;
-
+	private int spawn2, spawn3, spawn4;
+	
 	public ChamberOfDelusionTower(int questId, String name, String descr)
 	{
 		super(questId, name, descr);
@@ -116,20 +154,19 @@ public class ChamberOfDelusionTower extends Quest
 		addStartNpc(GKFINISH);
 		addFirstTalkId(GKFINISH);
 		addTalkId(GKFINISH);
-
+		
 		addKillId(AENKINEL);
-
+		
 		addAttackId(PRIZ);
 		addAttackId(FAIL1);
 		addAttackId(FAIL2);
 		addAttackId(FAIL3);
 	}
 	
-	@Deprecated
 	private boolean checkConditions(L2PcInstance player)
 	{
 		L2Party party = player.getParty();
-
+		
 		if (party == null)
 		{
 			player.sendPacket(SystemMessage.getSystemMessage(2101));
@@ -146,14 +183,14 @@ public class ChamberOfDelusionTower extends Quest
 			{
 				final SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.C1_LEVEL_REQUIREMENT_NOT_SUFFICIENT);
 				sm.addPcName(partyMember);
-				party.broadcastToPartyMembers(sm);
+				party.broadcastPacket(sm);
 				return false;
 			}
 			if (!Util.checkIfInRange(1000, player, partyMember, true))
 			{
 				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.C1_IS_IN_LOCATION_THAT_CANNOT_BE_ENTERED);
 				sm.addPcName(partyMember);
-				party.broadcastToPartyMembers(sm);
+				party.broadcastPacket(sm);
 				return false;
 			}
 			Long reentertime = InstanceManager.getInstance().getInstanceTime(partyMember.getObjectId(), INSTANCEID);
@@ -161,7 +198,7 @@ public class ChamberOfDelusionTower extends Quest
 			{
 				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.C1_MAY_NOT_REENTER_YET);
 				sm.addPcName(partyMember);
-				party.broadcastToPartyMembers(sm);
+				party.broadcastPacket(sm);
 				return false;
 			}
 		}
@@ -185,13 +222,13 @@ public class ChamberOfDelusionTower extends Quest
 			reenter.add(Calendar.MINUTE, RESET_MIN);
 			reenter.add(Calendar.HOUR_OF_DAY, RESET_HOUR);
 			SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.INSTANT_ZONE_S1_RESTRICTED);
-			sm.addString(InstanceManager.getInstance().getInstanceIdName(world.templateId));
-			for (int objectId : world.allowed)
+			sm.addString(InstanceManager.getInstance().getInstanceIdName(world.getTemplateId()));
+			for (int objectId : world.getAllowed())
 			{
 				L2PcInstance player = L2World.getInstance().getPlayer(objectId);
-				if (player != null && player.isOnline())
+				if ((player != null) && player.isOnline())
 				{
-					InstanceManager.getInstance().setInstanceTime(objectId, world.templateId, reenter.getTimeInMillis());
+					InstanceManager.getInstance().setInstanceTime(objectId, world.getTemplateId(), reenter.getTimeInMillis());
 					player.sendPacket(sm);
 				}
 			}
@@ -202,7 +239,7 @@ public class ChamberOfDelusionTower extends Quest
 	{
 		tp = Rnd.get(TELEPORT.length);
 		m = player.getParty().getMemberCount();
-		if (tp == ROOM1 && r1 != m)
+		if ((tp == ROOM1) && (r1 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -221,7 +258,7 @@ public class ChamberOfDelusionTower extends Quest
 			b = player.getY();
 			c = player.getZ();
 		}
-		else if (tp == ROOM2 && r2 != m)
+		else if ((tp == ROOM2) && (r2 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -240,7 +277,7 @@ public class ChamberOfDelusionTower extends Quest
 			b = player.getY();
 			c = player.getZ();
 		}
-		else if (tp == ROOM3 && r3 != m)
+		else if ((tp == ROOM3) && (r3 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -259,7 +296,7 @@ public class ChamberOfDelusionTower extends Quest
 			b = player.getY();
 			c = player.getZ();
 		}
-		else if (tp == ROOM4 && r4 != m)
+		else if ((tp == ROOM4) && (r4 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -278,7 +315,7 @@ public class ChamberOfDelusionTower extends Quest
 			b = player.getY();
 			c = player.getZ();
 		}
-		else if (tp == ROOM5 && r5 != m)
+		else if ((tp == ROOM5) && (r5 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -297,7 +334,7 @@ public class ChamberOfDelusionTower extends Quest
 			b = player.getY();
 			c = player.getZ();
 		}
-		else if (tp == ROOM6 && r6 != m)
+		else if ((tp == ROOM6) && (r6 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -316,7 +353,7 @@ public class ChamberOfDelusionTower extends Quest
 			b = player.getY();
 			c = player.getZ();
 		}
-		else if (tp == ROOM7 && r7 != m)
+		else if ((tp == ROOM7) && (r7 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -335,7 +372,7 @@ public class ChamberOfDelusionTower extends Quest
 			b = player.getY();
 			c = player.getZ();
 		}
-		else if (tp == ROOM8 && r8 != m)
+		else if ((tp == ROOM8) && (r8 != m))
 		{
 			for (int i = 0; i < TELEPORT.length; i++)
 			{
@@ -359,25 +396,25 @@ public class ChamberOfDelusionTower extends Quest
 	
 	protected void spawnState(CDWorld world)
 	{
-		world._aenkinel = addSpawn(AENKINEL, -108054, -154728, -6752, 0, false, 0, false, world.instanceId);
+		world._aenkinel = addSpawn(AENKINEL, -108054, -154728, -6752, 0, false, 0, false, world.getInstanceId());
 		world._aenkinel.setIsNoRndWalk(false);
-		world.manager = addSpawn(32669, -108064, -154688, -6752, 0, false, 0, false, world.instanceId);
+		world.manager = addSpawn(32669, -108064, -154688, -6752, 0, false, 0, false, world.getInstanceId());
 		world.manager.setIsNoRndWalk(true);
-		world.managerb = addSpawn(32669, -108992, -152624, -6752, 0, false, 0, false, world.instanceId);
+		world.managerb = addSpawn(32669, -108992, -152624, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managerb.setIsNoRndWalk(true);
-		world.managerc = addSpawn(32669, -108992, -153504, -6752, 0, false, 0, false, world.instanceId);
+		world.managerc = addSpawn(32669, -108992, -153504, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managerc.setIsNoRndWalk(true);
-		world.managerd = addSpawn(32669, -107120, -154304, -6752, 0, false, 0, false, world.instanceId);
+		world.managerd = addSpawn(32669, -107120, -154304, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managerd.setIsNoRndWalk(true);
-		world.managere = addSpawn(32669, -107120, -155184, -6752, 0, false, 0, false, world.instanceId);
+		world.managere = addSpawn(32669, -107120, -155184, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managere.setIsNoRndWalk(true);
-		world.managerf = addSpawn(32669, -108064, -151328, -6752, 0, false, 0, false, world.instanceId);
+		world.managerf = addSpawn(32669, -108064, -151328, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managerf.setIsNoRndWalk(true);
-		world.managerg = addSpawn(32669, -107120, -153008, -6752, 0, false, 0, false, world.instanceId);
+		world.managerg = addSpawn(32669, -107120, -153008, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managerg.setIsNoRndWalk(true);
-		world.managerh = addSpawn(32669, -108992, -154800, -6752, 0, false, 0, false, world.instanceId);
+		world.managerh = addSpawn(32669, -108992, -154800, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managerh.setIsNoRndWalk(true);
-		world.managera = addSpawn(32669, -108064, -153008, -6752, 0, false, 0, false, world.instanceId);
+		world.managera = addSpawn(32669, -108064, -153008, -6752, 0, false, 0, false, world.getInstanceId());
 		world.managera.setIsNoRndWalk(true);
 	}
 	
@@ -385,7 +422,7 @@ public class ChamberOfDelusionTower extends Quest
 	{
 		int instanceId = 0;
 		InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player);
-
+		
 		if (world != null)
 		{
 			if (!(world instanceof CDWorld))
@@ -397,31 +434,32 @@ public class ChamberOfDelusionTower extends Quest
 			tele.x = a;
 			tele.y = b;
 			tele.z = c;
-			tele.instanceId = world.instanceId;
+			tele.instanceId = world.getInstanceId();
 			teleportplayer(player, tele);
-			return instanceId;
 		}
 		else
 		{
 			if (!checkConditions(player))
+			{
 				return 0;
+			}
 			instanceId = InstanceManager.getInstance().createDynamicInstance(template);
 			world = new CDWorld();
-			world.instanceId = instanceId;
-			world.templateId = INSTANCEID;
-			world.status = 0;
+			world.setInstanceId(instanceId);
+			world.setTemplateId(INSTANCEID);
+			world.setStatus(0);
 			InstanceManager.getInstance().addWorld(world);
 			spawnState((CDWorld) world);
-			instId = world.instanceId;
+			instId = world.getInstanceId();
 			for (L2PcInstance partyMember : player.getParty().getMembers())
 			{
 				teleportrnd(partyMember);
-				world.allowed.add(partyMember.getObjectId());
+				world.addAllowed(partyMember.getObjectId());
 			}
 			startQuestTimer("tproom", 480000, null, player);
 			RB_Attacked = false;
-			return instanceId;
 		}
+		return instanceId;
 	}
 	
 	protected void exitInstance(L2PcInstance player, teleCoord tele)
@@ -531,18 +569,18 @@ public class ChamberOfDelusionTower extends Quest
 					
 				}
 			}
-		}	
+		}
 		return "";
 	}
 	
 	@Override
-	public String onAttack(final L2Npc npc, final L2PcInstance attacker, final int damage, final boolean isPet, final L2Skill skill)
+	public String onAttack(final L2Npc npc, final L2PcInstance attacker, final int damage, final boolean isSummon, final L2Skill skill)
 	{
 		InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof CDWorld)
 		{
 			CDWorld world = (CDWorld) tmpworld;
-			if (npc.getNpcId() == FAIL1 || npc.getNpcId() == FAIL2 || npc.getNpcId() == FAIL3)
+			if ((npc.getNpcId() == FAIL1) || (npc.getNpcId() == FAIL2) || (npc.getNpcId() == FAIL3))
 			{
 				world.chesta.deleteMe();
 				world.chestb.deleteMe();
@@ -555,7 +593,7 @@ public class ChamberOfDelusionTower extends Quest
 				world.chestc.deleteMe();
 				world.chestd.deleteMe();
 			}
-			else if (npc.getNpcId() == AENKINEL && !RB_Attacked)
+			else if ((npc.getNpcId() == AENKINEL) && !RB_Attacked)
 			{
 				RB_Attacked = true;
 				cancelQuestTimers("tproom");
@@ -568,7 +606,7 @@ public class ChamberOfDelusionTower extends Quest
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
 	{
 		int npcId = npc.getNpcId();
 		if (npcId == AENKINEL)
@@ -582,34 +620,34 @@ public class ChamberOfDelusionTower extends Quest
 				int spawn_x = CHESTSPAWN_X[sr_x];
 				switch (sr_x)
 				{
-				case 0:
-					spawn2 = CHESTSPAWN_X[1];
-					spawn3 = CHESTSPAWN_X[2];
-					spawn4 = CHESTSPAWN_X[3];
-					break;
-				case 1:
-					spawn2 = CHESTSPAWN_X[0];
-					spawn3 = CHESTSPAWN_X[2];
-					spawn4 = CHESTSPAWN_X[3];
-					break;
-				case 2:
-					spawn2 = CHESTSPAWN_X[0];
-					spawn3 = CHESTSPAWN_X[1];
-					spawn4 = CHESTSPAWN_X[3];
-					break;
-				case 3:
-					spawn2 = CHESTSPAWN_X[0];
-					spawn3 = CHESTSPAWN_X[1];
-					spawn4 = CHESTSPAWN_X[2];
-					break;
-				}		
-				world.chesta = addSpawn(PRIZ, spawn_x, -155102, -6752, 0, false, 0, false, world.instanceId);
+					case 0:
+						spawn2 = CHESTSPAWN_X[1];
+						spawn3 = CHESTSPAWN_X[2];
+						spawn4 = CHESTSPAWN_X[3];
+						break;
+					case 1:
+						spawn2 = CHESTSPAWN_X[0];
+						spawn3 = CHESTSPAWN_X[2];
+						spawn4 = CHESTSPAWN_X[3];
+						break;
+					case 2:
+						spawn2 = CHESTSPAWN_X[0];
+						spawn3 = CHESTSPAWN_X[1];
+						spawn4 = CHESTSPAWN_X[3];
+						break;
+					case 3:
+						spawn2 = CHESTSPAWN_X[0];
+						spawn3 = CHESTSPAWN_X[1];
+						spawn4 = CHESTSPAWN_X[2];
+						break;
+				}
+				world.chesta = addSpawn(PRIZ, spawn_x, -155102, -6752, 0, false, 0, false, world.getInstanceId());
 				world.chesta.setIsNoRndWalk(true);
-				world.chestb = addSpawn(FAIL1, spawn2, -155102, -6752, 0, false, 0, false, world.instanceId);
+				world.chestb = addSpawn(FAIL1, spawn2, -155102, -6752, 0, false, 0, false, world.getInstanceId());
 				world.chestb.setIsNoRndWalk(true);
-				world.chestc = addSpawn(FAIL2, spawn3, -155102, -6752, 0, false, 0, false, world.instanceId);
+				world.chestc = addSpawn(FAIL2, spawn3, -155102, -6752, 0, false, 0, false, world.getInstanceId());
 				world.chestc.setIsNoRndWalk(true);
-				world.chestd = addSpawn(FAIL3, spawn4, -155102, -6752, 0, false, 0, false, world.instanceId);
+				world.chestd = addSpawn(FAIL3, spawn4, -155102, -6752, 0, false, 0, false, world.getInstanceId());
 				world.chestd.setIsNoRndWalk(true);
 				cancelQuestTimers("tproom");
 				cancelQuestTimers("tproom1");
@@ -631,9 +669,11 @@ public class ChamberOfDelusionTower extends Quest
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		int npcId = npc.getNpcId();
-		QuestState st = player.getQuestState(qn);
+		QuestState st = player.getQuestState(getName());
 		if (st == null)
+		{
 			st = newQuestState(player);
+		}
 		if (npcId == GKSTART)
 		{
 			enterInstance(player, "ChamberofDelusionTower.xml");
@@ -651,13 +691,13 @@ public class ChamberOfDelusionTower extends Quest
 			cancelQuestTimers("tproom1");
 			cancelQuestTimers("tproom2");
 			cancelQuestTimers("tproom3");
-			for (int objectId : world.allowed)
+			for (int objectId : world.getAllowed())
 			{
 				L2PcInstance plyr = L2World.getInstance().getPlayer(objectId);
-				if (plyr != null && plyr.isOnline())
+				if ((plyr != null) && plyr.isOnline())
 				{
 					exitInstance(plyr, tele);
-					world.allowed.remove(world.allowed.indexOf(plyr.getObjectId()));
+					world.removeAllowed(world.getAllowed().indexOf(plyr.getObjectId()));
 				}
 			}
 		}
@@ -666,6 +706,6 @@ public class ChamberOfDelusionTower extends Quest
 	
 	public static void main(String[] args)
 	{
-		new ChamberOfDelusionTower(-1, qn, "instances");
+		new ChamberOfDelusionTower(-1, ChamberOfDelusionTower.class.getSimpleName(), "instances");
 	}
 }

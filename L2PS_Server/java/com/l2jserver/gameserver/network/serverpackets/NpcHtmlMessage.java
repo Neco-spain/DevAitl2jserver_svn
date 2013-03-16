@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
@@ -200,38 +204,15 @@ public final class NpcHtmlMessage extends L2GameServerPacket
 	
 	public boolean setFile(String prefix, String path)
 	{
-		String oriPath = path;
-		if ((prefix != null) && !prefix.equalsIgnoreCase("en"))
-		{
-			if (path.contains("html/"))
-			{
-				path = path.replace("html/", "html-" + prefix + "/");
-			}
-		}
-		String content = HtmCache.getInstance().getHtm(path);
-		if ((content == null) && !oriPath.equals(path))
-		{
-			content = HtmCache.getInstance().getHtm(oriPath);
-		}
+		String content = HtmCache.getInstance().getHtm(prefix, path);
+		
 		if (content == null)
 		{
 			setHtml("<html><body>My Text is missing:<br>" + path + "</body></html>");
 			_log.warning("missing html page " + path);
 			return false;
 		}
-		setHtml(content);
-		return true;
-	}
-	
-	public boolean setFile(String path)
-	{
-		String content = HtmCache.getInstance().getHtm(path);
-		if (content == null)
-		{
-			setHtml("<html><body>My Text is missing:<br>" + path + "</body></html>");
-			_log.warning("Missing html page: " + path);
-			return false;
-		}
+		
 		setHtml(content);
 		return true;
 	}
@@ -292,11 +273,6 @@ public final class NpcHtmlMessage extends L2GameServerPacket
 		{
 			writeD(_itemId);
 		}
-	}
-	
-	public String getHtm()
-	{
-		return _html;
 	}
 	
 	public void replace(String pattern, long value)

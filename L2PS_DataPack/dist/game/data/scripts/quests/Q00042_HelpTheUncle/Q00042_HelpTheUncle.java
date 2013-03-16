@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00042_HelpTheUncle;
 
@@ -27,14 +31,26 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00042_HelpTheUncle extends Quest
 {
+	// NPCs
 	private static final int WATERS = 30828;
 	private static final int SOPHYA = 30735;
+	// Monsters
 	private static final int MONSTER_EYE_DESTROYER = 20068;
 	private static final int MONSTER_EYE_GAZER = 20266;
+	// Items
 	private static final int TRIDENT = 291;
 	private static final int MAP_PIECE = 7548;
 	private static final int MAP = 7549;
 	private static final int PET_TICKET = 7583;
+	
+	public Q00042_HelpTheUncle(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(WATERS);
+		addTalkId(WATERS, SOPHYA);
+		addKillId(MONSTER_EYE_DESTROYER, MONSTER_EYE_GAZER);
+		registerQuestItems(MAP, MAP_PIECE);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -94,11 +110,30 @@ public class Q00042_HelpTheUncle extends Quest
 	}
 	
 	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		QuestState st = player.getQuestState(getName());
+		
+		if ((st != null) && st.isCond(2))
+		{
+			st.giveItems(MAP_PIECE, 1);
+			if (st.getQuestItemsCount(MAP_PIECE) == 30)
+			{
+				st.setCond(3, true);
+			}
+			else
+			{
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			}
+		}
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
 		final QuestState st = player.getQuestState(getName());
-		
 		if (st == null)
 		{
 			return htmltext;
@@ -153,40 +188,6 @@ public class Q00042_HelpTheUncle extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		QuestState st = player.getQuestState(getName());
-		
-		if ((st != null) && st.isCond(2))
-		{
-			st.giveItems(MAP_PIECE, 1);
-			if (st.getQuestItemsCount(MAP_PIECE) == 30)
-			{
-				st.setCond(3, true);
-			}
-			else
-			{
-				st.playSound("ItemSound.quest_itemget");
-			}
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00042_HelpTheUncle(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(WATERS);
-		addTalkId(WATERS, SOPHYA);
-		addKillId(MONSTER_EYE_DESTROYER, MONSTER_EYE_GAZER);
-		
-		questItemIds = new int[]
-		{
-			MAP,
-			MAP_PIECE
-		};
 	}
 	
 	public static void main(String[] args)

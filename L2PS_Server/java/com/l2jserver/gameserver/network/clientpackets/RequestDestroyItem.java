@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J Server
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J Server.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J Server is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J Server is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
@@ -28,6 +32,7 @@ import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.InventoryUpdate;
 import com.l2jserver.gameserver.network.serverpackets.ItemList;
 import com.l2jserver.gameserver.network.serverpackets.StatusUpdate;
+import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Util;
 
 /**
@@ -163,7 +168,33 @@ public final class RequestDestroyItem extends L2GameClientPacket
 			itemToRemove.endOfLife();
 		}
 		
-		L2ItemInstance removedItem = activeChar.getInventory().destroyItem("Destroy", _objectId, count, activeChar, null);
+		if (itemToRemove.isEquipped())
+		{
+			if (itemToRemove.getEnchantLevel() > 0)
+			{
+				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.EQUIPMENT_S1_S2_REMOVED);
+				sm.addNumber(itemToRemove.getEnchantLevel());
+				sm.addItemName(itemToRemove);
+				activeChar.sendPacket(sm);
+			}
+			else
+			{
+				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_DISARMED);
+				sm.addItemName(itemToRemove);
+				activeChar.sendPacket(sm);
+			}
+			
+			L2ItemInstance[] unequiped = activeChar.getInventory().unEquipItemInSlotAndRecord(itemToRemove.getLocationSlot());
+			
+			InventoryUpdate iu = new InventoryUpdate();
+			for (L2ItemInstance itm : unequiped)
+			{
+				iu.addModifiedItem(itm);
+			}
+			activeChar.sendPacket(iu);
+		}
+		
+		L2ItemInstance removedItem = activeChar.getInventory().destroyItem("Destroy", itemToRemove, count, activeChar, null);
 		
 		if (removedItem == null)
 		{
@@ -181,7 +212,6 @@ public final class RequestDestroyItem extends L2GameClientPacket
 			{
 				iu.addModifiedItem(removedItem);
 			}
-			
 			activeChar.sendPacket(iu);
 		}
 		else

@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00053_LinnaeusSpecialBait;
 
@@ -29,11 +33,25 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00053_LinnaeusSpecialBait extends Quest
 {
+	// NPCs
 	private static final int LINNAEUS = 31577;
 	private static final int CRIMSON_DRAKE = 20670;
+	// Items
 	private static final int CRIMSON_DRAKE_HEART = 7624;
 	private static final int FLAMING_FISHING_LURE = 7613;
+	// Misc
+	// Custom setting: whether or not to check for fishing skill level?
+	// Default False to require fishing skill level, any other value to ignore fishing and evaluate char level only.
 	private static final boolean ALT_IGNORE_FISHING = false;
+	
+	public Q00053_LinnaeusSpecialBait(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(LINNAEUS);
+		addTalkId(LINNAEUS);
+		addKillId(CRIMSON_DRAKE);
+		registerQuestItems(CRIMSON_DRAKE_HEART);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -67,6 +85,36 @@ public class Q00053_LinnaeusSpecialBait extends Quest
 	}
 	
 	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
+		if (partyMember == null)
+		{
+			return null;
+		}
+		
+		final QuestState st = partyMember.getQuestState(getName());
+		
+		if (st.getQuestItemsCount(CRIMSON_DRAKE_HEART) < 100)
+		{
+			float chance = 33 * Config.RATE_QUEST_DROP;
+			if (getRandom(100) < chance)
+			{
+				st.rewardItems(CRIMSON_DRAKE_HEART, 1);
+				st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			}
+		}
+		
+		if (st.getQuestItemsCount(CRIMSON_DRAKE_HEART) >= 100)
+		{
+			st.setCond(2, true);
+			
+		}
+		
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
 	{
 		String htmltext = getNoQuestMsg(player);
@@ -91,40 +139,9 @@ public class Q00053_LinnaeusSpecialBait extends Quest
 		return htmltext;
 	}
 	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "1");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		
-		final QuestState st = partyMember.getQuestState(getName());
-		
-		if (st.getQuestItemsCount(CRIMSON_DRAKE_HEART) < 100)
-		{
-			float chance = 33 * Config.RATE_QUEST_DROP;
-			if (getRandom(100) < chance)
-			{
-				st.rewardItems(CRIMSON_DRAKE_HEART, 1);
-				st.playSound("ItemSound.quest_itemget");
-			}
-		}
-		
-		if (st.getQuestItemsCount(CRIMSON_DRAKE_HEART) >= 100)
-		{
-			st.setCond(2, true);
-			
-		}
-		
-		return super.onKill(npc, player, isPet);
-	}
-	
-	private int fishingLevel(L2PcInstance player)
+	private static int fishingLevel(L2PcInstance player)
 	{
 		int level = 20;
-		
 		if (!ALT_IGNORE_FISHING)
 		{
 			level = player.getSkillLevel(1315);
@@ -135,19 +152,6 @@ public class Q00053_LinnaeusSpecialBait extends Quest
 			}
 		}
 		return level;
-	}
-	
-	public Q00053_LinnaeusSpecialBait(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		
-		addStartNpc(LINNAEUS);
-		addTalkId(LINNAEUS);
-		addKillId(CRIMSON_DRAKE);
-		questItemIds = new int[]
-		{
-			CRIMSON_DRAKE_HEART
-		};
 	}
 	
 	public static void main(String[] args)

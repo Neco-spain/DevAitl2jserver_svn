@@ -1,18 +1,24 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00242_PossessorOfAPreciousSoul2;
+
+import quests.Q00241_PossessorOfAPreciousSoul1.Q00241_PossessorOfAPreciousSoul1;
 
 import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -28,7 +34,6 @@ import com.l2jserver.gameserver.model.quest.State;
  */
 public class Q00242_PossessorOfAPreciousSoul2 extends Quest
 {
-	
 	// NPCs
 	private static final int VIRGIL = 31742;
 	private static final int KASSANDRA = 31743;
@@ -40,18 +45,24 @@ public class Q00242_PossessorOfAPreciousSoul2 extends Quest
 	private static final int ANGEL_CORPSE = 31752;
 	private static final int KALIS = 30759;
 	private static final int MATILD = 30738;
-	
 	private static final int RESTRAINER_OF_GLORY = 27317;
-	
 	// Items
 	private static final int VIRGILS_LETTER = 7677;
 	private static final int GOLDEN_HAIR = 7590;
 	private static final int ORB_OF_BINDING = 7595;
 	private static final int SORCERY_INGREDIENT = 7596;
 	private static final int CARADINE_LETTER = 7678;
-	
 	// Rewards
 	private static final int CHANCE_FOR_HAIR = 20;
+	
+	public Q00242_PossessorOfAPreciousSoul2(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(VIRGIL);
+		addTalkId(VIRGIL, KASSANDRA, OGMAR, MYSTERIOUS_KNIGHT, ANGEL_CORPSE, KALIS, MATILD, FALLEN_UNICORN, CORNERSTONE, PURE_UNICORN);
+		addKillId(RESTRAINER_OF_GLORY);
+		registerQuestItems(GOLDEN_HAIR, ORB_OF_BINDING, SORCERY_INGREDIENT);
+	}
 	
 	@Override
 	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
@@ -73,26 +84,44 @@ public class Q00242_PossessorOfAPreciousSoul2 extends Quest
 				st.takeItems(VIRGILS_LETTER, -1);
 				break;
 			case "31743-05.html":
-				st.setCond(2, true);
+				if (st.isCond(1))
+				{
+					st.setCond(2, true);
+				}
 				break;
 			case "31744-02.html":
-				st.setCond(3, true);
+				if (st.isCond(2))
+				{
+					st.setCond(3, true);
+				}
 				break;
 			case "31751-02.html":
-				st.setCond(4, true);
+				if (st.isCond(3))
+				{
+					st.setCond(4, true);
+				}
 				break;
 			case "30759-02.html":
-				st.setCond(7, true);
+				if (st.isCond(6))
+				{
+					st.setCond(7, true);
+				}
 				break;
 			case "30738-02.html":
-				st.setCond(8, true);
-				st.giveItems(SORCERY_INGREDIENT, 1);
+				if (st.isCond(7))
+				{
+					st.setCond(8, true);
+					st.giveItems(SORCERY_INGREDIENT, 1);
+				}
 				break;
 			case "30759-05.html":
-				st.takeItems(GOLDEN_HAIR, -1);
-				st.takeItems(SORCERY_INGREDIENT, -1);
-				st.set("awaitsDrops", "1");
-				st.setCond(9, true);
+				if (st.isCond(8))
+				{
+					st.takeItems(GOLDEN_HAIR, -1);
+					st.takeItems(SORCERY_INGREDIENT, -1);
+					st.set("awaitsDrops", "1");
+					st.setCond(9, true);
+				}
 				break;
 			case "PURE_UNICORN":
 				npc.getSpawn().stopRespawn();
@@ -106,6 +135,28 @@ public class Q00242_PossessorOfAPreciousSoul2 extends Quest
 				return null;
 		}
 		return event;
+	}
+	
+	@Override
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
+	{
+		final L2PcInstance partyMember = getRandomPartyMember(player, "awaitsDrops", "1");
+		if (partyMember == null)
+		{
+			return super.onKill(npc, player, isSummon);
+		}
+		
+		final QuestState st = partyMember.getQuestState(getName());
+		if (st.isCond(9) && (st.getQuestItemsCount(ORB_OF_BINDING) < 4))
+		{
+			st.giveItems(ORB_OF_BINDING, 1);
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+		}
+		if (st.getQuestItemsCount(ORB_OF_BINDING) >= 4)
+		{
+			st.unset("awaitsDrops");
+		}
+		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -128,7 +179,8 @@ public class Q00242_PossessorOfAPreciousSoul2 extends Quest
 				switch (st.getState())
 				{
 					case State.CREATED:
-						if (st.hasQuestItems(VIRGILS_LETTER))
+						final QuestState qs = player.getQuestState(Q00241_PossessorOfAPreciousSoul1.class.getSimpleName());
+						if ((qs != null) && qs.isCompleted())
 						{
 							htmltext = (player.isSubClassActive() && (player.getLevel() >= 60)) ? "31742-01.htm" : "31742-00.htm";
 						}
@@ -264,7 +316,7 @@ public class Q00242_PossessorOfAPreciousSoul2 extends Quest
 						{
 							st.setCond(10);
 						}
-						st.playSound("ItemSound.quest_middle");
+						st.playSound(QuestSound.ITEMSOUND_QUEST_MIDDLE);
 						npc.setTarget(player);
 						npc.doCast(SkillTable.getInstance().getInfo(4546, 1));
 					}
@@ -300,42 +352,6 @@ public class Q00242_PossessorOfAPreciousSoul2 extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
-	{
-		final L2PcInstance partyMember = getRandomPartyMember(player, "awaitsDrops", "1");
-		if (partyMember == null)
-		{
-			return null;
-		}
-		
-		final QuestState st = partyMember.getQuestState(getName());
-		if (st.isCond(9) && (st.getQuestItemsCount(ORB_OF_BINDING) < 4))
-		{
-			st.giveItems(ORB_OF_BINDING, 1);
-			st.playSound("ItemSound.quest_itemget");
-		}
-		if (st.getQuestItemsCount(ORB_OF_BINDING) >= 4)
-		{
-			st.unset("awaitsDrops");
-		}
-		return super.onKill(npc, player, isPet);
-	}
-	
-	public Q00242_PossessorOfAPreciousSoul2(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(VIRGIL);
-		addTalkId(VIRGIL, KASSANDRA, OGMAR, MYSTERIOUS_KNIGHT, ANGEL_CORPSE, KALIS, MATILD, FALLEN_UNICORN, CORNERSTONE, PURE_UNICORN);
-		addKillId(RESTRAINER_OF_GLORY);
-		questItemIds = new int[]
-		{
-			GOLDEN_HAIR,
-			ORB_OF_BINDING,
-			SORCERY_INGREDIENT
-		};
 	}
 	
 	public static void main(String[] args)

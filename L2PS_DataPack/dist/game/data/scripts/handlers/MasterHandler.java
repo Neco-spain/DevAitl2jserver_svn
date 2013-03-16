@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package handlers;
 
@@ -71,7 +75,6 @@ import handlers.admincommandhandlers.AdminEnchant;
 import handlers.admincommandhandlers.AdminEventEngine;
 import handlers.admincommandhandlers.AdminEvents;
 import handlers.admincommandhandlers.AdminExpSp;
-import handlers.admincommandhandlers.AdminFence;
 import handlers.admincommandhandlers.AdminFightCalculator;
 import handlers.admincommandhandlers.AdminFortSiege;
 import handlers.admincommandhandlers.AdminGeoEditor;
@@ -95,7 +98,6 @@ import handlers.admincommandhandlers.AdminMenu;
 import handlers.admincommandhandlers.AdminMessages;
 import handlers.admincommandhandlers.AdminMobGroup;
 import handlers.admincommandhandlers.AdminMonsterRace;
-import handlers.admincommandhandlers.AdminMovieMaker;
 import handlers.admincommandhandlers.AdminPForge;
 import handlers.admincommandhandlers.AdminPathNode;
 import handlers.admincommandhandlers.AdminPcCondOverride;
@@ -135,7 +137,6 @@ import handlers.bypasshandlers.FortSiege;
 import handlers.bypasshandlers.Freight;
 import handlers.bypasshandlers.Henna;
 import handlers.bypasshandlers.ItemAuctionLink;
-import handlers.bypasshandlers.Leaderboard;
 import handlers.bypasshandlers.Link;
 import handlers.bypasshandlers.Loto;
 import handlers.bypasshandlers.ManorManager;
@@ -144,7 +145,6 @@ import handlers.bypasshandlers.Observation;
 import handlers.bypasshandlers.OlympiadManagerLink;
 import handlers.bypasshandlers.OlympiadObservation;
 import handlers.bypasshandlers.PlayerHelp;
-import handlers.bypasshandlers.Premium;
 import handlers.bypasshandlers.PrivateWarehouse;
 import handlers.bypasshandlers.QuestLink;
 import handlers.bypasshandlers.QuestList;
@@ -209,7 +209,6 @@ import handlers.itemhandlers.SpecialXMas;
 import handlers.itemhandlers.SpiritShot;
 import handlers.itemhandlers.SummonItems;
 import handlers.itemhandlers.TeleportBookmark;
-import handlers.skillhandlers.BalanceLife;
 import handlers.skillhandlers.BallistaBomb;
 import handlers.skillhandlers.BeastSkills;
 import handlers.skillhandlers.Blow;
@@ -295,36 +294,35 @@ import handlers.telnethandlers.ReloadHandler;
 import handlers.telnethandlers.ServerHandler;
 import handlers.telnethandlers.StatusHandler;
 import handlers.telnethandlers.ThreadHandler;
-import handlers.usercommandhandlers.Birthday;
 import handlers.usercommandhandlers.ChannelDelete;
+import handlers.usercommandhandlers.ChannelInfo;
 import handlers.usercommandhandlers.ChannelLeave;
-import handlers.usercommandhandlers.ChannelListUpdate;
 import handlers.usercommandhandlers.ClanPenalty;
 import handlers.usercommandhandlers.ClanWarsList;
-import handlers.usercommandhandlers.DisMount;
-import handlers.usercommandhandlers.Escape;
+import handlers.usercommandhandlers.Dismount;
 import handlers.usercommandhandlers.InstanceZone;
 import handlers.usercommandhandlers.Loc;
 import handlers.usercommandhandlers.Mount;
+import handlers.usercommandhandlers.MyBirthday;
 import handlers.usercommandhandlers.OlympiadStat;
 import handlers.usercommandhandlers.PartyInfo;
 import handlers.usercommandhandlers.Time;
-import handlers.voicedcommandhandlers.OpenAtod;
-import handlers.voicedcommandhandlers.Repair;
+import handlers.usercommandhandlers.Unstuck;
 import handlers.voicedcommandhandlers.Voiced_Banking;
 import handlers.voicedcommandhandlers.Voiced_BindingIP;
-import handlers.voicedcommandhandlers.Voiced_CastleAction;
 import handlers.voicedcommandhandlers.Voiced_CastleManagerInfo;
+import handlers.voicedcommandhandlers.Voiced_CastleVCmd;
 import handlers.voicedcommandhandlers.Voiced_ChangePassword;
 import handlers.voicedcommandhandlers.Voiced_ChatAdmin;
 import handlers.voicedcommandhandlers.Voiced_Debug;
-import handlers.voicedcommandhandlers.Voiced_EvenlyDistributeItems;
 import handlers.voicedcommandhandlers.Voiced_Experience;
 import handlers.voicedcommandhandlers.Voiced_Hellbound;
 import handlers.voicedcommandhandlers.Voiced_Lang;
+import handlers.voicedcommandhandlers.Voiced_OpenAtod;
 import handlers.voicedcommandhandlers.Voiced_Premium;
-import handlers.voicedcommandhandlers.Voiced_PremiumCmd;
-import handlers.voicedcommandhandlers.Voiced_Set;
+import handlers.voicedcommandhandlers.Voiced_Repair;
+import handlers.voicedcommandhandlers.Voiced_SetVCmd;
+import handlers.voicedcommandhandlers.Voiced_StatsVCmd;
 import handlers.voicedcommandhandlers.Voiced_TeleToCl;
 import handlers.voicedcommandhandlers.Voiced_VoteRewardMe;
 import handlers.voicedcommandhandlers.Voiced_Wedding;
@@ -378,9 +376,6 @@ public class MasterHandler
 		},
 		{
 			// Admin Command Handlers
-			(Config.FENCE_MOVIE_BUILDER ? AdminFence.class : null),
-			(Config.FENCE_MOVIE_BUILDER ? AdminMovieMaker.class : null),
-			AdminPremium.class,
 			AdminAdmin.class,
 			AdminAnnouncements.class,
 			AdminBan.class,
@@ -433,6 +428,7 @@ public class MasterHandler
 			AdminPetition.class,
 			AdminPForge.class,
 			AdminPledge.class,
+			AdminPremium.class,
 			AdminPolymorph.class,
 			AdminQuest.class,
 			AdminRepairChar.class,
@@ -470,8 +466,6 @@ public class MasterHandler
 			Henna.class,
 			ItemAuctionLink.class,
 			Link.class,
-			Premium.class,
-			Leaderboard.class,
 			Loto.class,
 			ManorManager.class,
 			Multisell.class,
@@ -514,7 +508,6 @@ public class MasterHandler
 		},
 		{
 			// Item Handlers
-			NevitHourglass.class,
 			ScrollOfResurrection.class,
 			SoulShots.class,
 			SpiritShot.class,
@@ -538,6 +531,7 @@ public class MasterHandler
 			Seed.class,
 			Harvester.class,
 			MercTicket.class,
+			NevitHourglass.class,
 			FishShots.class,
 			PetFood.class,
 			SpecialXMas.class,
@@ -562,7 +556,6 @@ public class MasterHandler
 			HealPercent.class,
 			CombatPointHeal.class,
 			ManaHeal.class,
-			BalanceLife.class,
 			Charge.class,
 			Continuous.class,
 			Detection.class,
@@ -602,8 +595,8 @@ public class MasterHandler
 			// User Command Handlers
 			ClanPenalty.class,
 			ClanWarsList.class,
-			DisMount.class,
-			Escape.class,
+			Dismount.class,
+			Unstuck.class,
 			InstanceZone.class,
 			Loc.class,
 			Mount.class,
@@ -612,30 +605,28 @@ public class MasterHandler
 			OlympiadStat.class,
 			ChannelLeave.class,
 			ChannelDelete.class,
-			ChannelListUpdate.class,
-			Birthday.class,
+			ChannelInfo.class,
+			MyBirthday.class,
 		},
 		{
-			// Voiced Command Handlers
-			(Config.ENABLE_TELEPORT_TO_CL ? Voiced_TeleToCl.class : null),
-			(Config.VOTE_BUFF_ENABLED ? Voiced_VoteRewardMe.class : null),
-			(Config.BANKING_SYSTEM_ENABLED ? Voiced_Banking.class : null),
-			(Config.BINDING_IP ? Voiced_BindingIP.class : null),
-			Voiced_CastleAction.class,
-			(Config.CASTLE_SIEGE_INFO ? Voiced_CastleManagerInfo.class : null),
-			(Config.DEBUG_VOICE_COMMAND ? Voiced_Debug.class : null),
-			(Config.EVENLY_DISTRIBUTED_ITEMS ? Voiced_EvenlyDistributeItems.class : null),
-			(Config.ENABLE_BLOCK_EXP ? Voiced_Experience.class : null),
-			(Config.HELLBOUND_STATUS ? Voiced_Hellbound.class : null),
-			(Config.ALLOW_CHANGE_PASSWORD ? Voiced_ChangePassword.class : null),
-			(Config.CHAT_ADMIN ? Voiced_ChatAdmin.class : null),
-			(Config.MULTILANG_ENABLE && Config.MULTILANG_VOICED_ALLOW ? Voiced_Lang.class : null),
-			(Config.PREMIUM_SERVICE_ENABLED ? Voiced_Premium.class : null),
-			(Config.PREMIUM_SERVICE_ENABLED ? Voiced_PremiumCmd.class : null),
-			Voiced_Set.class,
-			(Config.ALLOW_WEDDING ? Voiced_Wedding.class : null),
-			OpenAtod.class,
-			Repair.class,
+			(Config.ALLOW_VOICED_1 ? Voiced_Banking.class : null),
+			(Config.ALLOW_VOICED_2 ? Voiced_BindingIP.class : null),
+			(Config.ALLOW_VOICED_3 ? Voiced_CastleManagerInfo.class : null),
+			(Config.ALLOW_VOICED_4 ? Voiced_CastleVCmd.class : null),
+			(Config.ALLOW_VOICED_5 ? Voiced_Debug.class : null),
+			(Config.ALLOW_VOICED_6 ? Voiced_Experience.class : null),
+			(Config.ALLOW_VOICED_7 ? Voiced_Hellbound.class : null),
+			(Config.ALLOW_VOICED_8 ? Voiced_ChangePassword.class : null),
+			(Config.ALLOW_VOICED_9 ? Voiced_ChatAdmin.class : null),
+			(Config.ALLOW_VOICED_10 ? Voiced_Lang.class : null),
+			(Config.ALLOW_VOICED_11 ? Voiced_OpenAtod.class : null),
+			(Config.ALLOW_VOICED_12 ? Voiced_Repair.class : null),
+			(Config.ALLOW_VOICED_13 ? Voiced_SetVCmd.class : null),
+			(Config.ALLOW_VOICED_14 ? Voiced_StatsVCmd.class : null),
+			(Config.ALLOW_VOICED_15 ? Voiced_TeleToCl.class : null),
+			(Config.ALLOW_VOICED_16 ? Voiced_VoteRewardMe.class : null),
+			(Config.ALLOW_VOICED_17 ? Voiced_Wedding.class : null),
+			(Config.USE_PREMIUMSERVICE ? Voiced_Premium.class : null),
 		},
 		{
 			// Target Handlers
@@ -649,6 +640,7 @@ public class MasterHandler
 			TargetBehindAura.class,
 			TargetClan.class,
 			TargetClanMember.class,
+			TargetChainHeal.class,
 			TargetCorpseAlly.class,
 			TargetCorpseClan.class,
 			TargetCorpseMob.class,
@@ -656,7 +648,6 @@ public class MasterHandler
 			TargetCorpsePlayer.class,
 			TargetEnemySummon.class,
 			TargetFlagPole.class,
-			TargetChainHeal.class,
 			TargetFrontArea.class,
 			TargetFrontAura.class,
 			TargetGround.class,

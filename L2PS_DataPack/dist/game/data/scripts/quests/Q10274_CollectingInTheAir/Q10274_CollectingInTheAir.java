@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2004-2013 L2J DataPack
+ * 
+ * This file is part of L2J DataPack.
+ * 
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q10274_CollectingInTheAir;
 
@@ -31,15 +35,14 @@ import com.l2jserver.gameserver.model.skills.L2Skill;
  */
 public class Q10274_CollectingInTheAir extends Quest
 {
-	// NPCs
+	// NPC
 	private static final int LEKON = 32557;
-	
 	// Items
 	private static final int SCROLL = 13844;
 	private static final int RED = 13858;
 	private static final int BLUE = 13859;
 	private static final int GREEN = 13860;
-	
+	// Monsters
 	private static final int MOBS[] =
 	{
 		18684, // Red Star Stone
@@ -52,6 +55,67 @@ public class Q10274_CollectingInTheAir extends Quest
 		18691, // Green Star Stone
 		18692, // Green Star Stone
 	};
+	
+	public Q10274_CollectingInTheAir(int questId, String name, String descr)
+	{
+		super(questId, name, descr);
+		addStartNpc(LEKON);
+		addTalkId(LEKON);
+		addSkillSeeId(MOBS);
+		registerQuestItems(SCROLL, RED, BLUE, GREEN);
+	}
+	
+	@Override
+	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
+	{
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return getNoQuestMsg(player);
+		}
+		
+		if (event.equals("32557-03.html"))
+		{
+			st.startQuest();
+			st.giveItems(SCROLL, 8);
+		}
+		return event;
+	}
+	
+	@Override
+	public String onSkillSee(L2Npc npc, L2PcInstance caster, L2Skill skill, L2Object[] targets, boolean isSummon)
+	{
+		final QuestState st = caster.getQuestState(getName());
+		if ((st == null) || !st.isStarted())
+		{
+			return null;
+		}
+		
+		if (st.isCond(1) && (skill.getId() == 2630))
+		{
+			switch (npc.getNpcId())
+			{
+				case 18684:
+				case 18685:
+				case 18686:
+					st.giveItems(RED, 1);
+					break;
+				case 18687:
+				case 18688:
+				case 18689:
+					st.giveItems(BLUE, 1);
+					break;
+				case 18690:
+				case 18691:
+				case 18692:
+					st.giveItems(GREEN, 1);
+					break;
+			}
+			st.playSound(QuestSound.ITEMSOUND_QUEST_ITEMGET);
+			npc.doDie(caster);
+		}
+		return super.onSkillSee(npc, caster, skill, targets, isSummon);
+	}
 	
 	@Override
 	public String onTalk(L2Npc npc, L2PcInstance player)
@@ -94,73 +158,6 @@ public class Q10274_CollectingInTheAir extends Quest
 				break;
 		}
 		return htmltext;
-	}
-	
-	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
-	{
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return getNoQuestMsg(player);
-		}
-		
-		if (event.equals("32557-03.html"))
-		{
-			st.startQuest();
-			st.giveItems(SCROLL, 8);
-		}
-		return event;
-	}
-	
-	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, L2Skill skill, L2Object[] targets, boolean isPet)
-	{
-		final QuestState st = caster.getQuestState(getName());
-		if ((st == null) || !st.isStarted())
-		{
-			return null;
-		}
-		
-		if (st.isCond(1) && (skill.getId() == 2630))
-		{
-			switch (npc.getNpcId())
-			{
-				case 18684:
-				case 18685:
-				case 18686:
-					st.giveItems(RED, 1);
-					break;
-				case 18687:
-				case 18688:
-				case 18689:
-					st.giveItems(BLUE, 1);
-					break;
-				case 18690:
-				case 18691:
-				case 18692:
-					st.giveItems(GREEN, 1);
-					break;
-			}
-			st.playSound("ItemSound.quest_itemget");
-			npc.doDie(caster);
-		}
-		return super.onSkillSee(npc, caster, skill, targets, isPet);
-	}
-	
-	public Q10274_CollectingInTheAir(int questId, String name, String descr)
-	{
-		super(questId, name, descr);
-		addStartNpc(LEKON);
-		addTalkId(LEKON);
-		addSkillSeeId(MOBS);
-		questItemIds = new int[]
-		{
-			SCROLL,
-			RED,
-			BLUE,
-			GREEN
-		};
 	}
 	
 	public static void main(String[] args)

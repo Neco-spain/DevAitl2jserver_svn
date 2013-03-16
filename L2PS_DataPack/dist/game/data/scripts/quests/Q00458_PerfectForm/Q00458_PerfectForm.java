@@ -1,16 +1,20 @@
 /*
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
+ * Copyright (C) 2004-2013 L2J DataPack
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * This file is part of L2J DataPack.
  * 
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * L2J DataPack is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * L2J DataPack is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package quests.Q00458_PerfectForm;
 
@@ -77,51 +81,6 @@ public class Q00458_PerfectForm extends Quest
 		addKillId(COUGARS);
 		addKillId(BUFFALOS);
 		addKillId(GRENDELS);
-	}
-	
-	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player)
-	{
-		String htmltext = getNoQuestMsg(player);
-		final QuestState st = player.getQuestState(getName());
-		if (st == null)
-		{
-			return htmltext;
-		}
-		
-		switch (st.getState())
-		{
-			case State.COMPLETED:
-				if (!st.isNowAvailable())
-				{
-					htmltext = "32768-18.htm";
-					break;
-				}
-				st.setState(State.CREATED);
-				//$FALL-THROUGH$
-			case State.CREATED:
-				htmltext = (player.getLevel() > 81) ? "32768-01.htm" : "32768-00.htm";
-				break;
-			case State.STARTED:
-				switch (st.getCond())
-				{
-					case 1:
-						if ((st.getInt("18879") == 0) && (st.getInt("18886") == 0) && (st.getInt("18893") == 0) && (st.getInt("18900") == 0))
-						{
-							htmltext = "32768-11.html";
-						}
-						else
-						{
-							htmltext = "32768-12.html";
-						}
-						break;
-					case 2:
-						htmltext = "32768-13.html";
-						break;
-				}
-				break;
-		}
-		return htmltext;
 	}
 	
 	@Override
@@ -255,7 +214,7 @@ public class Q00458_PerfectForm extends Quest
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet)
+	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon)
 	{
 		final QuestState st = player.getQuestState(getName());
 		if ((st != null) && st.isCond(1))
@@ -318,7 +277,52 @@ public class Q00458_PerfectForm extends Quest
 				player.sendPacket(log);
 			}
 		}
-		return super.onKill(npc, player, isPet);
+		return super.onKill(npc, player, isSummon);
+	}
+	
+	@Override
+	public String onTalk(L2Npc npc, L2PcInstance player)
+	{
+		String htmltext = getNoQuestMsg(player);
+		final QuestState st = player.getQuestState(getName());
+		if (st == null)
+		{
+			return htmltext;
+		}
+		
+		switch (st.getState())
+		{
+			case State.COMPLETED:
+				if (!st.isNowAvailable())
+				{
+					htmltext = "32768-18.htm";
+					break;
+				}
+				st.setState(State.CREATED);
+				//$FALL-THROUGH$
+			case State.CREATED:
+				htmltext = (player.getLevel() > 81) ? "32768-01.htm" : "32768-00.htm";
+				break;
+			case State.STARTED:
+				switch (st.getCond())
+				{
+					case 1:
+						if ((st.getInt("18879") == 0) && (st.getInt("18886") == 0) && (st.getInt("18893") == 0) && (st.getInt("18900") == 0))
+						{
+							htmltext = "32768-11.html";
+						}
+						else
+						{
+							htmltext = "32768-12.html";
+						}
+						break;
+					case 2:
+						htmltext = "32768-13.html";
+						break;
+				}
+				break;
+		}
+		return htmltext;
 	}
 	
 	public static void main(String[] args)
