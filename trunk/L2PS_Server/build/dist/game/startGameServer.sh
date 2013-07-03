@@ -1,1 +1,0 @@
-./GameServer_loop.sh &
