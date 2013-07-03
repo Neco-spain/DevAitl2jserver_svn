@@ -1,7 +1,0 @@
-ALTER TABLE `characters` ADD `lastVoteHopzone` BIGINT UNSIGNED DEFAULT NULL;
-ALTER TABLE `characters` ADD `lastVoteTopzone` BIGINT UNSIGNED DEFAULT NULL;
-ALTER TABLE `characters` ADD `hasVotedHop` INT UNSIGNED DEFAULT 0;
-ALTER TABLE `characters` ADD `hasVotedTop` INT UNSIGNED DEFAULT 0;
-ALTER TABLE `characters` ADD `monthVotes` INT UNSIGNED DEFAULT 0;
-ALTER TABLE `characters` ADD `totalVotes` INT UNSIGNED DEFAULT 0;
-ALTER TABLE `characters` ADD `tries` INT UNSIGNED DEFAULT 3;
